@@ -1,0 +1,133 @@
+{
+  "$comment": "Welcome-page loops, recorded from each original product by scripts/loops.mjs (setup is not kept; show is the loop). Each tool's server must be running at its url.",
+  "loops": [
+    {
+      "$comment": "From the live demo (Bengisu, 1 Oct: the studio's side controls put people off): the starling's song, then smoothing all the way up.",
+      "project": "voxmpe",
+      "url": "https://swwallowws.github.io/starling-web/try/?embed=1",
+      "viewport": [960, 600],
+      "inject": [
+        ".demoshell-rail, .demoshell-head, .demoshell-mark, #message, #rec-status, .try-fine { display: none !important; }",
+        ".demoshell-body { grid-template-columns: minmax(0, 1fr) !important; margin: 0 !important; }",
+        "html, body { margin: 0 !important; padding: 0 !important; background: var(--ground) !important; }",
+        "#demo { margin: 0 !important; padding: 44px 20px 20px !important; }",
+        "/* the song's first part, larger: the roll drawn at twice the width, clipped */",
+        ".try-stage { overflow: hidden !important; height: auto !important; max-height: none !important; }",
+        "#roll { width: 210% !important; max-width: none !important; height: 340px !important; }"
+      ],
+      "crop": "960:430:0:0",
+      "setup": [
+        { "click": "#sample" },
+        { "waitFor": "#empty", "state": "hidden", "timeout": 60000 },
+        { "waitFor": "#smoothing-row", "timeout": 30000 },
+        { "wait": 1500 }
+      ],
+      "show": [
+        { "wait": 800 },
+        { "click": "#play" },
+        { "wait": 1800 },
+        { "slide": "#smoothing", "to": 100, "ms": 3000 },
+        { "wait": 3000 }
+      ]
+    },
+    {
+      "project": "rearranged",
+      "url": "http://localhost:4196/new.html",
+      "viewport": [1100, 900],
+      "crop": "1100:822:0:0",
+      "setup": [
+        { "upload": "#song", "file": "visuals/staging/rearranged/song-a-house-of-the-rising-sun.mid" },
+        { "waitFor": "#song-tracks:not(.hidden)" },
+        { "upload": "#donor", "file": "visuals/staging/rearranged/bolero-song-b.mid" },
+        { "waitFor": "#donor-tracks:not(.hidden)" },
+        { "upload": "#parts", "file": "visuals/staging/rearranged/parts.json" },
+        { "waitFor": "#parts-strip .seg" },
+        { "click": "#go" },
+        { "waitFor": "#switches button", "timeout": 120000 },
+        { "inject": [
+          "body > :not(main), #override-row, #versions, #results, #mode-switches, #mode-blind, main > .grid:not(#switches), main > .row:has(#progress), details.keys, #song-hint, #song-switches, #section-note, #song-list-box, #song-status { display: none !important; }",
+          "main { padding-top: 56px !important; margin-top: 0 !important; }"
+        ] },
+        { "scrollTo": 0 },
+        { "wait": 1500 }
+      ],
+      "show": [
+        { "wait": 700 },
+        { "click": "#play" },
+        { "wait": 2500 },
+        { "click": "#switches button[data-f='guitar']:not(.on)" },
+        { "wait": 3000 },
+        { "click": "#use-part" },
+        { "waitFor": "#use-part:has-text('whole song uses')", "timeout": 60000 },
+        { "wait": 600 },
+        { "click": "#song-play" },
+        { "wait": 1800 },
+        { "click": "#sections .sec[data-i='1']" },
+        { "wait": 2200 },
+        { "click": "#sections .sec[data-i='2']" },
+        { "wait": 2200 }
+      ]
+    },
+    {
+      "project": "stemscribe",
+      "url": "http://localhost:8002/",
+      "viewport": [1000, 700],
+      "crop": "1000:500:0:0",
+      "setup": [
+        { "upload": "#file", "file": "../stemscribe/try-dist/try/mix.mp3" },
+        { "fill": "#duration", "text": "20" },
+        { "click": "#backend-choice button >> text=basic-pitch" },
+        { "click": "#go" },
+        { "waitFor": "#results", "timeout": 900000 },
+        { "inject": [
+          "#form, #prog-panel, #timing-note, #results > .panel ~ .panel, #dl { display: none !important; }",
+          "#parts { --lane-h: 64px !important; }"
+        ] },
+        { "click": "#view-choice button >> text=together" },
+        { "scrollTo": 0 },
+        { "wait": 1500 }
+      ],
+      "show": [
+        { "wait": 700 },
+        { "click": "#pl-play" },
+        { "wait": 2500 },
+        { "click": "#view-choice button >> text=by part" },
+        { "wait": 3000 },
+        { "click": "#pl-stems button >> text=drums" },
+        { "wait": 3000 }
+      ]
+    },
+    {
+      "project": "tabridge",
+      "url": "http://localhost:4206/",
+      "viewport": [960, 680],
+      "crop": "960:676:0:0",
+      "poster": 7,
+      "inject": [
+        ".hero, body > .bar, .uses, .ways, #online, footer, #template-state { display: none !important; }",
+        "main { padding: 56px 24px 24px !important; margin: 0 !important; max-width: none !important; }",
+        "#tool { margin-top: 0 !important; padding-top: 0 !important; }"
+      ],
+      "setup": [],
+      "show": [
+        { "wait": 800 },
+        { "upload": "#file", "file": "../tabridge/spike/gp_serenade/serenade.gp" },
+        { "waitFor": "#preview:not([disabled])", "timeout": 30000 },
+        { "wait": 900 },
+        { "click": "#preview" },
+        { "waitFor": "#player-host:not([hidden])", "timeout": 30000 },
+        { "wait": 2500 },
+        { "focus": "#semitones" },
+        { "press": "ArrowUp" },
+        { "wait": 250 },
+        { "press": "ArrowUp" },
+        { "wait": 250 },
+        { "press": "ArrowUp" },
+        { "wait": 600 },
+        { "blur": true },
+        { "click": "#preview" },
+        { "wait": 3000 }
+      ]
+    }
+  ]
+}

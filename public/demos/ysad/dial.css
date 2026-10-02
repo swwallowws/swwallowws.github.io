@@ -1,0 +1,30 @@
+/* Live-style dial (dial.js). Name above, a 270 degree arc with a needle,
+   the value below, as a live.dial draws it in the device view. */
+
+.dial {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font: 12px/1 var(--font-mono);
+  color: var(--ink-mut);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.dial-knob {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  cursor: ns-resize;
+  touch-action: none; /* a vertical drag turns the dial instead of scrolling */
+  -webkit-tap-highlight-color: transparent;
+}
+.dial-knob:focus { outline: none; }
+.dial-knob:focus-visible { outline: 1px solid var(--acc); outline-offset: 2px; }
+.dial-knob svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.dial-track, .dial-fill { fill: none; stroke-width: 3; stroke-linecap: butt; }
+.dial-track { stroke: var(--line); }
+.dial-fill { stroke: var(--acc); }
+.dial-needle { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+/* A long readout (a style name) wraps at its spaces, never past its width. */
+.dial-value { color: var(--ink); font-size: 13px; line-height: 1.25; min-width: 4ch; text-align: center; overflow-wrap: anywhere; }
+.dial.is-dragging .dial-value { color: var(--acc); }

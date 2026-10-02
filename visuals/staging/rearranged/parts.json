@@ -1,0 +1,17 @@
+{
+ "song": {
+  "parts": [
+   {"name": "intro", "startSec": 2.636544, "endSec": 15.436544},
+   {"name": "build", "startSec": 15.436544, "endSec": 28.236544},
+   {"name": "verse", "startSec": 28.236544, "endSec": 41.036544}
+  ]
+ },
+ "donor": {
+  "parts": [
+   {"name": "intro", "startSec": 166.5, "endSec": 171.0},
+   {"name": "build", "startSec": 171.0, "endSec": 189.0},
+   {"name": "verse", "startSec": 189.0, "endSec": 207.0}
+  ]
+ },
+ "note": "song-a: as open-pair-dj (the first 24 bars of House Of The Rising Sun as intro, build, verse, 8 bars each from the first Am at 2.64 s). song-b: Bolero (local/bolero/bolero-song-b.mid, 3/4 at 80 bpm, 2.25 s bars), the oboe d'amore statement, where the strings first play full chords: intro = bars 75-76, the two-bar ostinato link (snare, strings, bassoon on G, no melody); build = bars 77-84, the theme's first eight bars; verse = bars 85-92, its second eight. Contiguous, so intro -> build -> verse are song-b's own transitions."
+}

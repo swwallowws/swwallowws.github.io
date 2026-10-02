@@ -1,0 +1,25 @@
+{
+  "name": "showcase",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Portfolio showcase site.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "tsc --noEmit",
+    "visuals": "node scripts/visuals.mjs",
+    "favicons": "node scripts/favicons.mjs",
+    "peek": "node scripts/peek.mjs",
+    "check:site": "node scripts/check-site.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5"
+  },
+  "dependencies": {
+    "lucide": "^0.469.0"
+  }
+}

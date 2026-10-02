@@ -1,0 +1,53 @@
+{
+  "$comment": "Social cards for `npm run visuals` (scripts/visuals.mjs -> cards()). Each entry is rendered through the design system's visuals/card.html for every format (thumb, og, square, story) and theme (paper, night) into public/visuals/<id>/card-<format>-<theme>.png. The symbol and the image are derived, not stored here: `symbolFor(id)` in src/ui/glyphs.ts supplies the mark (custom glyphs for voxmpe and yousuckatdrums, shared with the live map; a Lucide icon for the rest, shared with the welcome page's item marks), and the theme-matched thumb shot in public/visuals/<id>/ (when one exists, the same way writeIndex() finds a project's `thumb`) supplies the image.",
+  "cards": [
+    {
+      "id": "voxmpe",
+      "name": "Starling",
+      "category": "transcribe",
+      "lines": ["Sing a phrase, get MIDI that keeps every glide, in any tuning."]
+    },
+    {
+      "id": "stemscribe",
+      "name": "Coming Undone",
+      "category": "transcribe",
+      "lines": ["Split a recording into its parts and write each one down as MIDI."]
+    },
+    {
+      "id": "rearranged",
+      "name": "Rearranged",
+      "category": "transform",
+      "lines": ["Rearrange songs in the style of another."]
+    },
+    {
+      "id": "tabridge",
+      "name": "Ready Set",
+      "category": "transform",
+      "lines": ["Open a tab or a score as a playable Ableton Live set."]
+    },
+    {
+      "id": "ysad",
+      "name": "You Suck At Drums",
+      "category": "transform",
+      "lines": ["A circular drum machine for Ableton Live and Push 3."],
+      "focus": "left"
+    },
+    {
+      "id": "session-notes",
+      "name": "Session Notes",
+      "category": "workflow",
+      "lines": ["Notes that live with the set.", "Lyrics that land on the arrangement."]
+    },
+    {
+      "id": "intentional",
+      "name": "Tagline",
+      "category": "workflow",
+      "lines": ["A plain-text music library whose tags travel inside the audio files."]
+    },
+    {
+      "id": "home",
+      "name": "swwallowws",
+      "lines": ["Producing music and tools"]
+    }
+  ]
+}

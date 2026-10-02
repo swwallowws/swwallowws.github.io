@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-category="transform">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YSAD: try it</title>
+  <!-- Favicons: generated and copied here by the showcase's `npm run favicons -- --copy`. -->
+  <link rel="icon" href="favicons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="favicons/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="favicons/apple-touch-icon.png">
+  <script>
+    // ?theme=paper|night forces a mode before first paint (the shell handles ?embed=1).
+    (function () {
+      var t = new URLSearchParams(location.search).get('theme');
+      if (t === 'paper' || t === 'night') document.documentElement.dataset.theme = t;
+    })();
+  </script>
+  <link rel="stylesheet" href="vendor/design/tokens.css">
+  <link rel="stylesheet" href="vendor/design/steprail.css">
+  <link rel="stylesheet" href="vendor/design/iconbutton.css">
+  <link rel="stylesheet" href="vendor/design/demoshell.css">
+  <link rel="stylesheet" href="dial.css">
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+  <main id="demo">
+    <!-- The instrument, packed like the plugin window: Play in the top-left
+         corner, the circle, then the eight dials in one row, the whole beat
+         (Style, Intensity, Swing, Take) then the drums in ring order from the
+         centre out (Kick, Snare, Perc, Hats), each in its drum's colour. Each
+         dial draws as a live.dial does: name above, a 270 degree arc with a
+         needle, the value below. Style and Swing turn through the device's own
+         lists, one notch per entry. The steps stay in the demo shell's rail, in
+         their own box beside it. -->
+    <section class="instrument" aria-label="YSAD">
+      <button id="play" class="corner-play" type="button" data-icon="play" data-toggle data-key="Space" data-size="s"></button>
+      <div class="device-body">
+      <canvas id="circle" class="circle" role="img" aria-label="The pattern: one ring per drum, kick on the inside, hats on the outside"></canvas>
+      <div class="controls" role="group" aria-label="Controls">
+        <div class="dials">
+          <div id="style-dial"></div>
+          <div id="intensity-dial"></div>
+          <div id="swing-dial"></div>
+          <div id="take-dial"></div>
+          <div id="kick-dial"></div>
+          <div id="snare-dial"></div>
+          <div id="perc-dial"></div>
+          <div id="hats-dial"></div>
+        </div>
+      </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { demoShell } from './vendor/design/demoshell.js';
+    import { iconButton } from './vendor/design/iconbutton.js';
+    import { createPlayer, hatsGesture } from './player.js';
+    import { loadGenerator } from './livegen.js';
+    import { KITS, synthVoices } from './synthkits.js';
+    import { createCircle } from './circle.js';
+    import { createDial } from './dial.js';
+
+    const $ = (id) => document.getElementById(id);
+
+    // What the page shows around the beat (patterns.json), and the generator
+    // itself, compiled (ysad.wasm): every dial shapes the beat as in the product.
+    let data, gen;
+    try {
+      const res = await fetch('patterns.json');
+      if (!res.ok) throw new Error(res.status);
+      data = await res.json();
+      gen = await loadGenerator('ysad.wasm', data);
+    } catch (e) {
+      const p = document.createElement('p');
+      p.className = 'load-error';
+      p.textContent = 'demo not built: run node yousuckatdrums/demo/precompute.js and m4l/tools/build-wasm.sh';
+      document.getElementById('demo').replaceChildren(p);
+      throw e;
+    }
+
+    // Where the full product lives: its store page, set when it exists (with
+    // FULL_LIVE below). The showcase's head links the same place.
+    const FULL_PRODUCT = '';
+
+    const DEFAULT_STYLE = 'Half-time';
+    const DEFAULT_STYLE_NAME = data.presets.includes(DEFAULT_STYLE) ? DEFAULT_STYLE : data.presets[0];
+    let style = DEFAULT_STYLE_NAME;
+    // Hats starts at 0 (no hats) so the tour can ask for it to come up.
+    const HATS_START = 0;
+    // Every dial's value, as the device opens (Hats aside).
+    const START = { kick: 0.5, snare: 0.5, hats: HATS_START, perc: 0.5, intensity: 0.5, swingIdx: 0, take: 0 };
+    const dials = { ...START };
+    let gesture = hatsGesture();
+    // The pattern playing now, made again whenever a dial or the style moves.
+    let pat = null;
+    function remake() {
+      pat = gen.pattern(style, dials);
+      circle.setPattern(pat);
+    }
+
+    // Style and Swing turn through the device's own lists (its Pattern and Swing
+    // menus), one notch per entry. dial.set() never calls onInput, so Start over
+    // sets the dials back without it counting as play.
+    const list = (items, value, def = value) => ({ min: 0, max: items.length - 1, value, def, step: 1, keyStep: 1 });
+    const DEFAULT_STYLE_IDX = data.presets.indexOf(DEFAULT_STYLE_NAME);
+    // The style's meter in words ("7/8, grouped 2+2+3") as the tooltip and the
+    // spoken value; the readout shows the name only.
+    const styleInfo = (i) => `${data.presets[i]}, ${data.patterns[data.presets[i]].meter.info}`;
+    const styleDial = createDial($('style-dial'), {
+      id: 'style', label: 'Style', ...list(data.presets, DEFAULT_STYLE_IDX),
+      format: (i) => data.presets[i],
+      spoken: styleInfo,
+      onInput: (i) => {
+        style = data.presets[i];
+        describeStyle();
+        remake();
+      },
+    });
+    function describeStyle() {
+      styleDial.knob.title = styleInfo(data.presets.indexOf(style));
+    }
+    describeStyle();
+    const swingDial = createDial($('swing-dial'), {
+      id: 'swing', label: 'Swing', ...list(data.swingLabels, START.swingIdx),
+      format: (i) => data.swingLabels[i],
+      onInput: (i) => {
+        dials.swingIdx = i;
+        remake();
+      },
+    });
+
+    function current() {
+      return pat;
+    }
+
+    // The drums: an 808-style kit made in the browser (synthkits.js, chosen by
+    // ear on sounds.html), nothing sampled and nothing to download first.
+    const makeVoices = synthVoices(KITS['808-style']);
+    const player = createPlayer({ getPattern: current, makeVoices });
+    const circle = createCircle($('circle'), { position: () => player.position(), now: () => player.now() });
+    player.onHit((voice, step, t, steps) => circle.hit(voice, step, t, steps));
+    remake();
+
+    // The device's ranges, defaults and readouts. Hats alone starts (and resets)
+    // at 0, so the tour can ask for it to come up.
+    const amount = { min: 0, max: 1, value: 0.5, def: 0.5, step: 0.01, keyStep: 0.05, format: (v) => v.toFixed(2) };
+    // A drum dial: the pattern follows it, and its ring lights up while it moves.
+    const drumDial = (id, label, key, ring, extra = {}) => createDial($(`${id}-dial`), {
+      id, label, ...amount, ...extra,
+      onInput: (v) => {
+        dials[key] = v;
+        remake();
+        circle.focus(ring);
+        if (key === 'hats' && rail.current === 'hats' && gesture.push(v)) rail.done('hats');
+      },
+    });
+    const kickDial = drumDial('kick', 'Kick', 'kick', 'kick');
+    const snareDial = drumDial('snare', 'Snare', 'snare', 'snare');
+    const hatsDial = drumDial('hats', 'Hats', 'hats', 'hat', { value: HATS_START, def: HATS_START });
+    const percDial = drumDial('perc', 'Perc', 'perc', 'perc');
+    // Intensity carries the tour's third step: the whole kit thins out or fills up.
+    const intensityDial = createDial($('intensity-dial'), {
+      id: 'intensity', label: 'Intensity', ...amount,
+      onInput: (v) => {
+        dials.intensity = v;
+        remake();
+        if (Math.abs(v - START.intensity) >= 0.15) rail.done('intensity');
+      },
+    });
+    const takeDial = createDial($('take-dial'), {
+      id: 'take', label: 'Take', min: 0, max: 255, value: START.take, def: START.take, step: 1, keyStep: 1,
+      format: (v) => `#${v}`,
+      onInput: (v) => { dials.take = v; remake(); },
+    });
+
+    // Play is an icon toggle; Space and the mouse run the same click, so the
+    // AudioContext is created or resumed inside the gesture either way.
+    const play = iconButton($('play'), {
+      onPress: (playing) => {
+        if (playing) {
+          player.start();
+          rail.done('play');
+        } else {
+          player.stop();
+        }
+      },
+    });
+
+    const { rail } = demoShell($('demo'), {
+      product: 'YSAD',
+      title: 'See the beat go round.',
+      intro: 'The Ableton Live device, running in the browser with limited features for demo purposes. One ring per drum, from the kick on the inside to the hats on the outside.',
+      steps: [
+        { id: 'play', label: 'Press Play' },
+        { id: 'hats', label: 'Turn Hats up', hint: 'Drag it up from 0 to add the hats.' },
+        { id: 'intensity', label: 'Change the intensity', hint: 'Turn it down to thin the kit out, up to fill it.' },
+      ],
+      // The rail's title stays a plain "Try it out!"; the way to the full
+      // version comes at the end of the tour.
+      endText: 'That was the first step. ',
+      // No label: Space still plays, with no "Space: play" hint under the rail.
+      primary: { toggle: () => play.toggle() },
+      onReset: () => {
+        player.stop();
+        play.setPressed(false);
+        Object.assign(dials, START);
+        kickDial.set(START.kick);
+        snareDial.set(START.snare);
+        hatsDial.set(START.hats);
+        percDial.set(START.perc);
+        intensityDial.set(START.intensity);
+        takeDial.set(START.take);
+        styleDial.set(DEFAULT_STYLE_IDX);
+        swingDial.set(START.swingIdx);
+        style = DEFAULT_STYLE_NAME;
+        gesture = hatsGesture();
+        describeStyle();
+        remake();
+      },
+    });
+    // The circle takes the instrument's width up to a comfortable size (demo.css).
+
+    // After the tour: the way to the full product, in a new tab so the demo
+    // stays where it is, with the same words as the showcase's button. Until
+    // the store pages exist, it says it's coming instead (FULL_LIVE).
+    const FULL_LIVE = false;
+    const fullLink = document.createElement(FULL_LIVE ? 'a' : 'span');
+    fullLink.className = 'full-link';
+    if (FULL_LIVE) {
+      fullLink.href = FULL_PRODUCT;
+      fullLink.target = '_blank';
+      fullLink.rel = 'noopener';
+      fullLink.textContent = 'Full version ↗';
+    } else {
+      fullLink.textContent = 'Full version coming soon.';
+    }
+    document.querySelector('.steprail-end').append(fullLink);
+
+    // For the walk script: audio state, bar count, and the output level (0 is silence).
+    window.ysadDemo = {
+      get voicesReady() { return !!player.voices && player.voices.ready; },
+      peak: () => (player.voices ? player.voices.peak() : 0),
+      get voices() { return player.voices; },
+      get ctx() { return player.ctx; },
+      now: () => player.now(),
+      get state() { return player.ctx ? player.ctx.state : 'none'; },
+      get bars() { return player.bars; },
+      get style() { return style; },
+      get meter() { return current().meter.label; },
+      get steps() { return current().meter.steps; },
+      get playing() { return player.playing; },
+      get hatHits() { return current().hat.prob.filter((x) => x > 0).length; },
+    };
+  </script>
+</body>
+</html>

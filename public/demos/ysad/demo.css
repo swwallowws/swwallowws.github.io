@@ -1,0 +1,37 @@
+/* YSAD demo: the instrument only. The page layout, header and step rail box
+   come from vendor/design/demoshell.css. Colours and type only from
+   vendor/design/tokens.css. */
+
+.steprail-end a { color: var(--acc); text-decoration: underline; }
+
+/* The instrument looks like the plugin's own window in Ableton Live: the
+   circle, then a hairline and the eight dials in one row (the whole beat, then
+   the drums), all in one panel, with Play in its top-left corner. No title bar,
+   so the panel's top lines up with the step rail's box and the DEMO mark. */
+.instrument {
+  position: relative; min-width: 0;
+  background: var(--ground); border: var(--hairline); border-radius: var(--radius);
+  overflow: hidden;
+}
+.corner-play { position: absolute; top: var(--space); left: var(--space); z-index: 1; }
+.device-body { display: grid; justify-items: center; }
+.circle { display: block; width: 100%; max-width: 420px; aspect-ratio: 1; margin: calc(var(--space) * 3) 0; }
+.load-error { font-family: var(--font-mono); color: var(--ink-mut); margin: 0; }
+
+.controls { width: 100%; padding: calc(var(--space) * 2) var(--space); border-top: var(--hairline); }
+.dials {
+  display: grid; grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: calc(var(--space) * 2.5) calc(var(--space) / 2);
+}
+.dials .dial-value { width: 100%; }
+/* Each drum dial's arc in its drum's colour, as on the circle. */
+#kick-dial { --acc: var(--drum-kick); }
+#snare-dial { --acc: var(--drum-snare); }
+#hats-dial { --acc: var(--drum-hats); }
+#perc-dial { --acc: var(--drum-perc); }
+
+/* Narrow: eight dials don't fit a phone, so they go four to a row there. */
+@media (max-width: 720px) {
+  .dials { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dials .dial-value { min-height: 2.5em; }
+}

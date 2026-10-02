@@ -1,0 +1,143 @@
+{
+  "$comment": "Shots for `npm run visuals`. Each shot is captured in Paper and Night (?theme=paper|night) at 2x. Summary visuals are staged from each product's full UI (the original product is the source of truth, never its demo): `viewport` sizes the window, `inject` is CSS added first (a string or a list) that hides chrome and resizes or zooms panels so the picture is full and composed, and `actions` run in order to load content: {\"click\": selector}, {\"fill\": selector, \"text\": ...}, {\"press\": key}, {\"select\": selector, \"value\": ...}, {\"upload\": selector, \"file\": path from the repo root}, {\"hover\": selector}, {\"focus\": selector} (then {\"press\": key} types into it), {\"blur\": true} (drops focus, so no focus ring shows), {\"inject\": css} (CSS added at that point, for chrome that has to stay usable until then), {\"scrollTo\": y}, {\"waitFor\": selector, \"state\"?: visible|hidden|attached, \"timeout\"?: ms}, {\"wait\": ms}. `selector` crops the capture to one element. `thumb: true` makes it the project's landing visual. `local: true` marks a shot of a frozen demo on a copyrighted test song: it is written to .local-visuals/<project>/ (gitignored, outside public/) and never used as a thumb, card image or index entry. Recordings dropped in visuals/raw/<project>/ are encoded automatically.",
+  "maxVideoSeconds": 90,
+  "shots": [
+    {
+      "project": "voxmpe",
+      "name": "studio",
+      "url": "http://localhost:4318/",
+      "viewport": [1000, 620],
+      "inject": [
+        "#take-name, #takes, #delete-take, #rec-status, #message, footer.bar { display: none !important; }"
+      ],
+      "actions": [
+        { "upload": "#wav-file", "file": "visuals/staging/voxmpe-phrase.wav" },
+        { "waitFor": "#empty", "state": "hidden", "timeout": 60000 },
+        { "wait": 1500 }
+      ],
+      "thumb": true
+    },
+    {
+      "project": "session-notes",
+      "name": "playground",
+      "url": "https://swwallowws.github.io/ableton-session-notes/try/?embed=1",
+      "viewport": [1040, 760],
+      "selector": ".live",
+      "inject": [
+        ".demoshell-mark { display: none !important; }",
+        ".live { padding: 56px 28px 28px !important; box-sizing: border-box !important; background: var(--ground) !important; }"
+      ],
+      "actions": [
+        { "fill": "#md", "text": "[9] Low tide at noon\nGulls count the boats\nI hum it back\nThe pier keeps time\n" },
+        { "wait": 300 },
+        { "click": "button >> text=Clips" },
+        { "wait": 600 }
+      ],
+      "thumb": true
+    },
+    {
+      "project": "tabridge",
+      "name": "site",
+      "url": "http://localhost:8000/",
+      "viewport": [960, 680],
+      "selector": "main",
+      "actions": [
+        { "click": "#online summary" },
+        { "fill": "#q", "text": "Greensleeves" },
+        { "press": "Enter" },
+        { "waitFor": ".result", "timeout": 30000 },
+        { "click": ".result" },
+        { "waitFor": "#preview" },
+        { "focus": "#semitones" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "click": "#preview" },
+        { "wait": 4000 },
+        { "focus": "#tr" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "blur": true },
+        { "wait": 300 },
+        { "inject": [
+          ".hero > :not(.demo), #tool > .eyebrow, #drop, #online, #template-state, .uses, .ways, body > header button { display: none !important; }",
+          "main { padding: 24px !important; margin: 0 !important; max-width: none !important; }",
+          ".hero { margin-top: 0 !important; padding-top: 0 !important; }",
+          "#tool { margin-top: 20px !important; padding-top: 0 !important; }"
+        ] },
+        { "scrollTo": 0 },
+        { "wait": 300 }
+      ],
+      "thumb": true
+    },
+    {
+      "project": "ysad",
+      "name": "circle",
+      "url": "http://localhost:4191/?embed=1&controls=all",
+      "viewport": [860, 560],
+      "inject": [
+        ".demoshell-rail > div:first-child, .demoshell-note, .demoshell-head { display: none !important; }",
+        "html.demoshell-embed, html.demoshell-embed body { background: var(--ground) !important; }",
+        ".demoshell[data-embed] { padding: 24px 32px !important; }",
+        ".demoshell-body { grid-template-columns: 1fr 300px !important; align-items: center !important; column-gap: 24px !important; }",
+        ".demoshell-stage { order: -1; }",
+        ".demoshell-aside { margin-top: 0 !important; }",
+        "canvas#circle { width: 460px !important; height: 460px !important; }"
+      ],
+      "actions": [
+        { "focus": "#style" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "press": "ArrowUp" },
+        { "blur": true },
+        { "click": "#play" },
+        { "wait": 2500 }
+      ],
+      "thumb": true
+    },
+    {
+      "project": "stemscribe",
+      "name": "full",
+      "url": "http://localhost:8002/",
+      "viewport": [1000, 620],
+      "actions": [
+        { "upload": "#file", "file": "../stemscribe/try-dist/try/mix.mp3" },
+        { "fill": "#duration", "text": "20" },
+        { "click": "#backend-choice button >> text=basic-pitch" },
+        { "click": "#go" },
+        { "inject": [
+          "#form .or, #url, #form .form-grid, #form .wave-foot, #change, #prog-panel, #timing-note, #results .player, #results > .panel ~ .panel { display: none !important; }",
+          "#parts { --lane-h: 64px !important; }"
+        ] },
+        { "waitFor": "#results", "timeout": 600000 },
+        { "click": "#view-choice button >> text=by part" },
+        { "wait": 1500 }
+      ],
+      "thumb": true
+    },
+    {
+      "project": "rearranged",
+      "name": "lab",
+      "url": "http://localhost:8010/lab/djopening",
+      "viewport": [1100, 560],
+      "actions": [
+        { "waitFor": "#strip-msg", "state": "hidden", "timeout": 60000 },
+        { "inject": [
+          "main > *:not(#sections) { display: none !important; }",
+          "#sections { height: 400px !important; margin: 0 !important; cursor: default !important; }",
+          ".sec.current { background: transparent !important; } .sec.current b { color: inherit !important; } #sec-head { display: none !important; }",
+          "main { padding: 28px 32px !important; box-sizing: border-box !important; }"
+        ] },
+        { "wait": 1500 }
+      ],
+      "thumb": true
+    }
+  ]
+}

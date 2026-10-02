@@ -1,0 +1,542 @@
+/* Showcase styles. Every colour, font and shape comes from the shared design
+   system (vendor/design/tokens.css); this file only lays things out. */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 16px/1.55 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One page width for the bar, the content and the footer. */
+:root { --page: 1280px; }
+main { max-width: var(--page); margin: 0 auto; padding: 0 16px 96px; }
+a { color: var(--ink); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--acc); }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.mut { color: var(--ink-mut); }
+.small { font-size: 13px; }
+code { font: 0.9em var(--font-mono); }
+
+.eyebrow {
+  margin: 0 0 calc(var(--space) * 2);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-mut);
+}
+.head {
+  margin: 0;
+  font-stretch: var(--head-stretch);
+  font-weight: var(--head-weight);
+  letter-spacing: var(--head-tracking);
+  line-height: .95;
+  text-wrap: balance;
+}
+.lede { color: var(--ink-mut); font-size: 1.08rem; max-width: 60ch; margin: calc(var(--space) * 2.5) 0 0; }
+.block { margin-top: calc(var(--space) * 8); }
+.intro { margin: 0 0 calc(var(--space) * 2); max-width: 60ch; }
+/* The map opens out after the list: no heading, no rule, its reading line small beneath. */
+.map-open { margin-top: calc(var(--space) * 12); }
+.prose { max-width: 64ch; margin: 0; }
+
+button {
+  font: inherit; color: var(--ink); background: var(--ground-2); border: var(--hairline);
+  border-radius: var(--radius); padding: calc(var(--space) / 2) var(--space); cursor: pointer;
+}
+button:hover { background: var(--band); }
+button[aria-pressed="true"] { border-color: var(--acc); color: var(--acc); }
+button[aria-pressed="true"]:hover { background: var(--ground-2); }
+
+/* ---------------------------------------------------------------- bar */
+
+.bar { border-bottom: var(--hairline); background: var(--ground-2); }
+.bar-inner { max-width: var(--page); margin: 0 auto; padding: calc(var(--space) * 2) 16px; display: flex; align-items: center; gap: var(--space); }
+.wordmark { font: 700 21px/1 var(--font-mono); text-decoration: none; margin-right: auto; display: inline-flex; align-items: center; gap: 10px; }
+.wordmark-mark { display: block; width: 24px; height: 24px; color: var(--ink); }
+/* The switch at the icon buttons' standard size, to match the larger bar. */
+.bar .themeswitch .iconbutton { --iconbutton-size: calc(var(--space) * 4); --iconbutton-glyph: 16px; }
+.wordmark-mark svg { display: block; width: 100%; height: 100%; }
+
+.foot { border-top: var(--hairline); }
+.foot-inner {
+  max-width: var(--page); margin: 0 auto; padding: calc(var(--space) * 3) 16px;
+  display: flex; gap: calc(var(--space) * 2); font: 12px/1.4 var(--font-mono); color: var(--ink-mut);
+}
+.foot-inner span { margin-right: auto; }
+.foot-inner a { color: var(--ink-mut); }
+
+/* ---------------------------------------------------------------- hero */
+
+.hero { position: relative; margin-top: calc(var(--space) * 8); }
+.hero-bg { position: absolute; inset: 0; pointer-events: none; }
+.hero-text { position: relative; }
+.hero h1 { font-size: clamp(2rem, 6vw, 3.6rem); max-width: 18ch; }
+
+/* One item per tool, in two columns: the want, name and summary on the left
+   (vertically centred), the visual on the right at about 64% of the row,
+   running the item's full height. Stacks on narrow screens. */
+.wants { list-style: none; margin: calc(var(--space) * 5) 0 0; padding: 0; border-top: var(--hairline); }
+/* Each item sets its own proportions (--cols), text placement (--align) and
+   spacing (--gap-top) from a hand-tuned sequence in home.ts, and every other
+   item flips sides, so the page flows instead of repeating one grid. */
+.wants { border-top: none; --gap-scale: 1.75; }
+.wants > li {
+  display: grid; grid-template-columns: var(--cols, minmax(0, 1fr) minmax(0, 1.8fr));
+  gap: calc(var(--space) * 5); align-items: var(--align, center);
+  /* The sequence scaled as a whole, so the rhythm stays and the tools breathe. */
+  padding: calc(var(--gap-top, 48px) * var(--gap-scale)) 0 0; border-bottom: none;
+}
+/* The first item keeps its distance from the heading. */
+.wants > li:first-child { padding-top: var(--gap-top, 48px); }
+@media (max-width: 860px) { .wants { --gap-scale: 1.3; } }
+.wants > li.coming { grid-template-columns: minmax(0, 1fr); }
+/* A tool still to come on the right-hand side keeps the rhythm: its text alone in
+   the right column, where a visual's partner text would sit. */
+.wants > li.coming.right { grid-template-columns: var(--cols); }
+.wants > li.coming.right > .item-text { grid-column: 2; }
+.wants > li.flip > .item-text { order: 2; }
+@media (max-width: 860px) {
+  .wants > li, .wants > li.coming.right { grid-template-columns: minmax(0, 1fr); gap: calc(var(--space) * 3); align-items: start; }
+  .wants > li.flip > .item-text { order: 0; }
+  .wants > li.coming.right > .item-text { grid-column: auto; }
+}
+.want {
+  margin: 0 0 calc(var(--space) * 2.5);
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: 600; font-stretch: var(--head-stretch);
+  letter-spacing: var(--head-tracking); line-height: 1.2; text-wrap: balance;
+}
+/* The still stream winding between the items, in the map's style. */
+.wants { position: relative; }
+.stream { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.stream path { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-linecap: round; }
+/* Mist (home.ts sets --fog, 0 clear to 1 misty): items away from the middle
+   of the window fade and soften a little; hover or focus clears them. The
+   stream stays crisp so the path through the page stays legible. */
+.wants > li > .item-text, .wants > li > .thumb-link, .wants > li > .thumb {
+  opacity: calc(1 - var(--fog, 0) * .45);
+  filter: blur(calc(var(--fog, 0) * 1.2px));
+  transition: opacity .6s ease-out, filter .6s ease-out;
+}
+.wants > li:hover > *, .wants > li:focus-within > * { opacity: 1; filter: none; }
+@media (prefers-reduced-motion: reduce) {
+  .wants > li > .item-text, .wants > li > .thumb-link, .wants > li > .thumb { opacity: 1; filter: none; transition: none; }
+}
+
+/* Arriving from the map (home.ts glides there): the want takes the tool's colour. */
+.wants > li .want { transition: color .6s; }
+.wants > li.arrived .want { color: var(--acc); }
+.wants > li { position: relative; z-index: 1; }
+/* A wider gutter between text and visual on desktop: the stream runs in it. */
+@media (min-width: 861px) {
+  .wants > li:not(.coming), .wants > li.coming.right { column-gap: calc(var(--space) * 9); }
+}
+.item-text h2 { margin: 0 0 calc(var(--space) * 1.25); font: 700 16px/1.3 var(--font-mono); color: var(--acc); }
+.item-text h2 a { color: var(--acc); text-decoration: none; }
+.item-text h2 a:hover { color: var(--ink); }
+/* A tool's short line ("simply sing.") beside its name: quiet, in the name's own font. */
+.tool-line { font-weight: 400; color: var(--ink-mut); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+/* The name on the picture's top-left corner, like a tab: it stays put and
+   readable when the picture softens on hover. */
+.thumb-link .name-tag {
+  position: absolute; top: 0; left: 0; z-index: 1;
+  display: flex; align-items: baseline; gap: .8ch;
+  padding: calc(var(--space) * .75) calc(var(--space) * 1.5);
+  background: var(--ground-2); border: var(--hairline); border-width: 0 1px 1px 0;
+  font: 700 14px/1.2 var(--font-mono); color: var(--acc); white-space: nowrap;
+  pointer-events: none;
+}
+.thumb-link .name-tag .tool-line { font-size: 13px; }
+/* A short name's long one takes its place while the picture is hovered. */
+.thumb-link .name-tag .name.full { display: none; }
+@media (hover: hover) {
+  .thumb-link:hover .name-tag .name:has(+ .name.full) { display: none; }
+  .thumb-link:hover .name-tag .name.full { display: inline; }
+}
+@media (max-width: 720px) {
+  .thumb-link .name-tag { padding: calc(var(--space) * .4) calc(var(--space) * .9); font-size: 12px; }
+  .thumb-link .name-tag .tool-line { font-size: 11px; }
+}
+.item-text h2 .tool-line { margin-left: .6ch; }
+.item-text .summary { margin: 0; max-width: 46ch; font-size: 18px; line-height: 1.7; color: var(--ink-mut); }
+.item-text .pending { margin-top: calc(var(--space) * 2.5); }
+
+/* "Two hops at most" (actions.ts): one accent-filled "Try it", then up to two
+   hairline buttons out to the full product with an external arrow, or a quiet
+   "Full version coming" note in the same slot. Wraps on narrow screens. */
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space) calc(var(--space) * 1.25); margin-top: calc(var(--space) * 3); }
+.btn {
+  display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
+  padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
+  border: 1px solid var(--acc); border-radius: var(--radius);
+  font: 600 14px/1.2 var(--font-mono); text-decoration: none; white-space: nowrap;
+  transition: background-color .2s, color .2s, border-color .2s;
+}
+.btn-try { background: var(--acc); color: var(--ground); }
+.btn-try:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.btn-quiet { background: none; color: var(--ink); border-color: var(--line); font-weight: 500; }
+.btn-quiet:hover { border-color: var(--acc); color: var(--ink); }
+.btn .ext { color: var(--acc); }
+.btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.full-coming { font: 12px/1.2 var(--font-mono); color: var(--ink-mut); }
+/* In a page head, where the Full version button would sit: an outlined label, not a link. */
+.full-coming.big {
+  display: inline-flex; align-items: center; min-height: 40px;
+  padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
+  border: 1px dashed var(--acc); border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; color: var(--ink);
+}
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+/* On a project page the demo sits beside the lead from 1240px up, so "Try it"
+   would point at something already in view: it only shows when stacked. */
+@media (min-width: 1240px) { .project-hero:not(.single) .btn.in-page { display: none; } }
+
+/* The visual is the way in: the whole of it links to the tool's page, and
+   its "Try demo" label rests in the top-right corner all the time, so the
+   demo is the first thing a reader sees there (before the buttons out to the
+   full product). On hover or focus the picture softens like water going
+   still (a veil in the ground colour, a little less colour) and the label
+   takes the accent. Slow ease both ways, no movement. */
+.thumb-link { position: relative; display: block; height: 100%; color: inherit; text-decoration: none; }
+.thumb-link .thumb { position: relative; }
+.thumb-link .veil {
+  position: absolute; inset: 0; pointer-events: none;
+  background: var(--ground); opacity: 0;
+}
+.thumb-link .cue {
+  position: absolute; top: 0; right: 0;
+  padding: calc(var(--space) * .4) calc(var(--space) * .8);
+  background: var(--ground-2); border: var(--hairline); border-width: 0 0 1px 1px;
+  font: 600 12px/1.2 var(--font-mono); color: var(--ink); white-space: nowrap;
+  pointer-events: none;
+}
+.thumb-link .cue-arrow { color: var(--acc); }
+.thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb {
+  transition: opacity .35s ease-in-out, filter .35s ease-in-out, border-color .35s ease-in-out, background-color .35s ease-in-out, color .35s ease-in-out;
+}
+.thumb-link:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+@media (hover: hover) {
+  .thumb-link:hover .thumb { border-color: var(--acc); }
+  .thumb-link:hover .thumb :is(img, video) { filter: saturate(.6); }
+  .thumb-link:hover .veil { opacity: .55; }
+  .thumb-link:hover .cue { background: var(--acc); color: var(--ground); border-color: var(--acc); }
+  .thumb-link:hover .cue-arrow { color: inherit; }
+}
+.thumb-link:focus-visible .thumb { border-color: var(--acc); }
+.thumb-link:focus-visible .thumb :is(img, video) { filter: saturate(.6); }
+.thumb-link:focus-visible .veil { opacity: .55; }
+.thumb-link:focus-visible .cue { background: var(--acc); color: var(--ground); border-color: var(--acc); }
+.thumb-link:focus-visible .cue-arrow { color: inherit; }
+@media (hover: none) {
+  .thumb-link .cue { font-size: 11px; padding: calc(var(--space) * .3) calc(var(--space) * .6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb { transition: none; }
+}
+
+/* The whole capture, uncropped; captures are already framed to the demo. */
+.thumb { border: var(--hairline); background: var(--ground-2); overflow: hidden; }
+.thumb img, .thumb video { display: block; width: 100%; height: auto; }
+/* An empty slot fills the item's height beside the text. */
+/* A picture still to come: a short strip, centred against its text, not a big empty frame. */
+.thumb.slot { aspect-ratio: auto; height: auto; min-height: 0; padding: calc(var(--space) * 1.25); }
+.thumb-link:has(.thumb.slot) { height: auto; align-self: center; max-width: 420px; }
+/* In the strip, the label sits beside the placeholder text instead of on its corner. */
+.thumb-link .thumb.slot { display: flex; justify-content: space-between; align-items: center; gap: var(--space); }
+.thumb-link .thumb.slot .cue { position: static; border-width: 1px; }
+
+/* ---------------------------------------------------------------- map */
+
+/* The explorable map (map.ts): at rest, symbols and faint curves; exploring
+   lights connections and opens a card beside the thing. Quick to light up,
+   slow to settle back, like water going still. */
+/* No clipping on desktop, so the attached card can reach past the map's edge
+   without giving the box its own scrollbar. (overflow-x: auto alone would
+   silently make overflow-y auto too.) Narrow screens scroll sideways only. */
+.map { position: relative; overflow: visible; }
+@media (max-width: 760px) { .map { overflow-x: auto; overflow-y: hidden; } }
+.map svg { display: block; width: 100%; min-width: 720px; max-height: 80vh; height: auto; font-family: var(--font-sans); touch-action: manipulation; }
+.map .edge .line, .map .edge .end, .map .edge .lbl, .map .node, .map .node .cap, .map .node .ring {
+  transition: opacity .9s cubic-bezier(.25, .1, .25, 1), stroke .9s;
+}
+.map .graph.exploring .edge .line, .map .graph.exploring .edge .end, .map .graph.exploring .edge .lbl,
+.map .graph.exploring .node, .map .graph.exploring .node .cap { transition-duration: .25s; }
+.map .edge .line, .map .edge .end { opacity: .2; }
+.map .edge.on .line, .map .edge.on .end { opacity: 1; }
+.map .edge.found:not(.on) .line, .map .edge.found:not(.on) .end { opacity: .55; }
+.map .edge .lbl { opacity: 0; font-stretch: 112%; }
+.map .edge.on .lbl, .map .edge.found .lbl { opacity: 1; }
+.map .graph.exploring .edge.found:not(.on) .lbl { opacity: .45; }
+.map .edge .hit { pointer-events: stroke; cursor: pointer; }
+.map .edge .line, .map .edge .end, .map .edge .lbl { pointer-events: none; }
+/* Symbols are read, not clicked through, so they keep the ordinary cursor;
+   only curves (real links) show the pointer and the browser's link preview. */
+.map .node { cursor: default; outline: none; }
+.map .node .hit { pointer-events: all; }
+.map .node .cap { opacity: 0; fill: var(--ink-mut); pointer-events: none; }
+.map .node.on .cap, .map .node.found .cap { opacity: 1; }
+.map .node.found .ring { stroke: var(--ink-mut); }
+.map .graph.exploring .node:not(.on) { opacity: .32; }
+.map .node.focus .ring { stroke: var(--ink); stroke-width: 2; }
+/* The card already names what's being read, so its own label steps aside. */
+.map .node.focus .cap, .map .node.focus .ring-name, .map .edge.focus .lbl { opacity: 0; }
+.map .node:focus-visible .ring { stroke: var(--ink); stroke-width: 2.5; }
+/* A halo in the ground colour keeps labels readable where they cross curves. */
+.map .cap, .map .lbl, .map .band, .map .ring-name { paint-order: stroke; stroke: var(--ground); stroke-width: 5px; stroke-linejoin: round; }
+/* Band captions and the lane's rule: quiet, always there. */
+.map .band { font: 500 10.5px var(--font-mono); letter-spacing: .08em; fill: var(--ink-mut); opacity: .75; }
+.map .lane-rule { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; }
+/* MIDI's expressive ring: a faint band with a wavering line, named along its top.
+   The band sits under the curves; outline, name and hit area sit with the symbols. */
+.map .ring-body .band-fill { fill: var(--ink); fill-opacity: .045; }
+.map .ring-body .wave { stroke: var(--ink-mut); opacity: .45; }
+.map .ring-body { transition: opacity .9s cubic-bezier(.25, .1, .25, 1); }
+.map .ring-name { font-family: var(--font-mono); font-weight: 500; letter-spacing: .06em; fill: var(--ink-mut); stroke-width: 4px; pointer-events: none; }
+.map .node.halo .hit { pointer-events: fill; }
+.map .node.halo.on .ring-name, .map .node.halo.focus .ring-name { fill: var(--ink); }
+.map .graph.exploring .ring-body:not(.on) { opacity: .32; }
+/* The lane around the music: smaller and fainter until it's being read. */
+.map .graph:not(.exploring) .node.lane { opacity: .72; }
+.map .graph:not(.exploring) .edge.lane:not(.found) .line, .map .graph:not(.exploring) .edge.lane:not(.found) .end { opacity: .14; }
+
+.map-card {
+  position: absolute; z-index: 2; width: 250px; padding: 10px 12px;
+  background: var(--ground-2); border: 1px solid var(--line); pointer-events: none;
+  font-size: 13.5px; line-height: 1.45; transition: opacity .25s;
+}
+.map-card.gone { opacity: 0; transition: opacity .7s; }
+.map-card strong { display: block; font-size: 14.5px; font-stretch: 112%; }
+.map-card strong[data-category] { color: var(--acc); }
+.map-card strong .tool-line { font-size: 13px; font-stretch: normal; }
+.map-card p { margin: 3px 0 0; color: var(--ink-mut); }
+.map-card ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 3px 12px; font: 600 11.5px var(--font-mono); }
+.map-card li { color: var(--acc); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) {
+  .map .edge .line, .map .edge .end, .map .edge .lbl, .map .node, .map .node .cap, .map .node .ring, .map .ring-body, .map-card, .map-card.gone { transition: none; }
+}
+
+/* ---------------------------------------------------------------- shared bits */
+
+.fromto { margin: 0; color: var(--ink-mut); }
+.fromto .arrow { color: var(--acc); font-weight: 700; }
+/* Badges and labelled rows come from the design system (badges.css). */
+.badges.big { margin-top: calc(var(--space) * 2.5); }
+.labelled.big { margin-top: calc(var(--space) * 2.5); }
+/* The details on a project page's head sit under the summary, quieter than it. */
+.labelled.details > dd { font-size: 0.95rem; line-height: 1.45; color: var(--ink-mut); }
+/* The title's row: the name, and the way to the full product at the far right. */
+.head-top { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--space) * 2); flex-wrap: wrap; }
+.btn-try .ext { color: inherit; }
+/* A term that explains itself: dotted underline, the note above on hover or
+   focus (and on tap, which focuses it). */
+.term { position: relative; text-decoration: underline dotted var(--acc); text-underline-offset: 4px; cursor: help; }
+.term:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.term-note {
+  position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2;
+  width: max-content; max-width: min(36ch, 80vw);
+  padding: var(--space) calc(var(--space) * 1.5);
+  background: var(--ground-2); border: var(--hairline); border-radius: var(--radius);
+  font-size: 0.9rem; line-height: 1.4; color: var(--ink);
+  opacity: 0; pointer-events: none; transition: opacity .2s ease-in-out;
+}
+.term:is(:hover, :focus) .term-note { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .term-note { transition: none; } }
+/* A short title (YSAD) swaps to its long name on hover or focus. */
+.head.has-full { cursor: default; }
+.head.has-full .long { display: none; }
+.head.has-full:is(:hover, :focus-visible) .short { display: none; }
+.head.has-full:is(:hover, :focus-visible) .long { display: inline; }
+.head.has-full:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
+.full-name { margin: calc(var(--space) * .75) 0 0; font: 400 1rem var(--font-mono); color: var(--ink-mut); }
+
+
+/* ---------------------------------------------------------------- project page */
+
+/* The first screen: the head on the left, the live demo on the right at a
+   modest size, both on one top line. The demo column is wide enough for the
+   demo shell to keep its rail beside the stage (it stacks under 720px). On
+   phones the text comes first, then the demo. */
+main > .back { margin-top: calc(var(--space) * 4); }
+.project-hero { margin-top: 0; }
+.project-hero:not(.single) {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.65fr);
+  column-gap: calc(var(--space) * 6); row-gap: calc(var(--space) * 4); align-items: start;
+}
+/* Below this the demo column would drop under 720px and the demo shell would
+   stack its rail over the stage, too tall to sit beside the text. */
+@media (max-width: 1239px) {
+  .project-hero:not(.single) { grid-template-columns: minmax(0, 1fr); }
+}
+/* The new layout: the description alone, then the demo across the page. */
+/* The demo sits on its own band, clearly apart from the head above it. */
+.demo-wide {
+  margin-top: calc(var(--space) * 8);
+  padding: calc(var(--space) * 3);
+  background: var(--ground-2); border: var(--hairline); border-radius: var(--radius);
+}
+@media (max-width: 720px) { .demo-wide { padding: calc(var(--space) * 1.5); } }
+.demo-wide .live, .demo-wide iframe { width: 100%; }
+/* The text rows keep a reading width; the badge rows may run wider, on one line. */
+.labelled.details > dd:not(.fold) { max-width: 56ch; }
+/* Folded rows: only the label shows, with a faint mark after it; hovering or
+   focusing the label or its row opens the content sideways, leaving closes it.
+   Touch screens have no hover, so they show it open. */
+.labelled.details > dt.fold { cursor: default; }
+.labelled.details > dt.fold::after { content: " ›"; color: var(--acc); }
+.labelled.details > dd.fold {
+  max-width: 0; overflow: hidden; white-space: nowrap; opacity: 0;
+  transition: max-width .45s ease-in-out, opacity .35s ease-in-out;
+}
+.labelled.details > dd.fold .badges { flex-wrap: nowrap; }
+.labelled.details > dt.fold:is(:hover, :focus-visible) + dd.fold,
+.labelled.details > dd.fold:hover { max-width: 60rem; opacity: 1; }
+/* The badges stay on one line the whole time, so nothing stacks while the row
+   is still opening. */
+.labelled.details > dd.fold { min-width: 0; }
+/* Fade the mark, don't remove it: its width holds the label column still. */
+.labelled.details > dt.fold::after { transition: opacity .35s ease-in-out; }
+.labelled.details > dt.fold:is(:hover, :focus-visible)::after { opacity: 0; }
+/* Touch screens have no hover, and on narrow screens a label sits above its
+   content, where a folded row would leave a gap: both show the rows open. */
+@media (hover: none), (max-width: 480px) {
+  .labelled.details > dd.fold { max-width: none; opacity: 1; white-space: normal; }
+  .labelled.details > dd.fold .badges { flex-wrap: wrap; }
+  .labelled.details > dt.fold::after { content: ""; }
+}
+@media (prefers-reduced-motion: reduce) { .labelled.details > dd.fold { transition: none; } }
+.project-hero .page-head { container-type: inline-size; }
+.project-hero .page-head h1 { font-size: clamp(1.8rem, calc(118cqi / var(--chars, 8)), 4rem); }
+
+/* Three or four highlights: the titles of the beats further down. */
+.highlights { list-style: none; margin: calc(var(--space) * 3) 0 0; padding: 0; max-width: 40ch; }
+.highlights li { position: relative; padding: calc(var(--space) * .75) 0 calc(var(--space) * .75) calc(var(--space) * 2.5); }
+.highlights li::before {
+  content: ''; position: absolute; left: 0; top: calc(var(--space) * .75 + .78em);
+  width: 10px; height: 2px; background: var(--acc);
+}
+.highlights a { text-decoration: none; }
+.highlights a:hover { text-decoration: underline; text-decoration-color: var(--acc); }
+
+/* Story beats: heading + a sentence or two, with the visual that shows it.
+   Wide visuals sit under the text; the rest sit beside it, alternating sides. */
+.beat { margin-top: calc(var(--space) * 8); }
+.beat-text .prose { margin: 0; max-width: 52ch; }
+.beat.wide .beat-text { margin-bottom: calc(var(--space) * 2.5); }
+.beat.beside {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: calc(var(--space) * 4); align-items: center;
+}
+.beat.beside.flip > .beat-text { order: 2; }
+@media (max-width: 720px) {
+  .beat.beside { grid-template-columns: 1fr; gap: calc(var(--space) * 2); }
+  .beat.beside.flip > .beat-text { order: 0; }
+}
+
+.keys {
+  display: grid; grid-template-columns: max-content 1fr; margin: 0;
+  border-top: var(--hairline);
+}
+.keys dt, .keys dd { margin: 0; padding: calc(var(--space) * 1.25) var(--space); border-bottom: var(--hairline); }
+.keys dt code { font: 600 15px var(--font-mono); color: var(--acc); }
+.keys dd { color: var(--ink-mut); }
+.section-title {
+  margin: 0 0 calc(var(--space) * 2);
+  font-size: clamp(1.25rem, 2.8vw, 1.6rem); font-weight: 700;
+  font-stretch: var(--head-stretch); letter-spacing: var(--head-tracking); line-height: 1.15;
+}
+/* One line per section (the new layout): a short heading that is the whole point. */
+.beat-line {
+  margin: 0; max-width: 34ch;
+  font-size: clamp(1.25rem, 2.6vw, 1.55rem); font-weight: 600;
+  font-stretch: var(--head-stretch); letter-spacing: var(--head-tracking); line-height: 1.25;
+  text-wrap: balance;
+}
+.beat.wide .beat-text:has(.beat-line) { margin-bottom: calc(var(--space) * 2.5); }
+.back { display: inline-block; margin-bottom: calc(var(--space) * 4); font: 12px var(--font-mono); color: var(--ink-mut); }
+.page-head h1 { font-size: clamp(2.4rem, 8vw, 4.4rem); }
+.fromto.big { margin-top: calc(var(--space) * 2); font-size: 1.2rem; color: var(--ink); }
+.tool-line.big { margin: calc(var(--space) * 1.5) 0 0; font: 400 1.05rem var(--font-mono); }
+
+/* The way out to the tool's own page: the one filled button on a project page. */
+.site-link {
+  display: inline-block; margin-top: calc(var(--space) * 3);
+  padding: var(--space) calc(var(--space) * 2);
+  background: var(--ink); color: var(--ground);
+  font-weight: 600; text-decoration: none;
+}
+a.site-link:hover { background: var(--acc); color: var(--ground); }
+.site-link.pending { background: none; color: var(--ink-mut); border: 1px dashed var(--ink-mut); font: 12px var(--font-mono); }
+
+.slot {
+  display: grid; place-items: center;
+  min-height: 120px; padding: calc(var(--space) * 2);
+  border: 1px dashed var(--ink-mut);
+  font: 12px var(--font-mono); color: var(--ink-mut); text-align: center;
+}
+.slot.tall { aspect-ratio: 16 / 9; min-height: 0; }
+.slot.slim { min-height: 0; padding: calc(var(--space) * 1.25); max-width: 420px; }
+
+/* No outline, no card: the demo sits on the page's own ground. Its height
+   comes from the demo's demo-height messages (project.ts). color-scheme is
+   inherited so the frame stays transparent in every mode. */
+/* Arriving at #demo (from a \"Try demo\" visual): stacked, the page scrolls
+   down to the demo with a little room above; side by side the demo is
+   already on the first screen, so a margin taller than the window keeps the
+   page at its top. */
+.live { scroll-margin-top: calc(var(--space) * 3); }
+@media (min-width: 1240px) { .live { scroll-margin-top: 100vh; } }
+.live iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: inherit; }
+.live p { margin: var(--space) 0 0; padding-left: 4px; }
+.video { display: block; width: 100%; border: var(--hairline); }
+
+.shot img { display: block; width: 100%; height: auto; border: var(--hairline); }
+.shots { display: grid; gap: calc(var(--space) * 2); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.shots figure { margin: 0; }
+.shots img { display: block; width: 100%; border: var(--hairline); }
+.shots figcaption { margin-top: var(--space); font-size: 13px; color: var(--ink-mut); }
+
+/* Show the screenshot that matches the mode: the system scheme by default,
+   the toggle's choice when one is set. */
+.for-night { display: none !important; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="paper"]) .for-night { display: block !important; }
+  :root:not([data-theme="paper"]) .for-paper { display: none !important; }
+}
+:root[data-theme="night"] .for-night { display: block !important; }
+:root[data-theme="night"] .for-paper { display: none !important; }
+
+.flow {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  border-top: var(--hairline); border-left: var(--hairline);
+  counter-reset: none;
+}
+.flow li {
+  position: relative;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: calc(var(--space) * 2);
+  border-right: var(--hairline); border-bottom: var(--hairline);
+  background: var(--ground-2);
+  font-size: 14px;
+}
+.flow .step-n { font: 600 12px var(--font-mono); color: var(--acc); }
+.flow strong { font-stretch: var(--head-stretch); }
+
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space) calc(var(--space) * 3); margin: 0; }
+.facts dt { font: 500 11px/1.9 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mut); }
+.facts dd { margin: 0; }
+
+
+@media (max-width: 560px) {
+  .facts { grid-template-columns: 1fr; gap: 2px; }
+  .facts dd { margin-bottom: var(--space); }
+}

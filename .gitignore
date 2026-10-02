@@ -1,0 +1,12 @@
+node_modules
+.DS_Store
+dist
+.verify-build
+CLAUDE.local.md
+.peek
+# raw screen recordings: large; the encoded copies in public/visuals are committed
+visuals/raw/
+# frozen demos on copyrighted test songs: local only until the open songs land
+# (manifest shots marked `local: true`, written outside public/ so Vite never
+# copies them into dist; cards for these projects stay text-only)
+.local-visuals/
