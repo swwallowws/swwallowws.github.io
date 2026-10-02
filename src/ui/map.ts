@@ -84,9 +84,9 @@ const SPECS: Record<string, NodeSpec> = {
   visuals: { at: [860, 210], band: 'lands', icon: Sparkles, cap: 'live visuals', explain: 'Visuals that react when the music surprises you.' },
   style: { at: [860, 400], band: 'lands', icon: Shuffle, cap: 'one song in the other’s style', explain: 'The first song’s chords, played the way the second song’s band would, never copying its notes.' },
   // around the music
-  notes: { at: [80, 795], band: 'around', r: 23, icon: NotebookPen, cap: 'notes and lyrics', explain: 'Lyrics, ideas and to-dos in Markdown (plain text with light formatting), inside Ableton Live 12.' },
-  folder: { at: [860, 760], band: 'around', r: 23, icon: FolderOpen, cap: 'saved with the set', explain: 'Set notes save into the set’s folder and travel with it; global notes are there in every set.' },
-  arrangement: { at: [860, 830], band: 'around', r: 23, icon: ChartGantt, cap: 'on the arrangement', explain: 'A lyric line tagged [17] or [1:04] lands right there, as a locator or a clip.' },
+  notes: { at: [560, 804], band: 'around', r: 23, icon: NotebookPen, cap: 'notes and lyrics', explain: 'Lyrics, ideas and to-dos in Markdown (plain text with light formatting), inside Ableton Live 12.' },
+  folder: { at: [860, 758], band: 'around', r: 23, icon: FolderOpen, cap: 'saved with the set', explain: 'Set notes save into the set’s folder and travel with it; global notes are there in every set.' },
+  arrangement: { at: [860, 851], band: 'around', r: 23, icon: ChartGantt, cap: 'on the arrangement', explain: 'A lyric line tagged [17] or [1:04] lands right there, as a locator or a clip.' },
   phone: { at: [80, 935], band: 'around', r: 23, icon: Smartphone, cap: 'a shared link', explain: 'A link shared from the phone, with a few words on why it caught the ear.' },
   note: { at: [340, 935], band: 'around', r: 23, icon: FileText, cap: 'a note', explain: 'One Markdown note per track, tagged and triaged in Obsidian.' },
   tagged: { at: [600, 935], band: 'around', r: 23, icon: FileAudio, cap: 'a tagged file', explain: 'The tags, written into the audio file itself.' },
