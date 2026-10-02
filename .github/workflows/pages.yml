@@ -1,10 +1,13 @@
 name: Pages
 
-# Builds the site and publishes it to GitHub Pages on every push to main.
+# Builds the site, walks every page in a real Chrome (scripts/check-site.mjs:
+# Paper and Night, every framed demo, every link within the site), and only then
+# publishes it to GitHub Pages, on every push to main.
 # Settings > Pages > Source: GitHub Actions.
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -13,7 +16,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -27,11 +30,17 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Every page works in Chrome (the runner's own)
+        run: |
+          npx vite preview --port 4180 --strictPort &
+          for i in $(seq 1 30); do curl -fsS -o /dev/null http://localhost:4180/ && break; sleep 1; done
+          npm run check:site -- http://localhost:4180/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     environment:

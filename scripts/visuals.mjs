@@ -19,6 +19,7 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { basename, extname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright-core";
+import { recordSource } from "./sources.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const manifest = JSON.parse(readFileSync(join(root, "visuals/manifest.json"), "utf8"));
@@ -128,6 +129,8 @@ async function captureShots() {
           const target = shot.selector ? page.locator(shot.selector) : page;
           await target.screenshot({ path: file });
           log(`shot   ${shot.local ? ".local-visuals/" : ""}${shot.project}/${shot.name}-${theme}.png`);
+          // Which live build this picture shows (scripts/check-visuals.mjs compares it later).
+          if (shot.site && theme === THEMES.at(-1)) await recordSource(`${shot.project}/${shot.name}`, shot.site);
         } catch (e) {
           problems.push(`${shot.project}/${shot.name} (${theme}): ${e.message.split("\n")[0]} (is its demo server running? ${shot.url})`);
         } finally {

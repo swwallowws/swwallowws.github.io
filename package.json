@@ -12,7 +12,8 @@
     "visuals": "node scripts/visuals.mjs",
     "favicons": "node scripts/favicons.mjs",
     "peek": "node scripts/peek.mjs",
-    "check:site": "node scripts/check-site.mjs"
+    "check:site": "node scripts/check-site.mjs",
+    "check:visuals": "node scripts/check-visuals.mjs"
   },
   "devDependencies": {
     "playwright-core": "^1.63.0",

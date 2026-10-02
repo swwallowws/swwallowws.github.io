@@ -5,7 +5,9 @@
 //   node scripts/loops.mjs            (every loop in visuals/loops.json)
 //   node scripts/loops.mjs voxmpe     (one project)
 //
-// Each recipe in visuals/loops.json: `url` (the product, served locally),
+// Each recipe in visuals/loops.json: `url` (the product, served locally or live),
+// `site` (the live site it stands for: its version.json is kept in
+// visuals/sources.json, so CI notices when the product moves on),
 // `viewport`, `inject` (CSS that hides chrome), `setup` (actions that load
 // content, not kept in the loop) and `show` (actions that are the loop). The
 // `show` part is recorded with Chrome's own screencast (timestamped frames, no
@@ -25,6 +27,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
+import { recordSource } from "./sources.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const recipes = JSON.parse(readFileSync(join(root, "visuals/loops.json"), "utf8")).loops;
@@ -33,6 +36,9 @@ const THEMES = ["paper", "night"];
 const tmp = join(root, ".peek/loops");
 
 async function act(page, a) {
+  // {"click": sel, "ifEnabled": true}: skip it when the control is disabled (it has
+  // nothing to do, e.g. Rearranged's "make a cover" when the song already matches).
+  if (a.click && a.ifEnabled && await page.isDisabled(a.click)) return;
   if (a.click) await page.click(a.click, a.force ? { force: true } : {});
   else if (a.fill) await page.fill(a.fill, a.text ?? "");
   else if (a.press) await page.keyboard.press(a.press);
@@ -129,6 +135,14 @@ try {
       execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", String(r.poster ?? 0), "-i", mp4, "-frames:v", "1", png]);
       const secs = frames.at(-1).t - frames[0].t;
       console.log(`loop   ${r.project}/loop-${theme}.mp4 (${secs.toFixed(1)} s, ${frames.length} frames)`);
+    }
+    // Which live build this loop shows (scripts/check-visuals.mjs compares it later).
+    // Record from a local server only once its build is the one deployed.
+    if (r.site && !problems.some((p) => p.startsWith(`${r.project} `))) {
+      try {
+        const s = await recordSource(`${r.project}/loop`, r.site);
+        console.log(`source ${r.project}/loop: ${r.site} build ${s.commit.slice(0, 7)}`);
+      } catch (e) { problems.push(`${r.project}: could not read ${r.site}version.json (${e.message})`); }
     }
   }
 } finally {

@@ -1,10 +1,11 @@
 {
-  "$comment": "Welcome-page loops, recorded from each original product by scripts/loops.mjs (setup is not kept; show is the loop). Each tool's server must be running at its url.",
+  "$comment": "Welcome-page loops, recorded from each original product by scripts/loops.mjs (setup is not kept; show is the loop). `url` is where it's recorded (a local server must be running there); `site` is the live site it stands for, whose build is kept in visuals/sources.json so CI notices when the product changes.",
   "loops": [
     {
       "$comment": "From the live demo (Bengisu, 1 Oct: the studio's side controls put people off): the starling's song, then smoothing all the way up.",
       "project": "voxmpe",
-      "url": "https://swwallowws.github.io/starling-web/try/?embed=1",
+      "url": "https://swwallowws.github.io/starling/try/?embed=1",
+      "site": "https://swwallowws.github.io/starling/",
       "viewport": [960, 600],
       "inject": [
         ".demoshell-rail, .demoshell-head, .demoshell-mark, #message, #rec-status, .try-fine { display: none !important; }",
@@ -32,14 +33,15 @@
     },
     {
       "project": "rearranged",
-      "url": "http://localhost:4196/new.html",
+      "url": "https://swwallowws.github.io/rearranged-web/new.html",
+      "site": "https://swwallowws.github.io/rearranged-web/",
       "viewport": [1100, 900],
       "crop": "1100:822:0:0",
       "setup": [
         { "upload": "#song", "file": "visuals/staging/rearranged/song-a-house-of-the-rising-sun.mid" },
-        { "waitFor": "#song-tracks:not(.hidden)" },
+        { "waitFor": "#song-roles:not(.hidden)" },
         { "upload": "#donor", "file": "visuals/staging/rearranged/bolero-song-b.mid" },
-        { "waitFor": "#donor-tracks:not(.hidden)" },
+        { "waitFor": "#donor-roles:not(.hidden)" },
         { "upload": "#parts", "file": "visuals/staging/rearranged/parts.json" },
         { "waitFor": "#parts-strip .seg" },
         { "click": "#go" },
@@ -57,7 +59,7 @@
         { "wait": 2500 },
         { "click": "#switches button[data-f='guitar']:not(.on)" },
         { "wait": 3000 },
-        { "click": "#use-part" },
+        { "click": "#use-part", "ifEnabled": true },
         { "waitFor": "#use-part:has-text('whole song uses')", "timeout": 60000 },
         { "wait": 600 },
         { "click": "#song-play" },
@@ -69,8 +71,10 @@
       ]
     },
     {
+      "$comment": "From the full local app (stemscribe-web on 8002): the live site's runs are capped and slow.",
       "project": "stemscribe",
       "url": "http://localhost:8002/",
+      "site": "https://swwallowws.github.io/coming-undone/",
       "viewport": [1000, 700],
       "crop": "1000:500:0:0",
       "setup": [
@@ -99,7 +103,8 @@
     },
     {
       "project": "tabridge",
-      "url": "http://localhost:4206/",
+      "url": "https://swwallowws.github.io/ready-set/",
+      "site": "https://swwallowws.github.io/ready-set/",
       "viewport": [960, 680],
       "crop": "960:676:0:0",
       "poster": 7,

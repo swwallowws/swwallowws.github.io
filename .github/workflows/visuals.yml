@@ -1,0 +1,26 @@
+name: Pictures up to date
+
+# Fails when a product has changed since the showcase's picture of it was recorded
+# (scripts/check-visuals.mjs: each tool site's version.json against
+# visuals/sources.json). Daily as well as on every push, since the products deploy
+# from their own repos; a failed run emails, and its log says what to re-record.
+# It doesn't hold back a deploy: an older picture is still a true one.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run check:visuals

@@ -21,6 +21,7 @@
       "project": "session-notes",
       "name": "playground",
       "url": "https://swwallowws.github.io/ableton-session-notes/try/?embed=1",
+      "site": "https://swwallowws.github.io/ableton-session-notes/",
       "viewport": [1040, 760],
       "selector": ".live",
       "inject": [

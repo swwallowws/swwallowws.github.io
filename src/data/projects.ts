@@ -103,18 +103,19 @@ export const BADGE_LINKS: Record<string, string> = {
 const VIDEO_COMING: Slot = { placeholder: 'video: coming' };
 
 /* Demos live in each project's own repo and are framed in here, from their
-   hosted pages. Only a project whose repo stays private (YSAD) has its built
-   demo copied into public/demos/, so the site carries it. */
+   hosted pages: a public repo's CI builds and publishes its site to its own
+   Pages on every push. Rearranged's code is private, so its built site is pushed
+   to rearranged-web; YSAD's is private too, so its built demo is copied into
+   public/demos/ and the site carries it. */
 const DEMOS = {
-  voxmpe: 'https://swwallowws.github.io/starling-web/try/', // voxmpe: scripts/deploy-web.sh
-  // ableton-session-notes: built demo on its gh-pages branch (repo's own Pages)
+  voxmpe: 'https://swwallowws.github.io/starling/try/',
   sessionNotes: 'https://swwallowws.github.io/ableton-session-notes/try/',
-  tabridge: 'https://swwallowws.github.io/ready-set-web/try/', // ready-set: scripts/deploy-web.sh
+  tabridge: 'https://swwallowws.github.io/ready-set/try/',
   // Its repo is private, so the site carries the demo itself (public/demos/ysad/,
   // copied by scripts/ysad-demo.sh).
   // index.html by name: Vite's dev server answers a bare folder with the welcome page.
   ysad: `${location.origin}${import.meta.env.BASE_URL}demos/ysad/index.html`,
-  stemscribe: 'https://swwallowws.github.io/coming-undone-web/try/', // stemscribe: scripts/deploy-web.sh
+  stemscribe: 'https://swwallowws.github.io/coming-undone/try/',
   rearranged: 'https://swwallowws.github.io/rearranged-web/try/', // rearranged: tools/deploy-web.sh
 } as const;
 
@@ -150,7 +151,7 @@ export const projects: ProjectEntry[] = [
     page: 'voxmpe/',
     live: { url: DEMOS.voxmpe },
     get: [
-      { label: 'Open the studio', href: 'https://swwallowws.github.io/starling-web/', name: 'Open the Starling studio' },
+      { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/starling', name: 'Starling on GitHub' },
     ],
     loop: 'loop',
@@ -188,7 +189,7 @@ export const projects: ProjectEntry[] = [
     page: 'stemscribe/',
     live: { url: DEMOS.stemscribe },
     get: [
-      { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone-web/', name: 'Open the Coming Undone studio' },
+      { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/coming-undone', name: 'Coming Undone on GitHub' },
     ],
     loop: 'loop',
@@ -265,7 +266,7 @@ export const projects: ProjectEntry[] = [
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/ready-set' },
     get: [
-      { label: 'Open the website', href: 'https://swwallowws.github.io/ready-set-web/', name: 'Open the Ready Set website' },
+      { label: 'Open the website', href: 'https://swwallowws.github.io/ready-set/', name: 'Open the Ready Set website' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/ready-set', name: 'Ready Set on GitHub' },
     ],
   },
