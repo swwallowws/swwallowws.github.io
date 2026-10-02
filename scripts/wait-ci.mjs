@@ -1,5 +1,6 @@
-// Wait for the newest CI run of each repo's main to finish, then print one line per
-// repo and exit non-zero if any failed. For "push, then make sure CI is green".
+// Wait for every workflow run on the newest commit of each repo's main (or on
+// --sha) to finish, then print one line per run and exit non-zero if any failed.
+// For "push, then make sure CI is green".
 //   node scripts/wait-ci.mjs swwallowws/ready-set swwallowws/starling ...
 //   node scripts/wait-ci.mjs --sha <commit> swwallowws/ready-set   (that commit's run)
 import { execFileSync } from "node:child_process";
@@ -13,34 +14,34 @@ if (!repos.length) { console.error("usage: node scripts/wait-ci.mjs [--sha <comm
 const gh = (...a) => JSON.parse(execFileSync("gh", a, { encoding: "utf8" }));
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The newest run on main, or the run for `sha`; waits for it to appear after a push.
-async function latest(repo) {
+// Every run for the newest commit on main (or for `sha`); waits for them to appear after a push.
+async function runsFor(repo) {
   for (let i = 0; i < 20; i++) {
-    const runs = gh("run", "list", "--repo", repo, "--branch", "main", "--limit", "10",
-      "--json", "databaseId,headSha,status,conclusion,workflowName,displayTitle,url,createdAt");
-    const pick = sha ? runs.find((r) => r.headSha.startsWith(sha)) : runs[0];
-    if (pick) return pick;
+    const runs = gh("run", "list", "--repo", repo, "--branch", "main", "--limit", "20",
+      "--json", "databaseId,headSha,status,conclusion,workflowName,displayTitle,url");
+    const head = sha ? runs.find((r) => r.headSha.startsWith(sha))?.headSha : runs[0]?.headSha;
+    if (head) return runs.filter((r) => r.headSha === head).map((r) => ({ repo, ...r }));
     await sleep(5000);
   }
-  return null;
+  return [{ repo, missing: true }];
 }
 
 let failed = 0;
-const pending = new Map();
-for (const repo of repos) pending.set(repo, await latest(repo));
-while ([...pending.values()].some((r) => r && r.status !== "completed")) {
+const all = [];
+for (const repo of repos) all.push(...(await runsFor(repo)));
+while (all.some((r) => !r.missing && r.status !== "completed")) {
   await sleep(20000);
-  for (const [repo, run] of pending) {
-    if (!run || run.status === "completed") continue;
+  for (const run of all) {
+    if (run.missing || run.status === "completed") continue;
     try {
-      pending.set(repo, { ...run, ...gh("run", "view", String(run.databaseId), "--repo", repo, "--json", "status,conclusion") });
+      Object.assign(run, gh("run", "view", String(run.databaseId), "--repo", run.repo, "--json", "status,conclusion"));
     } catch { /* a network blip: ask again next round */ }
   }
 }
-for (const [repo, run] of pending) {
-  if (!run) { console.log(`?    ${repo}: no run found`); failed++; continue; }
+for (const run of all) {
+  if (run.missing) { console.log(`?    ${run.repo}: no run found`); failed++; continue; }
   const ok = run.conclusion === "success";
   if (!ok) failed++;
-  console.log(`${ok ? "ok  " : "FAIL"} ${repo}: ${run.workflowName} "${run.displayTitle}" ${run.conclusion}${ok ? "" : `  ${run.url}`}`);
+  console.log(`${ok ? "ok  " : "FAIL"} ${run.repo}: ${run.workflowName} "${run.displayTitle}" ${run.conclusion}${ok ? "" : `  ${run.url}`}`);
 }
 process.exitCode = failed ? 1 : 0;
