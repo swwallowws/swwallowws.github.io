@@ -289,18 +289,23 @@ function wantItem(w: Want, i: number): HTMLElement {
 }
 
 /* The visual as the way in: the whole of it links to the tool's page. The
-   pictures are real product UI, so they look usable; the cue says where the
-   usable one is. On hover or focus the picture softens under a veil and a
-   label settles in its middle; on touch screens the label sits in the corner
-   all the time. A tool with a live demo links straight to it (#demo on its
-   page); one without says so plainly instead of promising a try. */
+   pictures are real product UI, so they look usable (a visitor tried turning
+   YSAD's knobs): a "preview" tag says it's a recording, and an accent button
+   on it says where the usable one is. On hover or focus the picture softens
+   under a veil and the button darkens. A tool with a live demo links straight
+   to it (#demo on its page); one without says so plainly instead of promising
+   a try. */
 function thumbLink(w: Want, p: ProjectEntry, page: string): HTMLElement {
   const live = !!p.live && 'url' in p.live;
-  const cue = live ? 'Try demo' : 'Read how it works';
+  const cue = live ? 'Try the demo' : 'Read how it works';
   const pic = visual(p);
+  const slot = pic.classList.contains('slot');
+  const button = el('span', { class: 'cue', 'aria-hidden': 'true' }, cue, el('span', { class: 'cue-arrow' }, ' →'));
   pic.append(
     el('span', { class: 'veil', 'aria-hidden': 'true' }),
-    el('span', { class: 'cue', 'aria-hidden': 'true' }, cue, el('span', { class: 'cue-arrow' }, ' →')),
+    // A recording gets the tag, and its button hangs below it, off the product's controls;
+    // a "visual: coming" strip keeps the button inline.
+    ...(slot ? [button] : [el('span', { class: 'preview-tag', 'aria-hidden': 'true' }, 'preview')]),
   );
   // The name as a tag on the picture's corner (the heading stays for screen readers).
   if (w.nameOn === 'corner') {
@@ -320,6 +325,7 @@ function thumbLink(w: Want, p: ProjectEntry, page: string): HTMLElement {
     'a',
     { class: 'thumb-link', href: live ? `${page}#demo` : page, 'aria-label': `${w.name}: ${cue.toLowerCase()}` },
     pic,
+    ...(slot ? [] : [button]),
   );
 }
 

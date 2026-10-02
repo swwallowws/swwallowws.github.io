@@ -199,26 +199,36 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
    would point at something already in view: it only shows when stacked. */
 @media (min-width: 1240px) { .project-hero:not(.single) .btn.in-page { display: none; } }
 
-/* The visual is the way in: the whole of it links to the tool's page, and
-   its "Try demo" label rests in the top-right corner all the time, so the
-   demo is the first thing a reader sees there (before the buttons out to the
-   full product). On hover or focus the picture softens like water going
-   still (a veil in the ground colour, a little less colour) and the label
-   takes the accent. Slow ease both ways, no movement. */
-.thumb-link { position: relative; display: block; height: 100%; color: inherit; text-decoration: none; }
+/* The visual is the way in: the whole of it links to the tool's page. The
+   pictures are recordings of real product UI, so they look usable: a quiet
+   "preview" tag in the top-right corner says it's a recording, and an
+   accent "Try the demo" button hangs below its bottom-right edge like a tab,
+   the size of the page's other buttons, off the product's own controls. On
+   hover or focus the picture softens like water going still (a veil in the
+   ground colour, a little less colour) and the button darkens, as "Try it"
+   does. Slow ease both ways, no movement. */
+.thumb-link { position: relative; display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
 .thumb-link .thumb { position: relative; }
 .thumb-link .veil {
   position: absolute; inset: 0; pointer-events: none;
   background: var(--ground); opacity: 0;
 }
-.thumb-link .cue {
+.thumb-link .preview-tag {
   position: absolute; top: 0; right: 0;
-  padding: calc(var(--space) * .4) calc(var(--space) * .8);
+  padding: calc(var(--space) * .35) calc(var(--space) * .8);
   background: var(--ground-2); border: var(--hairline); border-width: 0 0 1px 1px;
-  font: 600 12px/1.2 var(--font-mono); color: var(--ink); white-space: nowrap;
+  font: 500 11px/1.2 var(--font-mono); letter-spacing: .06em; color: var(--ink-mut);
   pointer-events: none;
 }
-.thumb-link .cue-arrow { color: var(--acc); }
+.thumb-link .cue {
+  display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
+  padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
+  background: var(--acc); border: 1px solid var(--acc);
+  font: 600 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap;
+  pointer-events: none;
+}
+.thumb-link > .cue { align-self: flex-end; margin-top: -1px; border-radius: 0 0 var(--radius) var(--radius); }
+.thumb-link .cue-arrow { color: inherit; }
 .thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb {
   transition: opacity .35s ease-in-out, filter .35s ease-in-out, border-color .35s ease-in-out, background-color .35s ease-in-out, color .35s ease-in-out;
 }
@@ -227,16 +237,15 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   .thumb-link:hover .thumb { border-color: var(--acc); }
   .thumb-link:hover .thumb :is(img, video) { filter: saturate(.6); }
   .thumb-link:hover .veil { opacity: .55; }
-  .thumb-link:hover .cue { background: var(--acc); color: var(--ground); border-color: var(--acc); }
-  .thumb-link:hover .cue-arrow { color: inherit; }
+  .thumb-link:hover .cue { background: var(--ink); border-color: var(--ink); }
 }
 .thumb-link:focus-visible .thumb { border-color: var(--acc); }
 .thumb-link:focus-visible .thumb :is(img, video) { filter: saturate(.6); }
 .thumb-link:focus-visible .veil { opacity: .55; }
-.thumb-link:focus-visible .cue { background: var(--acc); color: var(--ground); border-color: var(--acc); }
-.thumb-link:focus-visible .cue-arrow { color: inherit; }
-@media (hover: none) {
-  .thumb-link .cue { font-size: 11px; padding: calc(var(--space) * .3) calc(var(--space) * .6); }
+.thumb-link:focus-visible .cue { background: var(--ink); border-color: var(--ink); }
+@media (max-width: 720px) {
+  .thumb-link .cue { min-height: 34px; padding: calc(var(--space) * .5) calc(var(--space) * 1.1); font-size: 12px; }
+  .thumb-link .preview-tag { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb { transition: none; }
@@ -251,7 +260,7 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .thumb-link:has(.thumb.slot) { height: auto; align-self: center; max-width: 420px; }
 /* In the strip, the label sits beside the placeholder text instead of on its corner. */
 .thumb-link .thumb.slot { display: flex; justify-content: space-between; align-items: center; gap: var(--space); }
-.thumb-link .thumb.slot .cue { position: static; border-width: 1px; }
+.thumb-link .thumb.slot .cue { min-height: 0; padding: calc(var(--space) * .4) calc(var(--space) * .8); font-size: 12px; border-radius: var(--radius); }
 
 /* ---------------------------------------------------------------- map */
 
