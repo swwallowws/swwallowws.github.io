@@ -66,6 +66,19 @@ try {
         [...document.querySelectorAll("video[src]")].filter((v) => v.readyState === 0).map((v) => v.getAttribute("src")),
       );
       for (const s of stuck) problems.push(`${where}: video never loaded: ${s}`);
+      // The welcome page shows every tool's lamp card (src/lamp/) and no
+      // recordings marked "preview".
+      if (!path) {
+        const cards = await page.locator(".lamp-host canvas").count();
+        if (cards !== 7) problems.push(`${where}: ${cards} lamp cards, expected 7`);
+        if (await page.locator(".preview-tag").count()) problems.push(`${where}: a "preview" tag is still shown`);
+        // The cards draw in the theme's colours: in Paper the ground is light.
+        if (theme === "paper" && cards) {
+          const [r, g, b] = await page.locator(".lamp-host canvas").first()
+            .evaluate((c) => [...c.getContext("2d").getImageData(3, 3, 1, 1).data]);
+          if (r + g + b < 3 * 160) problems.push(`${where}: a lamp card's ground is dark (${r}, ${g}, ${b}) in Paper`);
+        }
+      }
       // getAttribute: the map's links are SVG <a>, whose .href isn't a string
       const hrefs = await page.evaluate(() =>
         [...document.querySelectorAll("a[href]")].map((a) => new URL(a.getAttribute("href"), location.href).href),

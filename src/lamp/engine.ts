@@ -189,7 +189,12 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: { label: string
     s.W = r.width;
     s.H = r.height;
     m.R = lampRadius(s.W);
-    if (first) [s.lx, s.ly] = wander(m, 0);
+    if (first) {
+      // A card is often mounted before its host joins the page, where no colour
+      // resolves yet; the first sizing means it is in the page now.
+      readColours(m);
+      [s.lx, s.ly] = wander(m, 0);
+    }
   };
   const ro = new ResizeObserver(size);
   ro.observe(canvas);

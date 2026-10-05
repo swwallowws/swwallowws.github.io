@@ -117,14 +117,14 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 /* Mist (home.ts sets --fog, 0 clear to 1 misty): items away from the middle
    of the window fade and soften a little; hover or focus clears them. The
    stream stays crisp so the path through the page stays legible. */
-.wants > li > .item-text, .wants > li > .thumb-link, .wants > li > .thumb {
+.wants > li > .item-text, .wants > li > .thumb-col, .wants > li > .thumb {
   opacity: calc(1 - var(--fog, 0) * .45);
   filter: blur(calc(var(--fog, 0) * 1.2px));
   transition: opacity .6s ease-out, filter .6s ease-out;
 }
 .wants > li:hover > *, .wants > li:focus-within > * { opacity: 1; filter: none; }
 @media (prefers-reduced-motion: reduce) {
-  .wants > li > .item-text, .wants > li > .thumb-link, .wants > li > .thumb { opacity: 1; filter: none; transition: none; }
+  .wants > li > .item-text, .wants > li > .thumb-col, .wants > li > .thumb { opacity: 1; filter: none; transition: none; }
 }
 
 /* Arriving from the map (home.ts glides there): the want takes the tool's colour. */
@@ -146,7 +146,7 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 }
 /* The name on the picture's top-left corner, like a tab: it stays put and
    readable when the picture softens on hover. */
-.thumb-link .name-tag {
+.thumb-col .name-tag {
   position: absolute; top: 0; left: 0; z-index: 1;
   display: flex; align-items: baseline; gap: .8ch;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.5);
@@ -154,16 +154,16 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   font: 700 14px/1.2 var(--font-mono); color: var(--acc); white-space: nowrap;
   pointer-events: none;
 }
-.thumb-link .name-tag .tool-line { font-size: 13px; }
+.thumb-col .name-tag .tool-line { font-size: 13px; }
 /* A short name's long one takes its place while the picture is hovered. */
-.thumb-link .name-tag .name.full { display: none; }
+.thumb-col .name-tag .name.full { display: none; }
 @media (hover: hover) {
-  .thumb-link:hover .name-tag .name:has(+ .name.full) { display: none; }
-  .thumb-link:hover .name-tag .name.full { display: inline; }
+  .thumb-col:hover .name-tag .name:has(+ .name.full) { display: none; }
+  .thumb-col:hover .name-tag .name.full { display: inline; }
 }
 @media (max-width: 720px) {
-  .thumb-link .name-tag { padding: calc(var(--space) * .4) calc(var(--space) * .9); font-size: 12px; }
-  .thumb-link .name-tag .tool-line { font-size: 11px; }
+  .thumb-col .name-tag { padding: calc(var(--space) * .4) calc(var(--space) * .9); font-size: 12px; }
+  .thumb-col .name-tag .tool-line { font-size: 11px; }
 }
 .item-text h2 .tool-line { margin-left: .6ch; }
 .item-text .summary { margin: 0; max-width: 46ch; font-size: 18px; line-height: 1.7; color: var(--ink-mut); }
@@ -199,68 +199,31 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
    would point at something already in view: it only shows when stacked. */
 @media (min-width: 1240px) { .project-hero:not(.single) .btn.in-page { display: none; } }
 
-/* The visual is the way in: the whole of it links to the tool's page. The
-   pictures are recordings of real product UI, so they look usable: a quiet
-   "preview" tag in the top-right corner says it's a recording, and an
-   accent "Try the demo" button hangs below its bottom-right edge like a tab,
-   the size of the page's other buttons, off the product's own controls. On
-   hover or focus the picture softens like water going still (a veil in the
-   ground colour, a little less colour) and the button darkens, as "Try it"
-   does. Slow ease both ways, no movement. */
-.thumb-link { position: relative; display: flex; flex-direction: column; height: 100%; color: inherit; text-decoration: none; }
-.thumb-link .thumb { position: relative; }
-.thumb-link .veil {
-  position: absolute; inset: 0; pointer-events: none;
-  background: var(--ground); opacity: 0;
-}
-.thumb-link .preview-tag {
-  position: absolute; top: 0; right: 0;
-  padding: calc(var(--space) * .35) calc(var(--space) * .8);
-  background: var(--ground-2); border: var(--hairline); border-width: 0 0 1px 1px;
-  font: 500 11px/1.2 var(--font-mono); letter-spacing: .06em; color: var(--ink-mut);
-  pointer-events: none;
-}
-.thumb-link .cue {
+/* The visual beside each summary: the lamp card (src/lamp/), with the way in
+   hanging under its bottom-right edge like a tab. The card plays on a click;
+   only the button is a link. */
+.thumb-col { position: relative; display: flex; flex-direction: column; height: 100%; }
+.thumb-col > .lamp-thumb { position: relative; flex: 1; min-height: 300px; }
+.thumb-col .name-tag { pointer-events: none; }
+.thumb-col > .cue {
+  align-self: flex-end; margin-top: -1px; border-radius: 0 0 var(--radius) var(--radius);
   display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
   background: var(--acc); border: 1px solid var(--acc);
-  font: 600 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap;
-  pointer-events: none;
+  font: 600 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap; text-decoration: none;
+  transition: background-color .35s ease-in-out, border-color .35s ease-in-out;
 }
-.thumb-link > .cue { align-self: flex-end; margin-top: -1px; border-radius: 0 0 var(--radius) var(--radius); }
-.thumb-link .cue-arrow { color: inherit; }
-.thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb {
-  transition: opacity .35s ease-in-out, filter .35s ease-in-out, border-color .35s ease-in-out, background-color .35s ease-in-out, color .35s ease-in-out;
-}
-.thumb-link:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
-@media (hover: hover) {
-  .thumb-link:hover .thumb { border-color: var(--acc); }
-  .thumb-link:hover .thumb :is(img, video) { filter: saturate(.6); }
-  .thumb-link:hover .veil { opacity: .55; }
-  .thumb-link:hover .cue { background: var(--ink); border-color: var(--ink); }
-}
-.thumb-link:focus-visible .thumb { border-color: var(--acc); }
-.thumb-link:focus-visible .thumb :is(img, video) { filter: saturate(.6); }
-.thumb-link:focus-visible .veil { opacity: .55; }
-.thumb-link:focus-visible .cue { background: var(--ink); border-color: var(--ink); }
+.thumb-col > .cue .cue-arrow { color: inherit; }
+@media (hover: hover) { .thumb-col > .cue:hover { background: var(--ink); border-color: var(--ink); } }
+.thumb-col > .cue:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; background: var(--ink); border-color: var(--ink); }
+.lamp-thumb canvas:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
 @media (max-width: 720px) {
-  .thumb-link .cue { min-height: 34px; padding: calc(var(--space) * .5) calc(var(--space) * 1.1); font-size: 12px; }
-  .thumb-link .preview-tag { font-size: 10px; }
+  .thumb-col > .lamp-thumb { min-height: 260px; }
+  .thumb-col > .cue { min-height: 34px; padding: calc(var(--space) * .5) calc(var(--space) * 1.1); font-size: 12px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  .thumb-link .thumb img, .thumb-link .veil, .thumb-link .cue, .thumb-link .thumb { transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { .thumb-col > .cue { transition: none; } }
 
-/* The whole capture, uncropped; captures are already framed to the demo. */
 .thumb { border: var(--hairline); background: var(--ground-2); overflow: hidden; }
-.thumb img, .thumb video { display: block; width: 100%; height: auto; }
-/* An empty slot fills the item's height beside the text. */
-/* A picture still to come: a short strip, centred against its text, not a big empty frame. */
-.thumb.slot { aspect-ratio: auto; height: auto; min-height: 0; padding: calc(var(--space) * 1.25); }
-.thumb-link:has(.thumb.slot) { height: auto; align-self: center; max-width: 420px; }
-/* In the strip, the label sits beside the placeholder text instead of on its corner. */
-.thumb-link .thumb.slot { display: flex; justify-content: space-between; align-items: center; gap: var(--space); }
-.thumb-link .thumb.slot .cue { min-height: 0; padding: calc(var(--space) * .4) calc(var(--space) * .8); font-size: 12px; border-radius: var(--radius); }
 
 /* ---------------------------------------------------------------- map */
 

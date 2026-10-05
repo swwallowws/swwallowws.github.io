@@ -6,7 +6,8 @@
 
 import { projects, type ProjectEntry } from '../data/projects.js';
 import { actions } from './actions.js';
-import { VISUALS } from '../data/visuals.generated.js';
+import { LAMP_CARDS } from '../lamp/cards/index.js';
+import { mountCard } from '../lamp/engine.js';
 import { renderMap } from './map.js';
 import { el, href } from './shared.js';
 
@@ -27,28 +28,29 @@ const WANTS: Want[] = [
   {
     want: 'simply groove.',
     project: 'ysad',
-    // The loop is cropped below the plugin's header, so the name goes on the corner.
+    // The card has no wordmark, so the name goes on the corner.
     nameOn: 'corner',
     name: 'YSAD',
   },
   {
     want: 'simply cover.',
     project: 'rearranged',
-    // The loop is cropped below the studio's header, so the name goes on the corner.
+    // The card has no wordmark, so the name goes on the corner.
     nameOn: 'corner',
     name: 'Rearranged',
   },
   {
     want: 'simply sing.',
     project: 'voxmpe',
-    // The loop comes from the demo, below its wordmark, so the name goes on the corner.
+    // The card has no wordmark, so the name goes on the corner.
     nameOn: 'corner',
     name: 'Starling',
   },
   {
     want: 'simply split.',
     project: 'stemscribe',
-    nameOn: 'picture',
+    // The card has no wordmark, so the name goes on the corner.
+    nameOn: 'corner',
     name: 'Coming Undone',
   },
   {
@@ -199,7 +201,7 @@ function drawStream(list: HTMLOListElement): void {
     const lanes: { x: number; top: number; bottom: number }[] = [];
     for (const li of items) {
       const text = li.querySelector<HTMLElement>('.item-text');
-      const vis = li.querySelector<HTMLElement>('.thumb-link, :scope > .thumb');
+      const vis = li.querySelector<HTMLElement>('.thumb-col');
       if (!text) continue;
       const lr = li.getBoundingClientRect(), tr = text.getBoundingClientRect();
       const gap = parseFloat(getComputedStyle(li).columnGap) || 72;
@@ -268,7 +270,8 @@ function wantItem(w: Want, i: number): HTMLElement {
     const row = actions(p, page);
     if (row) text.append(row);
   }
-  const side = p?.coming ? [] : page && p ? [thumbLink(w, p, page)] : [visual(p)];
+  const lamp = p && page && !p.coming ? lampSide(w, p, page) : null;
+  const side = lamp ? [lamp] : [];
   const r = RHYTHM[i % RHYTHM.length]!;
   // odd items sit on the right: their text after the visual, or, with no visual yet,
   // their text alone in the right-hand column
@@ -288,113 +291,36 @@ function wantItem(w: Want, i: number): HTMLElement {
   );
 }
 
-/* The visual as the way in: the whole of it links to the tool's page. The
-   pictures are real product UI, so they look usable (a visitor tried turning
-   YSAD's knobs): a "preview" tag says it's a recording, and an accent button
-   on it says where the usable one is. On hover or focus the picture softens
-   under a veil and the button darkens. A tool with a live demo links straight
-   to it (#demo on its page); one without says so plainly instead of promising
-   a try. */
-function thumbLink(w: Want, p: ProjectEntry, page: string): HTMLElement {
+/* The visual beside each summary: the project's lamp card (src/lamp/), drawn
+   in strings, which plays on a click, and under its bottom-right edge the way
+   in: "Try the demo" where the tool has a live demo, "Read how it works"
+   otherwise. The card plays, so only the button is a link. */
+function lampSide(w: Want, p: ProjectEntry, page: string): HTMLElement | null {
+  const def = LAMP_CARDS[p.id];
+  if (!def) return null;
   const live = !!p.live && 'url' in p.live;
-  const cue = live ? 'Try the demo' : 'Read how it works';
-  const pic = visual(p);
-  const slot = pic.classList.contains('slot');
-  const button = el('span', { class: 'cue', 'aria-hidden': 'true' }, cue, el('span', { class: 'cue-arrow' }, ' →'));
-  pic.append(
-    el('span', { class: 'veil', 'aria-hidden': 'true' }),
-    // A recording gets the tag, and its button hangs below it, off the product's controls;
-    // a "visual: coming" strip keeps the button inline.
-    ...(slot ? [button] : [el('span', { class: 'preview-tag', 'aria-hidden': 'true' }, 'preview')]),
-  );
-  // The name as a tag on the picture's corner (the heading stays for screen readers).
-  if (w.nameOn === 'corner') {
-    pic.append(
-      el(
-        'span',
-        { class: 'name-tag', 'aria-hidden': 'true' },
-        // A short name hides its long one, shown on hover (YSAD's easter egg).
-        el('span', { class: 'name' }, w.name),
-        ...(p.fullName ? [el('span', { class: 'name full' }, p.fullName)] : []),
-        // The tool's line, unless the want above already says it.
-        ...(p.line && p.line !== w.want ? [el('span', { class: 'tool-line' }, p.line)] : []),
-      ),
-    );
-  }
-  return el(
+  const box = el('div', { class: 'thumb lamp-thumb' });
+  mountCard(box, def, { label: `${w.name}: ${p.summary ?? p.lead}` });
+  if (w.nameOn) box.append(nameTag(w, p));
+  const link = el(
     'a',
-    { class: 'thumb-link', href: live ? `${page}#demo` : page, 'aria-label': `${w.name}: ${cue.toLowerCase()}` },
-    pic,
-    ...(slot ? [] : [button]),
+    { class: 'cue', href: live ? `${page}#demo` : page },
+    live ? 'Try the demo' : 'Read how it works',
+    el('span', { class: 'cue-arrow', 'aria-hidden': 'true' }, ' →'),
+  );
+  return el('div', { class: 'thumb-col' }, box, link);
+}
+
+/** The name as a tag on the card's corner (the heading stays for screen readers). */
+function nameTag(w: Want, p: ProjectEntry): HTMLElement {
+  return el(
+    'span',
+    { class: 'name-tag', 'aria-hidden': 'true' },
+    // A short name hides its long one, shown on hover (YSAD's easter egg).
+    el('span', { class: 'name' }, w.name),
+    ...(p.fullName ? [el('span', { class: 'name full' }, p.fullName)] : []),
+    // The tool's line, unless the want above already says it.
+    ...(p.line && p.line !== w.want ? [el('span', { class: 'tool-line' }, p.line)] : []),
   );
 }
 
-/* The theme in view: the page's switch when set, else the system's. */
-function currentTheme(): 'paper' | 'night' {
-  const t = document.documentElement.dataset.theme;
-  if (t === 'paper' || t === 'night') return t;
-  return matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'paper';
-}
-
-/* The visual beside each summary: the project's thumb shot from
-   `npm run visuals` (Paper and Night), else the entry's own image, else a
-   labelled placeholder. */
-function visual(p: ProjectEntry | undefined): HTMLElement {
-  // A loop of the real product, where there is one: silent, looping, inline.
-  // Readers who ask for reduced motion get its first frame as a still.
-  if (p?.loop) {
-    const base = href(`visuals/${p.id}/${p.loop}`);
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (still) {
-      return el(
-        'div',
-        { class: 'thumb' },
-        el('img', { src: `${base}-paper.png`, alt: `${p.name}, running`, class: 'for-paper', loading: 'lazy' }),
-        el('img', { src: `${base}-night.png`, alt: `${p.name}, running`, class: 'for-night', loading: 'lazy' }),
-      );
-    }
-    // One video, fetching only the theme in view (about 150 KB), and only once
-    // it nears the window; it swaps files when the theme changes.
-    const video = el('video', {
-      loop: '', playsinline: '', preload: 'none', 'aria-label': `${p.name}, running`,
-    }) as HTMLVideoElement;
-    // The muted attribute alone does not mute when set from script; autoplay needs it.
-    video.muted = true;
-    let near = false;
-    const load = () => {
-      const theme = currentTheme();
-      video.poster = `${base}-${theme}.png`;
-      if (!near) return;
-      const src = `${base}-${theme}.mp4`;
-      if (video.getAttribute('src') === src) return;
-      video.src = src;
-      void video.play().catch(() => {});
-    };
-    new IntersectionObserver((entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
-      near = true;
-      load();
-    }, { rootMargin: '400px' }).observe(video);
-    new MutationObserver(load).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    matchMedia('(prefers-color-scheme: dark)').addEventListener('change', load);
-    load();
-    return el('div', { class: 'thumb' }, video);
-  }
-  const thumb = p ? VISUALS[p.id]?.thumb : undefined;
-  if (p && thumb) {
-    const base = href(`visuals/${p.id}/${thumb}`);
-    return el(
-      'div',
-      { class: 'thumb' },
-      el('img', { src: `${base}-paper.png`, alt: `${p.name}, running`, class: 'for-paper', loading: 'lazy' }),
-      el('img', { src: `${base}-night.png`, alt: `${p.name}, running`, class: 'for-night', loading: 'lazy' }),
-    );
-  }
-  if (p?.image) {
-    const box = el('div', { class: 'thumb' });
-    box.append(el('img', { src: p.image.src, alt: p.image.alt, class: p.image.srcDark ? 'for-paper' : '', loading: 'lazy' }));
-    if (p.image.srcDark) box.append(el('img', { src: p.image.srcDark, alt: p.image.alt, class: 'for-night', loading: 'lazy' }));
-    return box;
-  }
-  return el('div', { class: 'thumb slot' }, 'visual: coming');
-}
