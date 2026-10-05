@@ -7,6 +7,8 @@
    slots render as labelled placeholders, so filling one later is a data change. */
 
 import { categoryLabel, type Beat, type ProjectEntry, type Slot } from '../data/projects.js';
+import { LAMP_CARDS } from '../lamp/cards/index.js';
+import { mountCard } from '../lamp/engine.js';
 import { VISUALS } from '../data/visuals.generated.js';
 import { actions, FULL_VERSION } from './actions.js';
 import { THEME_EVENT } from './chrome.js';
@@ -108,10 +110,16 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
     else if (p.worksWith) text.append(badges(p.worksWith, 'badges big'));
   }
 
+  // The project's lamp card (src/lamp/): on its own, wide, between the head and the rest.
+  const def = LAMP_CARDS[p.id];
+  const lamp = def ? el('section', { class: 'lamp-wide' }) : null;
+  if (lamp && def) mountCard(lamp, def, { label: `${p.name}: ${p.summary ?? p.lead}` });
+
   if (liveBeat && p.live && 'url' in p.live && p.parts) {
-    // The new layout: the description on its own, then the demo full width
-    // below it, at its own full height.
+    // The new layout: the description on its own, the card, then the demo
+    // full width below it, at its own full height.
     main.append(el('section', { class: 'project-hero single' }, text));
+    if (lamp) main.append(lamp);
     const demo = liveDemo(p.live.url, p.name, liveBeat.title);
     const wide = el('section', { class: 'demo-wide' }, demo.node);
     main.append(wide);
@@ -121,8 +129,10 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
     const hero = el('section', { class: 'project-hero' }, text, demo.node);
     main.append(hero);
     demo.fit(hero, text);
+    if (lamp) main.append(lamp);
   } else {
     main.append(el('section', { class: 'project-hero single' }, text));
+    if (lamp) main.append(lamp);
   }
 
   let side = 0; // alternates beside-visuals left and right

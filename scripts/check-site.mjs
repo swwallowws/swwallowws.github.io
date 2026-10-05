@@ -66,6 +66,8 @@ try {
         [...document.querySelectorAll("video[src]")].filter((v) => v.readyState === 0).map((v) => v.getAttribute("src")),
       );
       for (const s of stuck) problems.push(`${where}: video never loaded: ${s}`);
+      // A project page shows its lamp card, wide, after the head.
+      if (path && (await page.locator(".lamp-wide canvas").count()) !== 1) problems.push(`${where}: no lamp card`);
       // The welcome page shows every tool's lamp card (src/lamp/) and no
       // recordings marked "preview".
       if (!path) {

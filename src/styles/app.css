@@ -357,6 +357,10 @@ main > .back { margin-top: calc(var(--space) * 4); }
 }
 @media (max-width: 720px) { .demo-wide { padding: calc(var(--space) * 1.5); } }
 .demo-wide .live, .demo-wide iframe { width: 100%; }
+/* A project page's lamp card: on its own, wide, between the head and the rest. */
+.lamp-wide { margin: calc(var(--space) * 4) 0; height: clamp(320px, 38vw, 480px); border: var(--hairline); background: var(--ground-2); }
+@media (max-width: 720px) { .lamp-wide { height: 300px; margin: calc(var(--space) * 2.5) 0; } }
+.lamp-wide canvas:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
 /* The text rows keep a reading width; the badge rows may run wider, on one line. */
 .labelled.details > dd:not(.fold) { max-width: 56ch; }
 /* Folded rows: only the label shows, with a faint mark after it; hovering or
