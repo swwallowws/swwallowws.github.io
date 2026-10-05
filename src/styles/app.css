@@ -152,17 +152,18 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-/* The name on the picture's top-left corner, like a tab: it stays put and
-   readable when the picture softens on hover. */
+/* The name on the picture's top-left corner, like a tab: a solid chip in the
+   tool's colour, as the Try button is, so it reads at a glance and stays put
+   when the picture softens on hover. */
 .thumb-col .name-tag {
   position: absolute; top: 0; left: 0; z-index: 1;
   display: flex; align-items: baseline; gap: .8ch;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.5);
-  background: var(--ground-2); border: var(--hairline); border-width: 0 1px 1px 0;
-  font: 700 14px/1.2 var(--font-mono); color: var(--acc); white-space: nowrap;
+  background: var(--acc);
+  font: 700 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap;
   pointer-events: none;
 }
-.thumb-col .name-tag .tool-line { font-size: 13px; }
+.thumb-col .name-tag .tool-line { font-size: 13px; color: var(--ground); opacity: .85; }
 /* A short name's long one takes its place while the picture is hovered. */
 .thumb-col .name-tag .name.full { display: none; }
 @media (hover: hover) {
