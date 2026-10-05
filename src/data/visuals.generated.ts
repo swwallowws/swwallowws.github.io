@@ -20,8 +20,11 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     }
   },
   "intentional": {
-    "shots": [],
+    "shots": [
+      "lamp"
+    ],
     "videos": [],
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -31,11 +34,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "rearranged": {
     "shots": [
-      "lab",
-      "loop"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "loop",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -45,10 +47,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "session-notes": {
     "shots": [
-      "playground"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "playground",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -58,11 +60,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "stemscribe": {
     "shots": [
-      "full",
-      "loop"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "loop",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -72,11 +73,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "tabridge": {
     "shots": [
-      "loop",
-      "site"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "loop",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -86,11 +86,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "voxmpe": {
     "shots": [
-      "loop",
-      "studio"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "loop",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",
@@ -100,11 +99,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
   },
   "ysad": {
     "shots": [
-      "circle",
-      "loop"
+      "lamp"
     ],
     "videos": [],
-    "thumb": "loop",
+    "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
       "og": "card-og",

@@ -188,7 +188,8 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: { label: string
     const first = !s.W;
     s.W = r.width;
     s.H = r.height;
-    m.R = lampRadius(s.W);
+    // A still (a share card) is seen small, so its lamp is uncapped: a third of the card.
+    m.R = m.still ? s.W * 0.3 : lampRadius(s.W);
     if (first) {
       // A card is often mounted before its host joins the page, where no colour
       // resolves yet; the first sizing means it is in the page now.

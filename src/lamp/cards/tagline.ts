@@ -26,7 +26,7 @@ const pillX = (s: CardState, j: number): number => s.U(0.08 + j * 0.17);
 export const tagline: CardDef = {
   id: 'intentional',
   category: 'workflow',
-  still: [0.3, 0.38],
+  still: [0.2, 0.42],
   strings: CAPS.length,
   base: (k) => (cap(k).keep ? 0.55 : 0.35),
   colour: (k) => (cap(k).keep ? 'acc' : 'mut'),
