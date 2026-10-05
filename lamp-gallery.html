@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Lamp cards (dev)</title>
+    <style>
+      body { margin: 0; background: var(--ground); color: var(--ink); }
+      #grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); gap: 24px; padding: 24px 16px; max-width: 1240px; margin: 0 auto; box-sizing: border-box; }
+      .lamp-host { height: 320px; border: var(--hairline); background: var(--ground-2); }
+      body.still #grid { display: block; padding: 0; max-width: none; }
+      body.still .lamp-host { width: 100vw; height: 100vh; border: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="grid"></div>
+    <script type="module" src="/src/lamp/gallery.ts"></script>
+  </body>
+</html>
