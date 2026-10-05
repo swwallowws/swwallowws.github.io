@@ -240,6 +240,10 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 /* Badges and labelled rows come from the design system (badges.css). */
 .badges.big { margin-top: calc(var(--space) * 2.5); }
 .labelled.big { margin-top: calc(var(--space) * 2.5); }
+/* A row's label is an interface label, in the labels' capitals; except the
+   details' "Give it" / "It" / "Get", which begin the sentence beside them. */
+.labelled > dt { text-transform: var(--button-case); letter-spacing: .04em; }
+.labelled.details > dt:not(.fold) { text-transform: none; letter-spacing: normal; }
 /* The details on a project page's head sit under the summary, quieter than it. */
 .labelled.details > dd { font-size: 0.95rem; line-height: 1.45; color: var(--ink-mut); }
 /* The title's row: the name, and the way to the full product at the far right. */

@@ -128,7 +128,7 @@ export const projects: ProjectEntry[] = [
     summary: 'Your voice as MIDI, every slide and in-between note included.',
     parts: {
       give: 'a recording of your voice.',
-      does: 'follows your pitch note by note and keeps the slides, vibrato and loudness, in standard tuning or any other, like Turkish makam.',
+      does: 'follows your pitch note by note and keeps the slides, vibrato and loudness, in standard tuning or any other, like the comma tuning of Turkish makam music.',
       get: 'MIDI that keeps every slide (MPE), or an Ableton Live set that’s ready to play.',
     },
     story: [
@@ -138,7 +138,7 @@ export const projects: ProjectEntry[] = [
         show: 'live',
       },
       { title: 'Slides stay slides', text: 'Your voice slides between notes; the MIDI slides with it.' },
-      { title: 'Any tuning', text: 'Not stuck in standard tuning: Turkish makam, or any tuning you bring.' },
+      { title: 'Any tuning', text: 'Not stuck in standard tuning: the comma tuning of Turkish makam music, or any tuning you bring.' },
       { title: 'One take, start to finish', text: 'From singing to MIDI in Ableton Live, in one take.', show: 'video' },
     ],
     worksWith: ['MIDI / MPE', 'Scala tunings', 'Ableton Live'],
