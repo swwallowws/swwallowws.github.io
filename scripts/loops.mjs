@@ -1,4 +1,5 @@
-// The welcome page's moving pictures for the browser-based tools: a short,
+// Moving pictures of the browser-based tools, for each project's repo (media/,
+// linked from its README; the showcase itself shows lamp cards): a short,
 // silent loop of the product (or its demo, where that reads better: Starling)
 // doing one meaningful thing, in Paper and Night, like YSAD's (made from its plugin by
 // yousuckatdrums/m4l/tools/make-loop.sh).

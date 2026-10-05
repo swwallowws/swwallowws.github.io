@@ -1,5 +1,5 @@
 {
-  "$comment": "Welcome-page loops, recorded from each original product by scripts/loops.mjs (setup is not kept; show is the loop). `url` is where it's recorded (a local server must be running there); `site` is the live site it stands for, whose build is kept in visuals/sources.json so CI notices when the product changes.",
+  "$comment": "Loops for each project's repo (media/, linked from its README), recorded from each original product by scripts/loops.mjs (setup is not kept; show is the loop). `url` is where it's recorded (a local server must be running there); `site` is the live site it stands for, whose build is kept in visuals/sources.json so CI notices when the product changes.",
   "loops": [
     {
       "$comment": "From the live demo (Bengisu, 1 Oct: the studio's side controls put people off): the starling's song, then smoothing all the way up.",

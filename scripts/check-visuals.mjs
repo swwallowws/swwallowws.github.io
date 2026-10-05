@@ -1,4 +1,5 @@
-// Fail when a picture on the showcase shows an older product than the live one.
+// Fail when a recorded picture shows an older product than the live one: the
+// loops kept in each project's repo (media/), and any showcase shot naming a site.
 // Compares each entry in visuals/sources.json (written when the picture was
 // recorded, see scripts/sources.mjs) with the live site's version.json, and checks
 // that every recipe naming a `site` has an entry. Runs in CI on every push and daily.
