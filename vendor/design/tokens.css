@@ -36,14 +36,15 @@
   --acc: var(--ink);
 
   /* One colour per drum part, wherever drums are drawn (YSAD's circle, dials
-     and pads). A fixed categorical set, validated with the dataviz palette
-     checks for every pair in both modes: lightness band, chroma, colourblind
-     separation, normal-vision separation, 3:1 against the ground. The kick is
-     the transform accent. */
-  --drum-kick:  light-dark(#c23900, #fa4e00);
-  --drum-snare: light-dark(#2a78d6, #0066c8);
-  --drum-hats:  light-dark(#008a5f, #199e70);
-  --drum-perc:  light-dark(#4a3aa7, #c366e7);
+     and pads). A fixed categorical set in the dusk family, no orange: kick
+     coral-rose, snare steel teal, hats olive-lime, perc violet. check-drums.mjs
+     gates every pair in both modes: lightness band, colourblind separation
+     (deuteranopia, protanopia, tritanopia), normal-vision separation, 3:1 on
+     the ground. */
+  --drum-kick:  light-dark(#a33445, #ff7a86);
+  --drum-snare: light-dark(#2f7a8c, #4fb4c8);
+  --drum-hats:  light-dark(#778916, #b4c840);
+  --drum-perc:  light-dark(#6b4fbf, #b29aff);
 
   --font-sans: "Inter Tight", -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -88,10 +89,10 @@
     --ink: #1a1620;
     --ink-mut: #635b67;
     --mark: #1a1620;
-    --drum-kick: #c23900;
-    --drum-snare: #2a78d6;
-    --drum-hats: #008a5f;
-    --drum-perc: #4a3aa7;
+    --drum-kick: #a33445;
+    --drum-snare: #2f7a8c;
+    --drum-hats: #778916;
+    --drum-perc: #6b4fbf;
   }
   [data-category="transcribe"] { --acc: #326a7a; }
   [data-category="transform"]  { --acc: #5c4a9e; }
