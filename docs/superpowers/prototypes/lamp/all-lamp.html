@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The lamp, every project</title>
+<link rel="stylesheet" href="../../../../vendor/design/tokens.css">
+<style>
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--font-sans); }
+  main { max-width: 1240px; margin: 0 auto; padding: 40px 16px 80px; }
+  h1 { font-stretch: 125%; font-weight: 800; letter-spacing: -.02em; font-size: 32px; margin: 0 0 8px; }
+  .sub { color: var(--ink-mut); max-width: 68ch; margin: 0 0 18px; line-height: 1.5; }
+  .modes { display: flex; margin: 0 0 24px; }
+  .modes button { font: 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 8px 14px; background: var(--ground-2); color: var(--ink); border: var(--hairline); cursor: pointer; }
+  .modes button + button { border-left: 0; }
+  .modes button[aria-pressed="true"] { background: var(--ink); color: var(--ground); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(440px, 1fr)); gap: 24px; }
+  @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+  .opt { border: var(--hairline); background: var(--ground-2); position: relative; }
+  .opt canvas { display: block; width: 100%; height: 320px; touch-action: none; }
+  .meta { padding: 14px 16px 18px; border-top: var(--hairline); }
+  .letter { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--acc); text-transform: uppercase; }
+  h3 { margin: 4px 0 6px; font-size: 18px; }
+  .meta p { margin: 0; color: var(--ink-mut); line-height: 1.45; font-size: 14px; }
+  .foot { margin-top: 28px; color: var(--ink-mut); font-size: 14px; }
+  .probe { position: absolute; visibility: hidden; }
+</style>
+</head>
+<body>
+<main>
+  <h1>The lamp, every project</h1>
+  <p class="sub">Move the lamp over each (drag on a phone); click to play.</p>
+  <div class="modes" role="group" aria-label="Mode">
+    <button data-mode="paper" aria-pressed="true">Paper</button><button data-mode="night" aria-pressed="false">Night</button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <p class="foot">Anything off? Answer in the terminal.</p>
+</main>
+<script src="lamp.js"></script>
+<script src="cards/starling.js"></script>
+<script src="cards/coming-undone.js"></script>
+<script src="cards/rearranged.js"></script>
+<script src="cards/ready-set.js"></script>
+<script src="cards/ysad.js"></script>
+<script src="cards/session-notes.js"></script>
+<script src="cards/tagline.js"></script>
+<script>lampStart();</script>
+</body>
+</html>
