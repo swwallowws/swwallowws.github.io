@@ -190,8 +190,9 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   text-transform: var(--button-case); letter-spacing: var(--button-tracking);
   transition: background-color .2s, color .2s, border-color .2s;
 }
-.btn-try { background: var(--acc); color: var(--ground); }
-.btn-try:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+/* Outlined in the tool's colour (the card's name tag is the solid chip), filling on hover. */
+.btn-try { background: none; color: var(--acc); border-width: 2px; }
+.btn-try:hover { background: var(--acc); color: var(--ground); }
 .btn-quiet { background: none; color: var(--ink); border-color: var(--line); font-weight: 500; }
 .btn-quiet:hover { border-color: var(--acc); color: var(--ink); }
 .btn .ext { color: var(--acc); }
