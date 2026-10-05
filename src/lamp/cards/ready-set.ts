@@ -81,7 +81,7 @@ export const readySet: CardDef = {
   // the set shows through, turning the accent colour on the way: one symbol,
   // never two.
   over: (s, ctx) => {
-    ctx.font = '600 13px Archivo, sans-serif';
+    ctx.font = '600 13px \"Inter Tight\", sans-serif';
     CHORDS.forEach((c, b) => {
       const x = barX(s, b) + 4, y0 = staffY(s, 0) - 12, y1 = s.V(LANE.chords[1]) - 6;
       const lit = s.lit(x, y0 - 2, X0 + ((X1 - X0) * b) / BARS);

@@ -34,6 +34,7 @@ code { font: 0.9em var(--font-mono); }
   font-stretch: var(--head-stretch);
   font-weight: var(--head-weight);
   letter-spacing: var(--head-tracking);
+  text-transform: var(--head-case);
   line-height: .95;
   text-wrap: balance;
 }
@@ -107,8 +108,8 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 }
 .want {
   margin: 0 0 calc(var(--space) * 2.5);
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: 600; font-stretch: var(--head-stretch);
-  letter-spacing: var(--head-tracking); line-height: 1.2; text-wrap: balance;
+  font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: var(--head-weight); font-stretch: var(--head-stretch);
+  letter-spacing: var(--head-tracking); text-transform: var(--head-case); line-height: 1.1; text-wrap: balance;
 }
 /* The still stream winding between the items, in the map's style. */
 .wants { position: relative; }
@@ -182,7 +183,8 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
   border: 1px solid var(--acc); border-radius: var(--radius);
-  font: 600 14px/1.2 var(--font-mono); text-decoration: none; white-space: nowrap;
+  font: 600 13px/1.2 var(--font-mono); text-decoration: none; white-space: nowrap;
+  text-transform: var(--button-case); letter-spacing: var(--button-tracking);
   transition: background-color .2s, color .2s, border-color .2s;
 }
 .btn-try { background: var(--acc); color: var(--ground); }
@@ -198,6 +200,7 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
   border: 1px dashed var(--acc); border-radius: var(--radius);
   font-size: 13px; font-weight: 600; color: var(--ink);
+  text-transform: var(--button-case); letter-spacing: var(--button-tracking);
 }
 @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
 /* On a project page the demo sits beside the lead from 1240px up, so "Try it"

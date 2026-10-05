@@ -37,7 +37,7 @@ export const sessionNotes: CardDef = {
   },
   // The lyrics themselves, as written in the note.
   surface: (s, ctx) => {
-    ctx.font = '14px Archivo, sans-serif';
+    ctx.font = '14px \"Inter Tight\", sans-serif';
     LYR.forEach((l, i) => {
       ctx.fillStyle = rgba(s.C.ink, 0.75);
       ctx.fillText(l.text, s.U(TL(l.bar)), rowY(s, i));

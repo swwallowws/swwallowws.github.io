@@ -101,7 +101,7 @@ export const calm = (): boolean => motionQuery.matches;
 
 /** Sets a canvas font to the design system's mono at `px`. */
 export const mono = (c: CanvasRenderingContext2D, px: number): void => {
-  c.font = `${px}px "JetBrains Mono", monospace`;
+  c.font = `${px}px \"Geist Mono\", monospace`;
 };
 
 interface Mounted {
