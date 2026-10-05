@@ -68,6 +68,7 @@ const WANTS: Want[] = [
   {
     want: 'simply tag.',
     project: 'intentional',
+    nameOn: 'corner',
     name: 'Tagline',
   },
   {
