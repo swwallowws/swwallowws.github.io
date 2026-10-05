@@ -130,6 +130,14 @@ export const taglineFlow: CardDef = {
     const t = clamp(x / s.W, 0, 0.999);
     return say(stepOf(t), cap(nearest(s, t, y)));
   },
+  // The label names a capture: point at its string, just before the Sync column's
+  // hashtags when the lamp is over them, so the ring never sits on a tag.
+  labelAt: (s, x, y) => {
+    const t = clamp(x / s.W, 0, 0.999), k = nearest(s, t, y);
+    const sync = at(4) * s.W, px = x > sync - 4 && x < sync + 130 ? sync - 6 : x;
+    const pt = clamp(px / s.W, 0, 0.999);
+    return [px, staged(s, k, pt, s.sec), 4] as const;
+  },
   playLabel: (s, p) => ({ text: STEPS[stepOf(p)]!, x: p * s.W + 8, y: s.V(0.02) + 8 }),
   // A soft note per step; at Triage, a falling tone for each drop.
   audio: (a, at0) => {

@@ -95,6 +95,7 @@ try {
             .evaluate((c) => [...c.getContext("2d").getImageData(3, 3, 1, 1).data]);
           if (r + g + b < 3 * 160) problems.push(`${where}: a lamp card's ground is dark (${r}, ${g}, ${b}) in Paper`);
         }
+        await checkCards(page, where);
         await checkMap(page, where);
       }
       // getAttribute: the map's links are SVG <a>, whose .href isn't a string
@@ -118,6 +119,22 @@ try {
 }
 
 console.log(`checked ${PAGES.length} pages in Paper and Night, ${linked.size} links within the site`);
+
+/* The welcome page's cards: each plays once by itself when it comes into view
+   (the card reports data-playing), and a click opens the same place as the
+   "Try the demo" button beside it. */
+async function checkCards(page, where) {
+  const host = page.locator(".lamp-host").nth(1);
+  await host.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(700);
+  if ((await host.getAttribute("data-playing")) !== "1") problems.push(`${where}: a card did not play when it came into view`);
+  const li = page.locator(".wants > li").nth(1);
+  const want = new URL(await li.locator(".actions .btn-try").getAttribute("href"), page.url()).href;
+  await host.locator("canvas").click();
+  await page.waitForURL((u) => u.href !== new URL("/", page.url()).href, { timeout: 5000 }).catch(() => {});
+  if (page.url() !== want) problems.push(`${where}: clicking a card went to ${page.url()}, expected ${want}`);
+  await page.goBack({ waitUntil: "networkidle" });
+}
 
 /* The map at the foot of the welcome page (src/ui/map.ts): it draws, has a link
    for every tool for keyboards and screen readers, draws a track taut under the

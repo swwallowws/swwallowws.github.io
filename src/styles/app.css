@@ -76,7 +76,8 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .hero { position: relative; margin-top: calc(var(--space) * 8); }
 .hero-bg { position: absolute; inset: 0; pointer-events: none; }
 .hero-text { position: relative; }
-.hero h1 { font-size: clamp(2rem, 6vw, 3.6rem); max-width: 18ch; }
+/* as written (lowercase, with a capital I): the welcome speaks in a voice; capitals stay for labels and buttons */
+.hero h1 { font-size: clamp(2rem, 6vw, 3.6rem); max-width: 18ch; text-transform: none; }
 
 /* One item per tool, in two columns: the want, name and summary on the left
    (vertically centred), the visual on the right at about 64% of the row,
@@ -109,7 +110,8 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .want {
   margin: 0 0 calc(var(--space) * 2.5);
   font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: var(--head-weight); font-stretch: var(--head-stretch);
-  letter-spacing: var(--head-tracking); text-transform: var(--head-case); line-height: 1.1; text-wrap: balance;
+  /* lowercase on purpose: one shout per page (the headline); the wants answer in a voice */
+  letter-spacing: var(--head-tracking); text-transform: none; line-height: 1.1; text-wrap: balance;
 }
 /* The still stream winding between the items, in the map's style. */
 .wants { position: relative; }
@@ -193,7 +195,8 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .btn-quiet:hover { border-color: var(--acc); color: var(--ink); }
 .btn .ext { color: var(--acc); }
 .btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
-.full-coming { font: 12px/1.2 var(--font-mono); color: var(--ink-mut); }
+/* in the buttons' row, so in their voice: the same mono capitals, quieter */
+.full-coming { font: 500 12px/1.2 var(--font-mono); color: var(--ink-mut); text-transform: var(--button-case); letter-spacing: var(--button-tracking); }
 /* In a page head, where the Full version button would sit: an outlined label, not a link. */
 .full-coming.big {
   display: inline-flex; align-items: center; min-height: 40px;

@@ -87,6 +87,9 @@ export interface CardDef {
   sweepX?(s: CardState, p: number): number;
   playhead?(s: CardState, ctx: CanvasRenderingContext2D, p: number): void;
   label?(s: CardState, x: number, y: number): string | null;
+  /** The exact point the label names, and a ring radius (YSAD: the hit). Without
+      it, the drawn string point nearest the lamp. null: point at nothing. */
+  labelAt?(s: CardState, x: number, y: number): readonly [number, number, number] | null;
   playLabel?(s: CardState, p: number): { text: string; x: number; y: number } | null;
   /** Runs on every click, before the sound (and when there is no sound). */
   onPlay?(s: CardState): void;
@@ -126,14 +129,17 @@ const mounted = new Set<Mounted>();
 let running = false;
 
 /** How a page mounts a card. `label` is read out for the canvas, so it says
-    what a click and Enter do there. `silent`: a click plays the picture only
-    (the welcome page). `onEnter`: what Enter does (the welcome page opens the
-    tool's demo); without it, Enter plays the card. `still`: a share-card capture. */
+    what a click and Enter do there. `silent`: plays the picture only, no sound
+    (the welcome page). `onPress`: what a click and Enter do (the welcome page
+    opens the tool's demo); without it, they play the card. `playOnView`: the
+    card plays once by itself the first time it is mostly on screen (never under
+    reduced motion). `still`: a share-card capture. */
 export interface MountOptions {
   label: string;
   still?: boolean;
   silent?: boolean;
-  onEnter?: () => void;
+  onPress?: () => void;
+  playOnView?: boolean;
 }
 
 export function mountCard(host: HTMLElement, def: CardDef, opts: MountOptions): { destroy(): void } {
@@ -145,7 +151,8 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: MountOptions): 
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:pan-y;cursor:pointer';
   canvas.tabIndex = 0;
-  canvas.setAttribute('role', 'button');
+  // a card that opens a page is a link; one that plays is a button
+  canvas.setAttribute('role', opts.onPress ? 'link' : 'button');
   canvas.setAttribute('aria-label', opts.label);
   host.append(canvas);
   const off = document.createElement('canvas');
@@ -181,14 +188,22 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: MountOptions): 
   canvas.addEventListener('pointerdown', at);
   canvas.addEventListener('pointerleave', () => { s.inside = false; });
   canvas.addEventListener('pointercancel', () => { s.inside = false; });
-  canvas.addEventListener('click', () => play(m));
+  const press = (): void => { if (opts.onPress) opts.onPress(); else play(m); };
+  canvas.addEventListener('click', press);
   // Enter only: Space stays the page's, so it scrolls even with a card focused.
   canvas.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
-    if (opts.onEnter) opts.onEnter();
-    else play(m);
+    press();
   });
+  if (opts.playOnView && !opts.still) {
+    const seen = new IntersectionObserver(([e]) => {
+      if (!e?.isIntersecting) return;
+      seen.disconnect();
+      if (!calm()) play(m);
+    }, { threshold: 0.6 });
+    seen.observe(canvas);
+  }
 
   const size = (): void => {
     const r = canvas.getBoundingClientRect(), d = devicePixelRatio || 1;
@@ -306,8 +321,10 @@ function draw(m: Mounted, ms: number): void {
   def.surface?.(s, ctx, s.sec);
   light(m, quiet);
 
-  // The strings: each in a few paths by how taut and intense its pieces are.
+  // The strings: each in a few paths by how taut and intense its pieces are. The
+  // drawn point nearest the lamp is kept: it is what the lamp's label names.
   const mid = (def.strings - 1) / 2, N = def.points ?? POINTS;
+  let nearest: [number, number] | null = null, nd = m.R * 0.6;
   for (let k = 0; k < def.strings; k++) {
     const paths = Array.from({ length: LEVELS + 1 }, () => new Path2D());
     let px = 0, py = 0;
@@ -319,6 +336,8 @@ function draw(m: Mounted, ms: number): void {
       if (def.lift) w = Math.max(w, def.lift(s, k, t));
       if (s.sweep >= 0) w = Math.max(w, behind(def.when ? def.when(k, t) : t, s.sweep, s.keep));
       const x = rx + (tx - rx) * w, y = ry + (ty - ry) * w;
+      const d = Math.hypot(x - s.lx, y - s.ly);
+      if (d < nd) { nd = d; nearest = [x, y]; }
       if (i > 0) {
         const lv = Math.round(clamp(def.intensity ? def.intensity(s, k, t, w) : w, 0, 1) * LEVELS);
         const path = paths[lv]!;
@@ -356,7 +375,13 @@ function draw(m: Mounted, ms: number): void {
     if (pl) tag(s, ctx, pl.text, pl.x, pl.y, C.acc);
   } else if (def.label && (s.inside || !quiet)) {
     label = def.label(s, s.lx, s.ly) ?? '';
-    if (label) tag(s, ctx, label, s.lx + m.R * 0.45, s.ly - m.R * 0.45);
+    if (label) {
+      const box = tag(s, ctx, label, s.lx + m.R * 0.45, s.ly - m.R * 0.45);
+      // Point at what the label names: the card's own point if it gives one, else
+      // the drawn string nearest the lamp; a small ring there, a hairline to the label.
+      const at = def.labelAt ? def.labelAt(s, s.lx, s.ly) : nearest ? [...nearest, 4] as const : null;
+      if (at) pointAt(s, ctx, at[0], at[1], at[2], box);
+    }
   }
   if (label !== m.label) {
     m.label = label;
@@ -410,7 +435,7 @@ function light(m: Mounted, quiet: boolean): void {
 }
 
 /** A small label on a ground-coloured strip, kept inside the card. */
-function tag(s: CardState, c: CanvasRenderingContext2D, text: string, x: number, y: number, colour: Rgb = s.C.ink): void {
+function tag(s: CardState, c: CanvasRenderingContext2D, text: string, x: number, y: number, colour: Rgb = s.C.ink): [number, number, number, number] {
   mono(c, 10);
   const tw = c.measureText(text).width;
   const cx = clamp(x, 4, Math.max(4, s.W - tw - 8));
@@ -419,4 +444,22 @@ function tag(s: CardState, c: CanvasRenderingContext2D, text: string, x: number,
   c.fillRect(cx - 3, cy - 10, tw + 6, 14);
   c.fillStyle = rgba(colour, 1);
   c.fillText(text, cx, cy);
+  return [cx - 3, cy - 10, cx + tw + 3, cy + 4];
+}
+
+/** A small ring on (x, y), radius r, and a hairline from it to the nearest edge of
+    the label's box (none when the point is already at the label). */
+function pointAt(s: CardState, c: CanvasRenderingContext2D, x: number, y: number, r: number, [x0, y0, x1, y1]: [number, number, number, number]): void {
+  c.strokeStyle = rgba(s.C.ink, 0.85);
+  c.lineWidth = 1;
+  c.beginPath();
+  c.arc(x, y, r, 0, Math.PI * 2);
+  c.stroke();
+  const bx = clamp(x, x0, x1), by = clamp(y, y0, y1), d = Math.hypot(bx - x, by - y);
+  if (d < r + 6) return;
+  c.strokeStyle = rgba(s.C.ink, 0.35);
+  c.beginPath();
+  c.moveTo(x + ((bx - x) / d) * r, y + ((by - y) / d) * r);
+  c.lineTo(bx, by);
+  c.stroke();
 }

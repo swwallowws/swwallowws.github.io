@@ -40,6 +40,17 @@ function halfWidth(s: CardState, ring: number, t: number): number {
 
 // Where the hand is: the playhead while playing, otherwise its own slow turn.
 const hand = (s: CardState): number => (s.playing ? s.p : (s.sec / BAR) % 1);
+
+/** The ring and step under (x, y), and that step's chance; null in the centre or
+    outside the rings, so no label floats free of the circle. */
+function pointed(s: CardState, x: number, y: number): { ring: number; step: number; pr: number } | null {
+  const { cx, cy, R } = geo(s), r = Math.hypot(x - cx, y - cy) / R;
+  if (r < 0.25 || r > RING_R[RING_R.length - 1]! + 0.12) return null;
+  const ring = RING_R.reduce((b, f, i) => (Math.abs(f - r) < Math.abs(RING_R[b]! - r) ? i : b), 0);
+  const t = ((Math.atan2(y - cy, x - cx) + Math.PI / 2) / (Math.PI * 2) + 1) % 1;
+  const step = Math.round(t * 16) % 16;
+  return { ring, step, pr: probAt(ring, step) };
+}
 const onRing = (s: CardState, t: number, r: number): Point => {
   const { cx, cy } = geo(s), a = ang(t);
   return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
@@ -122,12 +133,22 @@ export const ysad: CardDef = {
   },
   playhead: () => {},
   label: (s, x, y) => {
-    const { cx, cy, R } = geo(s), r = Math.hypot(x - cx, y - cy) / R;
-    if (r < 0.25) return null;
-    const ring = RING_R.reduce((b, f, i) => (Math.abs(f - r) < Math.abs(RING_R[b]! - r) ? i : b), 0);
-    const t = ((Math.atan2(y - cy, x - cx) + Math.PI / 2) / (Math.PI * 2) + 1) % 1;
-    const step = Math.round(t * 16) % 16, pr = probAt(ring, step);
-    return pr ? `${RINGS[ring]} · ${Math.round(pr * 100)}% chance on step ${step + 1}` : RINGS[ring]!;
+    const at = pointed(s, x, y);
+    if (!at) return null;
+    return at.pr ? `${RINGS[at.ring]} · ${Math.round(at.pr * 100)}% chance on step ${at.step + 1}` : RINGS[at.ring]!;
+  },
+  // The label names a hit: ring that dot, so "step 5" is visibly it. A bare ring
+  // name points at the ring itself, where the lamp is.
+  labelAt: (s, x, y) => {
+    const at = pointed(s, x, y);
+    if (!at) return null;
+    const { cx, cy, R } = geo(s), r = RING_R[at.ring]! * R;
+    if (!at.pr) {
+      const a = Math.atan2(y - cy, x - cx);
+      return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, 4] as const;
+    }
+    const a = ang(at.step / 16);
+    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, DOT[at.ring]! * R + 5] as const;
   },
   audio: (a, at) => {
     for (let i = 0; i < 16; i++) {

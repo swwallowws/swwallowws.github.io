@@ -212,6 +212,8 @@ export function renderMap(): HTMLElement {
     }
     const lastX = Math.max(...t.row.stops.map(([k]) => xOf(k)));
     for (const [k, note, input] of t.row.stops) {
+      // (set every time: a note's text, drawn after a mark, changes the fill)
+      ctx.strokeStyle = rgba(col, a); ctx.fillStyle = rgba(col, a); ctx.lineWidth = 2;
       const x = xOf(k), z = height(x, y), j = at(x);
       const dir = unit(screen[Math.max(0, j - 2)]!, screen[Math.min(screen.length - 1, j + 2)]!);
       const p = P(x, y, z);

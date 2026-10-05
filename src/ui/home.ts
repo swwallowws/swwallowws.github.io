@@ -40,6 +40,12 @@ const WANTS: Want[] = [
     name: 'Rearranged',
   },
   {
+    want: 'simply jam.',
+    project: 'tabridge',
+    nameOn: 'corner',
+    name: 'Ready Set',
+  },
+  {
     want: 'simply sing.',
     project: 'voxmpe',
     // The card has no wordmark, so the name goes on the corner.
@@ -52,12 +58,6 @@ const WANTS: Want[] = [
     // The card has no wordmark, so the name goes on the corner.
     nameOn: 'corner',
     name: 'Coming Undone',
-  },
-  {
-    want: 'simply jam.',
-    project: 'tabridge',
-    nameOn: 'corner',
-    name: 'Ready Set',
   },
   {
     want: 'simply sketch.',
@@ -89,7 +89,7 @@ export function renderHome(main: HTMLElement): void {
     el(
       'div',
       { class: 'hero-text' },
-      el('h1', { class: 'head' }, 'Producing music and tools, because I want to…'),
+      el('h1', { class: 'head' }, 'producing music and tools, because I want to…'),
       el('ol', { class: 'wants' }, ...WANTS.map((w, i) => wantItem(w, i))),
     ),
   );
@@ -292,17 +292,19 @@ function wantItem(w: Want, i: number): HTMLElement {
 }
 
 /* The visual beside each summary: the project's lamp card (src/lamp/), drawn
-   in strings. A click plays its picture, silently (sound belongs to the demos);
-   Enter opens the same place as the "Try the demo" button beside the summary. */
+   in strings. It plays its picture once, silently (sound belongs to the demos),
+   the first time it comes into view; a click or Enter opens the same place as
+   the "Try the demo" button beside the summary. */
 function lampSide(w: Want, p: ProjectEntry, page: string): HTMLElement | null {
   const def = LAMP_CARDS[p.id];
   if (!def) return null;
   const to = wayIn(p, page);
   const box = el('div', { class: 'thumb lamp-thumb' });
   mountCard(box, def, {
-    label: `${w.name}: ${p.summary ?? p.lead}. Click to play it; press Enter to ${to.live ? 'open the demo' : 'read how it works'}.`,
+    label: `${w.name}: ${p.summary ?? p.lead}. Opens ${to.live ? 'the demo' : 'how it works'}.`,
     silent: true,
-    onEnter: () => location.assign(to.href),
+    playOnView: true,
+    onPress: () => location.assign(to.href),
   });
   if (w.nameOn) box.append(nameTag(w, p));
   return el('div', { class: 'thumb-col' }, box);

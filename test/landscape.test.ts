@@ -52,6 +52,20 @@ test('each ring name stays 12 px clear of every line, all the way round the loop
   }
 });
 
+test('the ring names stay 6 px clear of each other', () => {
+  for (const v of views) {
+    const boxes = RINGS.map((e, i) => {
+      const [px, py] = proj(v, S, e.cx + Math.cos(e.at) * e.rx, e.cy + Math.sin(e.at) * e.ry, LIFT * (i + 1));
+      return { name: e.name, b: box(px, py + 4 * S, e.name.length, RING_FONT) };
+    });
+    for (const p of boxes) for (const q of boxes) {
+      if (p === q) continue;
+      const gap = Math.max(q.b[0] - p.b[2], p.b[0] - q.b[2], q.b[1] - p.b[3], p.b[1] - q.b[3]);
+      assert.ok(gap >= 6, `${p.name} and ${q.name} are ${gap.toFixed(1)} px apart at pitch ${v.pitch.toFixed(2)}`);
+    }
+  }
+});
+
 test('the column headings stay 14 px clear of the MIDI ring and every line', () => {
   for (const v of views) {
     const obstacles = [...ring(v, RINGS[0]!, 0), ...ring(v, RINGS[0]!, LIFT), ...tracks(v).map((t) => t.p)];
@@ -78,8 +92,8 @@ test('marks of different tools stay 30 px apart', () => {
 });
 
 test('the tools that never touch MIDI stay 30 px clear of its ring, foot and top', () => {
-  const off = ROWS.map((r, i) => [r, i] as const).filter(([r]) => !r.loop && !r.stops.some(([k]) => k === 'mid' || k === 'midL'));
-  assert.deepEqual(off.map(([r]) => r.id), ['intentional', 'session-notes']);
+  const off = ROWS.map((r, i) => [r, i] as const).filter(([r]) => !r.loop && !r.stops.some(([k]) => k.startsWith('mid')));
+  assert.deepEqual(off.map(([r]) => r.id).sort(), ['intentional', 'session-notes']);
   for (const v of views) {
     const midi = [...ring(v, RINGS[0]!, 0), ...ring(v, RINGS[0]!, LIFT)];
     for (const [r, i] of off) for (const [x, y, z] of trackPts(r, i)) {

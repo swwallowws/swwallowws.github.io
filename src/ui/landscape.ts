@@ -11,7 +11,7 @@
    test/landscape.test.ts checks that no name, heading or mark crowds a line at
    any moment of the loop. */
 
-export type Stop = 'margin' | 'sound' | 'score' | 'mid' | 'midL' | 'set' | 'out';
+export type Stop = 'margin' | 'sound' | 'score' | 'mid' | 'midL' | 'midR' | 'set' | 'out';
 
 export interface Row {
   /** The project id (src/data/projects.ts): its name, category and item. */
@@ -37,26 +37,31 @@ export const NAME_X = 148;
 /** margin: where tracks that don't start in a named form begin; out: the right-hand
     ends, a short way past the set. */
 export const X = { margin: 222, sound: 290, score: 400, mid: 640, set: 900, out: 1000 } as const;
-export const xOf = (k: Stop): number => (k === 'midL' ? X.mid - 95 : X[k]);
+/** midL, midR: a stop inside MIDI's rings but short of the centre, so a tool that
+    climbs higher (Starling, to the microtonal peak) can pass without crowding it. */
+export const xOf = (k: Stop): number => (k === 'midL' ? X.mid - 95 : k === 'midR' ? X.mid + 95 : X[k]);
 
 /** Column guides and their names. The right-hand edge has no name: only two tools
     end there, in different things, so each end is named under its mark. MIDI is
     named on its ring, in the same row. */
 export const COLS: ['sound' | 'score' | 'set', string][] = [['sound', 'sound'], ['score', 'tab or score'], ['set', 'Ableton Live set']];
 
-/* Rows, top to bottom: the tools that touch MIDI together, so the sets can hold
-   them, each colour kept together; the two that don't touch MIDI below. Words only
-   where a track starts in the margin, which has no column name. */
+/* Rows, top to bottom, in the welcome page's order (home.ts WANTS), each colour
+   kept together. One exception: Odoroki touches MIDI, so it sits with the other
+   MIDI tools inside the ring, above the two that don't touch MIDI; on the page
+   it comes last. Words only where a track starts in the margin, which has no
+   column name. */
 export const ROWS: Row[] = [
+  { id: 'ysad', stops: [['margin', 'style', true], ['mid'], ['set']] },
+  { id: 'rearranged', stops: [], loop: { rx: 68, ry: 12, dy: -6, from: 0.62 * Math.PI, sweep: 1.72 * Math.PI } },
+  // (stops in expressive's band, right of the centre: Starling climbs past to the peak)
+  { id: 'tabridge', stops: [['score', '', true], ['midR'], ['set']] },
+  { id: 'voxmpe', stops: [['sound', '', true], ['mid'], ['set']] },
   // (stops in plain MIDI's band, short of the centre, so Starling can climb past it)
   { id: 'stemscribe', stops: [['sound', '', true], ['midL']] },
-  { id: 'voxmpe', stops: [['sound', '', true], ['mid'], ['set']] },
-  { id: 'tabridge', stops: [['score', '', true], ['mid'], ['set']] },
-  { id: 'rearranged', stops: [], loop: { rx: 68, ry: 14, dy: 10, from: 0.62 * Math.PI, sweep: 1.72 * Math.PI } },
-  { id: 'ysad', stops: [['margin', 'style', true], ['mid'], ['set']] },
   { id: 'odoroki', stops: [['sound', '', true], ['mid', '', true], ['out', 'live visuals']] },
-  { id: 'intentional', stops: [['margin', 'link', true], ['out', 'DJ crate']] },
   { id: 'session-notes', stops: [['margin', 'lyrics', true], ['set']] },
+  { id: 'intentional', stops: [['margin', 'link', true], ['out', 'DJ crate']] },
 ];
 
 /** The nested sets, each holding the next. Each ring is broken where its name sits
@@ -64,10 +69,11 @@ export const ROWS: Row[] = [
 export const RINGS: Ring[] = [
   // top: level with the column headings
   { name: 'MIDI', cx: X.mid, cy: (rowY(0) + rowY(5)) / 2, rx: 215, ry: (rowY(5) - rowY(0)) / 2 + 34, at: -Math.PI / 2 },
-  // bottom, between Ready Set and Rearranged
-  { name: 'expressive', cx: X.mid, cy: (rowY(1) + rowY(2)) / 2, rx: 140, ry: ROW / 2 + 34, at: Math.PI / 2 },
-  // bottom, between Starling and Ready Set
-  { name: 'microtonal', cx: X.mid, cy: rowY(1), rx: 78, ry: 30, at: Math.PI / 2 },
+  // holds Ready Set and Starling; named at its bottom, under microtonal's name
+  { name: 'expressive', cx: X.mid, cy: (rowY(2) + rowY(3)) / 2, rx: 140, ry: ROW / 2 + 46, at: Math.PI / 2 },
+  // holds Starling; named at its bottom, between Starling and Coming Undone
+  { name: 'microtonal', cx: X.mid, cy: rowY(3), rx: 78, ry: 26, at: Math.PI / 2 },
+  // (angles from .peek/search-rings.ts: the clearest spots across the whole loop)
 ];
 
 /** The heading row runs along the top of the MIDI ring, where MIDI is named. */

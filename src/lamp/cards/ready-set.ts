@@ -14,6 +14,12 @@ const CHORDS = ['Am', 'F', 'C', 'G'];
 const ROLE: Role[] = ['you', 'chords', 'chords', 'bass', 'drums'];
 const LANE: Record<Role, [number, number]> = { you: [0.1, 0.3], chords: [0.35, 0.56], bass: [0.61, 0.78], drums: [0.83, 1] };
 const mid = (r: Role): number => (LANE[r][0] + LANE[r][1]) / 2;
+/** The lane nearest a height on the card. */
+const laneAt = (s: CardState, y: number): Role => {
+  const v = (y - 22) / (s.H - 44);
+  const roles = Object.keys(LANE) as Role[];
+  return roles.reduce((b, r) => (Math.abs(mid(r) - v) < Math.abs(mid(b) - v) ? r : b), roles[0]!);
+};
 const staffY = (s: CardState, k: number): number => s.V(0.4) + k * s.H * 0.07;
 const CH = [0, -1, 1, -0.5], BASS = [0, 0, -2, -2, 1, 1, -1, -1], DR = new Set([0, 4, 6, 8, 12, 14]);
 const t2 = (t: number): number => clamp((t - X0) / (X1 - X0), 0, 1);
@@ -94,10 +100,14 @@ export const readySet: CardDef = {
       ctx.fillText(c, x + 2 * lit, y0 + (y1 - y0) * lit);
     });
   },
+  // The label names a lane: point at that lane's clip, at the lamp's place along it.
+  labelAt: (s, x, y) => {
+    const role = laneAt(s, y);
+    const x0 = barX(s, 0), x1 = barX(s, BARS);
+    return [Math.min(x1 - 6, Math.max(x0 + 6, x)), s.V(LANE[role][0]) + 6, 4] as const;
+  },
   label: (s, x, y) => {
-    const v = (y - 22) / (s.H - 44);
-    const roles = Object.keys(LANE) as Role[];
-    const role = roles.reduce((b, r) => (Math.abs(mid(r) - v) < Math.abs(mid(b) - v) ? r : b), roles[0]!);
+    const role = laneAt(s, y);
     if (role === 'you') return 'your part · open: sing it, play it, or improvise';
     if (role === 'chords') return `chords · ${CHORDS[Math.min(3, Math.floor(t2(s.u(x)) * 4))]}`;
     return role === 'bass' ? 'bass' : 'drums';
