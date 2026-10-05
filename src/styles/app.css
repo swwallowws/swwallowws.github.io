@@ -219,73 +219,13 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 
 /* ---------------------------------------------------------------- map */
 
-/* The explorable map (map.ts): at rest, symbols and faint curves; exploring
-   lights connections and opens a card beside the thing. Quick to light up,
-   slow to settle back, like water going still. */
-/* No clipping on desktop, so the attached card can reach past the map's edge
-   without giving the box its own scrollbar. (overflow-x: auto alone would
-   silently make overflow-y auto too.) Narrow screens scroll sideways only. */
-.map { position: relative; overflow: visible; }
-@media (max-width: 760px) { .map { overflow-x: auto; overflow-y: hidden; } }
-.map svg { display: block; width: 100%; min-width: 720px; max-height: 80vh; height: auto; font-family: var(--font-sans); touch-action: manipulation; }
-.map .edge .line, .map .edge .end, .map .edge .lbl, .map .node, .map .node .cap, .map .node .ring {
-  transition: opacity .9s cubic-bezier(.25, .1, .25, 1), stroke .9s;
-}
-.map .graph.exploring .edge .line, .map .graph.exploring .edge .end, .map .graph.exploring .edge .lbl,
-.map .graph.exploring .node, .map .graph.exploring .node .cap { transition-duration: .25s; }
-.map .edge .line, .map .edge .end { opacity: .2; }
-.map .edge.on .line, .map .edge.on .end { opacity: 1; }
-.map .edge.found:not(.on) .line, .map .edge.found:not(.on) .end { opacity: .55; }
-.map .edge .lbl { opacity: 0; font-stretch: 112%; }
-.map .edge.on .lbl, .map .edge.found .lbl { opacity: 1; }
-.map .graph.exploring .edge.found:not(.on) .lbl { opacity: .45; }
-.map .edge .hit { pointer-events: stroke; cursor: pointer; }
-.map .edge .line, .map .edge .end, .map .edge .lbl { pointer-events: none; }
-/* Symbols are read, not clicked through, so they keep the ordinary cursor;
-   only curves (real links) show the pointer and the browser's link preview. */
-.map .node { cursor: default; outline: none; }
-.map .node .hit { pointer-events: all; }
-.map .node .cap { opacity: 0; fill: var(--ink-mut); pointer-events: none; }
-.map .node.on .cap, .map .node.found .cap { opacity: 1; }
-.map .node.found .ring { stroke: var(--ink-mut); }
-.map .graph.exploring .node:not(.on) { opacity: .32; }
-.map .node.focus .ring { stroke: var(--ink); stroke-width: 2; }
-/* The card already names what's being read, so its own label steps aside. */
-.map .node.focus .cap, .map .node.focus .ring-name, .map .edge.focus .lbl { opacity: 0; }
-.map .node:focus-visible .ring { stroke: var(--ink); stroke-width: 2.5; }
-/* A halo in the ground colour keeps labels readable where they cross curves. */
-.map .cap, .map .lbl, .map .band, .map .ring-name { paint-order: stroke; stroke: var(--ground); stroke-width: 5px; stroke-linejoin: round; }
-/* Band captions and the lane's rule: quiet, always there. */
-.map .band { font: 500 10.5px var(--font-mono); letter-spacing: .08em; fill: var(--ink-mut); opacity: .75; }
-.map .lane-rule { stroke: var(--line); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; }
-/* MIDI's expressive ring: a faint band with a wavering line, named along its top.
-   The band sits under the curves; outline, name and hit area sit with the symbols. */
-.map .ring-body .band-fill { fill: var(--ink); fill-opacity: .045; }
-.map .ring-body .wave { stroke: var(--ink-mut); opacity: .45; }
-.map .ring-body { transition: opacity .9s cubic-bezier(.25, .1, .25, 1); }
-.map .ring-name { font-family: var(--font-mono); font-weight: 500; letter-spacing: .06em; fill: var(--ink-mut); stroke-width: 4px; pointer-events: none; }
-.map .node.halo .hit { pointer-events: fill; }
-.map .node.halo.on .ring-name, .map .node.halo.focus .ring-name { fill: var(--ink); }
-.map .graph.exploring .ring-body:not(.on) { opacity: .32; }
-/* The lane around the music: smaller and fainter until it's being read. */
-.map .graph:not(.exploring) .node.lane { opacity: .72; }
-.map .graph:not(.exploring) .edge.lane:not(.found) .line, .map .graph:not(.exploring) .edge.lane:not(.found) .end { opacity: .14; }
-
-.map-card {
-  position: absolute; z-index: 2; width: 250px; padding: 10px 12px;
-  background: var(--ground-2); border: 1px solid var(--line); pointer-events: none;
-  font-size: 13.5px; line-height: 1.45; transition: opacity .25s;
-}
-.map-card.gone { opacity: 0; transition: opacity .7s; }
-.map-card strong { display: block; font-size: 14.5px; font-stretch: 112%; }
-.map-card strong[data-category] { color: var(--acc); }
-.map-card strong .tool-line { font-size: 13px; font-stretch: normal; }
-.map-card p { margin: 3px 0 0; color: var(--ink-mut); }
-.map-card ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 3px 12px; font: 600 11.5px var(--font-mono); }
-.map-card li { color: var(--acc); }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-@media (prefers-reduced-motion: reduce) {
-  .map .edge .line, .map .edge .end, .map .edge .lbl, .map .node, .map .node .cap, .map .node .ring, .map .ring-body, .map-card, .map-card.gone { transition: none; }
+/* The map (map.ts): the landscape drawn in strings on a canvas, which sizes its own
+   height. Narrow screens scroll it sideways rather than shrink the words away. */
+.map { position: relative; }
+.map canvas { display: block; width: 100%; touch-action: pan-y; }
+@media (max-width: 760px) {
+  .map { overflow-x: auto; overflow-y: hidden; }
+  .map canvas { min-width: 720px; }
 }
 
 /* ---------------------------------------------------------------- shared bits */

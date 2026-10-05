@@ -95,6 +95,7 @@ try {
             .evaluate((c) => [...c.getContext("2d").getImageData(3, 3, 1, 1).data]);
           if (r + g + b < 3 * 160) problems.push(`${where}: a lamp card's ground is dark (${r}, ${g}, ${b}) in Paper`);
         }
+        await checkMap(page, where);
       }
       // getAttribute: the map's links are SVG <a>, whose .href isn't a string
       const hrefs = await page.evaluate(() =>
@@ -117,6 +118,46 @@ try {
 }
 
 console.log(`checked ${PAGES.length} pages in Paper and Night, ${linked.size} links within the site`);
+
+/* The map at the foot of the welcome page (src/ui/map.ts): it draws, has a link
+   for every tool for keyboards and screen readers, draws a track taut under the
+   pointer (the map reports the tool in data-focus), and a click glides to that
+   tool's item. */
+async function checkMap(page, where) {
+  const map = page.locator(".map");
+  if ((await map.count()) !== 1) return problems.push(`${where}: no map`);
+  await map.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(600);
+  const inked = await map.locator("canvas").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4 * 16) if (d[i] > 0) n++;
+    return n;
+  });
+  if (inked < 200) problems.push(`${where}: the map drew almost nothing (${inked} sampled pixels)`);
+  const links = await map.locator(".sr-only a").evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+  if (links.length !== 8) problems.push(`${where}: the map has ${links.length} tool links, expected 8`);
+  // sweep the pointer down the map a third of the way across: it crosses most tracks
+  const box = await map.locator("canvas").boundingBox();
+  const seen = new Set();
+  for (let y = box.y + 4; y < box.y + box.height - 4; y += 3) {
+    await page.mouse.move(box.x + box.width * 0.33, y);
+    const f = await map.getAttribute("data-focus");
+    if (f) seen.add(f);
+  }
+  if (seen.size < 5) problems.push(`${where}: the pointer drew only ${seen.size} tracks taut (${[...seen].join(", ")})`);
+  // back onto one, then click: the page glides to that tool's item
+  for (let y = box.y + 4; y < box.y + box.height - 4; y += 3) {
+    await page.mouse.move(box.x + box.width * 0.33, y);
+    const f = await map.getAttribute("data-focus");
+    if (!f) continue;
+    await page.mouse.click(box.x + box.width * 0.33, y);
+    await page.waitForTimeout(1000);
+    const hash = await page.evaluate(() => location.hash);
+    if (hash !== `#${f}`) problems.push(`${where}: clicking ${f} on the map went to "${hash}"`);
+    break;
+  }
+}
 if (elsewhere.size) {
   console.log(`\nother sites that didn't answer (fine if not deployed yet):`);
   for (const [u, pages] of elsewhere) console.log(`- ${u} (from ${[...new Set(pages.split(" "))].join(", ")})`);
