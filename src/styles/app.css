@@ -490,6 +490,26 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
 }
 .flow .step-n { font: 600 12px var(--font-mono); color: var(--acc); }
 .flow strong { font-stretch: var(--head-stretch); }
+/* A flow merged with its lamp card (src/lamp/): the card on top, in the same
+   frame, each column of strings above its step; the step being played lights up. */
+.flow-lamp .lamp-flow {
+  height: clamp(260px, 28vw, 380px);
+  border: var(--hairline); border-bottom: 0; background: var(--ground-2);
+}
+.flow-lamp .lamp-flow canvas:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
+/* Always six columns under the card's six; on a narrow screen the block keeps
+   its width and scrolls sideways inside its own frame, and a sideways swipe
+   over the card scrolls it too. */
+.flow-lamp { overflow-x: auto; }
+.flow-lamp .flow { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 800px) {
+  .flow-lamp > * { min-width: 760px; }
+  .flow-lamp .lamp-flow canvas { touch-action: pan-x pan-y !important; }
+}
+.flow-lamp .flow li { transition: background-color .25s ease-in-out; }
+.flow-lamp .flow li.lit { background: color-mix(in srgb, var(--acc) 6%, var(--ground-2)); }
+.flow-lamp .flow li.lit strong { color: var(--acc); }
+@media (prefers-reduced-motion: reduce) { .flow-lamp .flow li { transition: none; } }
 
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space) calc(var(--space) * 3); margin: 0; }
 .facts dt { font: 500 11px/1.9 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mut); }

@@ -7,8 +7,8 @@
    slots render as labelled placeholders, so filling one later is a data change. */
 
 import { categoryLabel, type Beat, type ProjectEntry, type Slot } from '../data/projects.js';
-import { LAMP_CARDS } from '../lamp/cards/index.js';
-import { mountCard } from '../lamp/engine.js';
+import { LAMP_CARDS, LAMP_FLOW_CARDS } from '../lamp/cards/index.js';
+import { mountCard, type CardDef } from '../lamp/engine.js';
 import { VISUALS } from '../data/visuals.generated.js';
 import { actions, FULL_VERSION } from './actions.js';
 import { THEME_EVENT } from './chrome.js';
@@ -111,8 +111,9 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
   }
 
   // The project's lamp card (src/lamp/), on its own, wide, between the head and
-  // the rest: only where there is no live demo, since a demo shows the tool itself.
-  const def = liveBeat ? undefined : LAMP_CARDS[p.id];
+  // the rest: only where there is no live demo, since a demo shows the tool
+  // itself, and no flow of steps to merge it with (see flowWithCard).
+  const def = liveBeat || flowCard(p) ? undefined : LAMP_CARDS[p.id];
   const lamp = def ? el('section', { class: 'lamp-wide' }) : null;
   if (lamp && def) mountCard(lamp, def, { label: `${p.name}: ${p.summary ?? p.lead}. Click or press Enter to play it.` });
 
@@ -229,7 +230,8 @@ function visualFor(beat: Beat, p: ProjectEntry): HTMLElement | null {
     case 'image':
       return p.image ? picture(p.image) : null;
     case 'flow':
-      return p.flow ? flow(p.flow) : null;
+      if (!p.flow) return null;
+      return flowCard(p) ? flowWithCard(p, flowCard(p)!, beat.text ?? beat.title) : flow(p.flow);
     case 'shots':
       return p.shots ? shots(p.shots) : null;
     case 'keys':
@@ -347,6 +349,25 @@ function picture(img: NonNullable<ProjectEntry['image']>): HTMLElement {
   wrap.append(el('img', { src: img.src, alt: img.alt, class: img.srcDark ? 'for-paper' : '', loading: 'lazy' }));
   if (img.srcDark) wrap.append(el('img', { src: img.srcDark, alt: img.alt, class: 'for-night', loading: 'lazy' }));
   return wrap;
+}
+
+/** A page's lamp card that merges with its flow of steps, when it has no live demo. */
+function flowCard(p: ProjectEntry): CardDef | undefined {
+  return p.live && 'url' in p.live ? undefined : LAMP_FLOW_CARDS[p.id];
+}
+
+/* The flow of steps with its lamp card on top, in one frame: the card's width
+   is the steps' columns, so each column of strings sits above its step. While
+   the card plays, the step under the playhead lights up. */
+function flowWithCard(p: ProjectEntry, def: CardDef, says: string): HTMLElement {
+  const steps = flow(p.flow!);
+  const host = el('div', { class: 'lamp-flow' });
+  mountCard(host, def, { label: `${p.name}: ${says} Click or press Enter to play it.` });
+  new MutationObserver(() => {
+    const lit = host.dataset['step'];
+    [...steps.children].forEach((li, i) => li.classList.toggle('lit', String(i) === lit));
+  }).observe(host, { attributes: true, attributeFilter: ['data-step'] });
+  return el('div', { class: 'flow-lamp' }, host, steps);
 }
 
 function flow(steps: NonNullable<ProjectEntry['flow']>): HTMLElement {

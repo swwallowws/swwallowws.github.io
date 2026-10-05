@@ -22,6 +22,8 @@ const EXPECT = {
   ysad: [[0.5, 0.09, /^hats/]],
   "session-notes": [[0.2, 0.23, /^\[1\] · a clip on bar 1$/]],
   intentional: [[0.5, 0.5, /(kept|dropped)/]],
+  // Tagline's page card: its six columns are the six steps.
+  "intentional-flow": [[0.08, 0.5, /^Capture · /], [0.42, 0.5, /^Triage · /], [0.75, 0.35, /^Sync · /]],
 };
 
 const problems = [];

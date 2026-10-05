@@ -69,12 +69,16 @@ try {
         [...document.querySelectorAll("video[src]")].filter((v) => v.readyState === 0).map((v) => v.getAttribute("src")),
       );
       for (const s of stuck) problems.push(`${where}: video never loaded: ${s}`);
-      // A project page shows its lamp card only when it has no live demo (the
-      // demo is the better picture): today, Tagline's alone.
+      // A project page shows a lamp card only when it has no live demo (the
+      // demo is the better picture): today, Tagline's alone, merged with its
+      // six steps (.flow-lamp) rather than on its own.
       if (path) {
         const want = NO_DEMO.has(path) ? 1 : 0;
-        const have = await page.locator(".lamp-wide canvas").count();
+        const have = await page.locator(".lamp-wide canvas, .flow-lamp canvas").count();
         if (have !== want) problems.push(`${where}: ${have} lamp cards, expected ${want}`);
+        if (path === "intentional/" && (await page.locator(".flow-lamp canvas").count()) !== 1) {
+          problems.push(`${where}: the card is not merged with the six steps`);
+        }
       }
       // The welcome page shows every tool's lamp card (src/lamp/) and no
       // recordings marked "preview".
