@@ -379,7 +379,8 @@ function draw(m: Mounted, ms: number): void {
     }
     const pl = def.playLabel?.(s, s.p);
     if (pl) tag(s, ctx, pl.text, pl.x, pl.y, C.acc);
-  } else if (def.label && (s.inside || !quiet)) {
+  } else if (def.label && !m.still && (s.inside || !quiet)) {
+    // (no label in a still: share cards crop the picture, which can cut a label off)
     label = def.label(s, s.lx, s.ly) ?? '';
     if (label) {
       const box = tag(s, ctx, label, s.lx + m.R * 0.45, s.ly - m.R * 0.45);
