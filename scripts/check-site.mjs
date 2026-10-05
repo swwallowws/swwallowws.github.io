@@ -14,6 +14,9 @@ const PAGES = process.argv.length > 3
   ? process.argv.slice(3)
   : ["", "ysad/", "rearranged/", "voxmpe/", "stemscribe/", "tabridge/", "session-notes/", "intentional/"];
 
+// Project pages without a live demo, which show their lamp card instead.
+const NO_DEMO = new Set(["intentional/"]);
+
 const problems = [];
 const elsewhere = new Map(); // other sites' URLs that failed, with the pages asking
 const linked = new Set();
@@ -66,14 +69,22 @@ try {
         [...document.querySelectorAll("video[src]")].filter((v) => v.readyState === 0).map((v) => v.getAttribute("src")),
       );
       for (const s of stuck) problems.push(`${where}: video never loaded: ${s}`);
-      // A project page shows its lamp card, wide, after the head.
-      if (path && (await page.locator(".lamp-wide canvas").count()) !== 1) problems.push(`${where}: no lamp card`);
+      // A project page shows its lamp card only when it has no live demo (the
+      // demo is the better picture): today, Tagline's alone.
+      if (path) {
+        const want = NO_DEMO.has(path) ? 1 : 0;
+        const have = await page.locator(".lamp-wide canvas").count();
+        if (have !== want) problems.push(`${where}: ${have} lamp cards, expected ${want}`);
+      }
       // The welcome page shows every tool's lamp card (src/lamp/) and no
       // recordings marked "preview".
       if (!path) {
         const cards = await page.locator(".lamp-host canvas").count();
         if (cards !== 7) problems.push(`${where}: ${cards} lamp cards, expected 7`);
         if (await page.locator(".preview-tag").count()) problems.push(`${where}: a "preview" tag is still shown`);
+        // The way in sits with the other buttons, one per tool.
+        const tries = await page.locator(".actions .btn-try").count();
+        if (tries !== 7) problems.push(`${where}: ${tries} "Try the demo" or "Read how it works" buttons beside the summaries, expected 7`);
         // The cards draw in the theme's colours: in Paper the ground is light.
         if (theme === "paper" && cards) {
           const [r, g, b] = await page.locator(".lamp-host canvas").first()

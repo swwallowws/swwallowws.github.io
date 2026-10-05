@@ -5,7 +5,7 @@
    Wording is a draft for Bengisu to edit. */
 
 import { projects, type ProjectEntry } from '../data/projects.js';
-import { actions } from './actions.js';
+import { actions, wayIn } from './actions.js';
 import { LAMP_CARDS } from '../lamp/cards/index.js';
 import { mountCard } from '../lamp/engine.js';
 import { renderMap } from './map.js';
@@ -292,23 +292,20 @@ function wantItem(w: Want, i: number): HTMLElement {
 }
 
 /* The visual beside each summary: the project's lamp card (src/lamp/), drawn
-   in strings, which plays on a click, and under its bottom-right edge the way
-   in: "Try the demo" where the tool has a live demo, "Read how it works"
-   otherwise. The card plays, so only the button is a link. */
+   in strings. A click plays its picture, silently (sound belongs to the demos);
+   Enter opens the same place as the "Try the demo" button beside the summary. */
 function lampSide(w: Want, p: ProjectEntry, page: string): HTMLElement | null {
   const def = LAMP_CARDS[p.id];
   if (!def) return null;
-  const live = !!p.live && 'url' in p.live;
+  const to = wayIn(p, page);
   const box = el('div', { class: 'thumb lamp-thumb' });
-  mountCard(box, def, { label: `${w.name}: ${p.summary ?? p.lead}` });
+  mountCard(box, def, {
+    label: `${w.name}: ${p.summary ?? p.lead}. Click to play it; press Enter to ${to.live ? 'open the demo' : 'read how it works'}.`,
+    silent: true,
+    onEnter: () => location.assign(to.href),
+  });
   if (w.nameOn) box.append(nameTag(w, p));
-  const link = el(
-    'a',
-    { class: 'cue', href: live ? `${page}#demo` : page },
-    live ? 'Try the demo' : 'Read how it works',
-    el('span', { class: 'cue-arrow', 'aria-hidden': 'true' }, ' →'),
-  );
-  return el('div', { class: 'thumb-col' }, box, link);
+  return el('div', { class: 'thumb-col' }, box);
 }
 
 /** The name as a tag on the card's corner (the heading stays for screen readers). */

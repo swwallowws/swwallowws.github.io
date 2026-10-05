@@ -89,6 +89,39 @@ try {
     await page.close();
   }
 
+  // Silent cards (the welcome page's): a click plays the picture, never a sound.
+  if (ids.length) {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    page.on("pageerror", (e) => problems.push(`silent: script error: ${e.message}`));
+    await page.addInitScript(() => {
+      const Real = window.AudioContext;
+      window.__audioMade = 0;
+      window.AudioContext = class extends Real { constructor(...a) { super(...a); window.__audioMade++; } };
+    });
+    await page.goto(gallery("silent=1"), { waitUntil: "networkidle" });
+    for (const id of ids) {
+      await page.locator(`#${id} canvas`).click();
+      await page.waitForTimeout(400);
+      if ((await data(page, id, "playing")) !== "1") problems.push(`silent: ${id} did not play its picture`);
+    }
+    const made = await page.evaluate(() => window.__audioMade);
+    if (made) problems.push(`silent: ${made} audio context(s) made, expected none`);
+    await page.close();
+  }
+
+  // Keys: Enter plays a focused card; Space is left alone, so it scrolls the page.
+  if (ids.length) {
+    const page = await open(`card=${ids[0]}`);
+    await page.locator(`#${ids[0]} canvas`).focus();
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(400);
+    if ((await data(page, ids[0], "playing")) !== "0") problems.push(`keys: Space played ${ids[0]}`);
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(400);
+    if ((await data(page, ids[0], "playing")) !== "1") problems.push(`keys: Enter did not play ${ids[0]}`);
+    await page.close();
+  }
+
   // Many clicks: a restless visitor clicks fast; the card keeps playing.
   if (ids.length) {
     const page = await open("");

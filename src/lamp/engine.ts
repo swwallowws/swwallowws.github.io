@@ -2,7 +2,7 @@
    A card is a bundle of strings with a rest form (the music as a musician
    knows it) and a taut form (what the tool makes of it). The lamp, a soft light
    under the pointer, pulls the strings it touches taut and shows the card's
-   backdrop beneath it; a click (or Enter, or Space) plays the card, and
+   backdrop beneath it; a click (or Enter) plays the card, and
    everything the playhead passes turns taut, then relaxes. Text lives only in
    the lamp's label or rides with the playhead.
    Spec: docs/superpowers/specs/2026-10-05-lamp-visuals-design.md */
@@ -116,6 +116,7 @@ interface Mounted {
   last: number;
   playStart: number;
   still: boolean;
+  silent: boolean;
   label: string;
   playing: boolean;
   ready: boolean;
@@ -124,17 +125,28 @@ interface Mounted {
 const mounted = new Set<Mounted>();
 let running = false;
 
-export function mountCard(host: HTMLElement, def: CardDef, opts: { label: string; still?: boolean }): { destroy(): void } {
+/** How a page mounts a card. `label` is read out for the canvas, so it says
+    what a click and Enter do there. `silent`: a click plays the picture only
+    (the welcome page). `onEnter`: what Enter does (the welcome page opens the
+    tool's demo); without it, Enter plays the card. `still`: a share-card capture. */
+export interface MountOptions {
+  label: string;
+  still?: boolean;
+  silent?: boolean;
+  onEnter?: () => void;
+}
+
+export function mountCard(host: HTMLElement, def: CardDef, opts: MountOptions): { destroy(): void } {
   host.classList.add('lamp-host');
   host.dataset['category'] = def.category;
   host.dataset['label'] = '';
   host.dataset['playing'] = '0';
 
   const canvas = document.createElement('canvas');
-  canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:pan-y';
+  canvas.style.cssText = 'display:block;width:100%;height:100%;touch-action:pan-y;cursor:pointer';
   canvas.tabIndex = 0;
   canvas.setAttribute('role', 'button');
-  canvas.setAttribute('aria-label', `${opts.label}. Press to play.`);
+  canvas.setAttribute('aria-label', opts.label);
   host.append(canvas);
   const off = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -154,7 +166,7 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: { label: string
   };
   const m: Mounted = {
     s, def, canvas, ctx, off, octx, R: 0, visible: true, last: -Infinity, playStart: -1,
-    still: !!opts.still, label: '', playing: false, ready: false,
+    still: !!opts.still, silent: !!opts.silent, label: '', playing: false, ready: false,
   };
   readColours(m);
 
@@ -170,10 +182,12 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: { label: string
   canvas.addEventListener('pointerleave', () => { s.inside = false; });
   canvas.addEventListener('pointercancel', () => { s.inside = false; });
   canvas.addEventListener('click', () => play(m));
+  // Enter only: Space stays the page's, so it scrolls even with a card focused.
   canvas.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.key !== 'Enter') return;
     e.preventDefault();
-    play(m);
+    if (opts.onEnter) opts.onEnter();
+    else play(m);
   });
 
   const size = (): void => {
@@ -234,7 +248,7 @@ function start(): void {
 function play(m: Mounted): void {
   if (m.still) return;
   m.def.onPlay?.(m.s);
-  const a = audio();
+  const a = m.silent ? null : audio();
   if (a && m.def.audio) {
     try {
       m.def.audio(a, a.currentTime + 0.06, m.s);

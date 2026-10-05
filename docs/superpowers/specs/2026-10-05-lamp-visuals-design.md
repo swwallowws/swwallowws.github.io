@@ -193,6 +193,13 @@ Each README change is its own commit in its own repo, pushed only when asked.
   the first story beat.
 - Recorded loops and studio stills are deleted from the showcase once each
   project's repo has them (see READMEs).
+- After the first build: a project page shows its card only when it has no
+  live demo (the demo shows the tool itself), which today is Tagline's alone.
+- The welcome page's cards are silent: a click plays the picture, sound is
+  left to the demos. Enter on a focused card opens the tool's demo (or page),
+  and Space is left to scroll the page.
+- The way in ("Try the demo" or "Read how it works") is the first button in
+  the row beside each summary, with "Full version" and "GitHub".
 
 ## Reference
 

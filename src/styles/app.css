@@ -199,29 +199,13 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
    would point at something already in view: it only shows when stacked. */
 @media (min-width: 1240px) { .project-hero:not(.single) .btn.in-page { display: none; } }
 
-/* The visual beside each summary: the lamp card (src/lamp/), with the way in
-   hanging under its bottom-right edge like a tab. The card plays on a click;
-   only the button is a link. */
+/* The visual beside each summary: the lamp card (src/lamp/). A click plays it;
+   the way in is the first button beside the summary (actions.ts). */
 .thumb-col { position: relative; display: flex; flex-direction: column; height: 100%; }
 .thumb-col > .lamp-thumb { position: relative; flex: 1; min-height: 300px; }
 .thumb-col .name-tag { pointer-events: none; }
-.thumb-col > .cue {
-  align-self: flex-end; margin-top: -1px; border-radius: 0 0 var(--radius) var(--radius);
-  display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
-  padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
-  background: var(--acc); border: 1px solid var(--acc);
-  font: 600 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap; text-decoration: none;
-  transition: background-color .35s ease-in-out, border-color .35s ease-in-out;
-}
-.thumb-col > .cue .cue-arrow { color: inherit; }
-@media (hover: hover) { .thumb-col > .cue:hover { background: var(--ink); border-color: var(--ink); } }
-.thumb-col > .cue:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; background: var(--ink); border-color: var(--ink); }
 .lamp-thumb canvas:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
-@media (max-width: 720px) {
-  .thumb-col > .lamp-thumb { min-height: 260px; }
-  .thumb-col > .cue { min-height: 34px; padding: calc(var(--space) * .5) calc(var(--space) * 1.1); font-size: 12px; }
-}
-@media (prefers-reduced-motion: reduce) { .thumb-col > .cue { transition: none; } }
+@media (max-width: 720px) { .thumb-col > .lamp-thumb { min-height: 260px; } }
 
 .thumb { border: var(--hairline); background: var(--ground-2); overflow: hidden; }
 

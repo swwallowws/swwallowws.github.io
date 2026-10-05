@@ -110,10 +110,11 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
     else if (p.worksWith) text.append(badges(p.worksWith, 'badges big'));
   }
 
-  // The project's lamp card (src/lamp/): on its own, wide, between the head and the rest.
-  const def = LAMP_CARDS[p.id];
+  // The project's lamp card (src/lamp/), on its own, wide, between the head and
+  // the rest: only where there is no live demo, since a demo shows the tool itself.
+  const def = liveBeat ? undefined : LAMP_CARDS[p.id];
   const lamp = def ? el('section', { class: 'lamp-wide' }) : null;
-  if (lamp && def) mountCard(lamp, def, { label: `${p.name}: ${p.summary ?? p.lead}` });
+  if (lamp && def) mountCard(lamp, def, { label: `${p.name}: ${p.summary ?? p.lead}. Click or press Enter to play it.` });
 
   if (liveBeat && p.live && 'url' in p.live && p.parts) {
     // The new layout: the description on its own, the card, then the demo
