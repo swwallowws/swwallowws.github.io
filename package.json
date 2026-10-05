@@ -9,6 +9,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "check": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "check:lamp": "node scripts/lamp-check.mjs",
     "visuals": "node scripts/visuals.mjs",
     "favicons": "node scripts/favicons.mjs",
     "peek": "node scripts/peek.mjs",
