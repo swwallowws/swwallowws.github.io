@@ -1,11 +1,14 @@
 // Export YSAD's logo files for its store page, into yousuckatdrums/docs/brand/:
 //   - the icon: the demo favicon's eight-step circle (demo/favicons/favicon.svg),
 //     square, on Paper and on Night, plus its SVG;
-//   - the wordmark: "YSAD" as the plugin window draws it (Archivo, weight 800,
-//     width 125%, tracking -0.02em; gui/fonts.rs), ink on a transparent ground.
+//   - the wordmark: "YSAD" in the design system's head style (Inter Tight,
+//     weight 900, tracking -0.02em), ink on a transparent ground.
+// Colours come from the design system's tokens (the transform accent, the
+// grounds and the ink), so the logo follows the design.
 //   node scripts/export-ysad-logo.mjs [size]   (default 1024)
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright-core';
+import { parseTokens } from '../../design/check-contrast.mjs';
 
 const size = Number(process.argv[2] || 1024);
 const out = new URL('../../yousuckatdrums/docs/brand/', import.meta.url);
@@ -20,13 +23,12 @@ const dots = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
   return `<circle cx="${x}" cy="${y}" r="${big ? 3.2 : 1.6}"${big ? '' : ' opacity="0.45"'}/>`;
 }).join('');
 const icon = (acc) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -12 24 24" fill="${acc}">${dots}</svg>`;
-writeFileSync(new URL('ysad-icon.svg', out), icon('#c23900') + '\n');
-
-const themes = {
-  paper: { ground: '#efeee9', ink: '#111111', acc: '#c23900' },
-  night: { ground: '#0e0e0e', ink: '#f2f2ee', acc: '#ff5a1f' },
-};
-const font = readFileSync(new URL('../../design/fonts/Archivo.woff2', import.meta.url)).toString('base64');
+const tokens = parseTokens(readFileSync(new URL('../../design/tokens.css', import.meta.url), 'utf8'));
+const themes = Object.fromEntries(['paper', 'night'].map((m) => [m, {
+  ground: tokens['--ground'][m], ink: tokens['--ink'][m], acc: tokens['acc:transform'][m],
+}]));
+writeFileSync(new URL('ysad-icon.svg', out), icon(themes.paper.acc) + '\n');
+const font = readFileSync(new URL('../../design/fonts/InterTight.woff2', import.meta.url)).toString('base64');
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const page = await browser.newPage({ viewport: { width: size, height: size } });
@@ -39,8 +41,8 @@ for (const [name, t] of Object.entries(themes)) {
   console.log(`docs/brand/ysad-icon-${name}-${size}.png`);
 
   // Wordmark: set large, cropped to the letters with a small margin.
-  await page.setContent(`<style>@font-face{font-family:A;src:url(data:font/woff2;base64,${font}) format('woff2');font-weight:100 900;font-stretch:62% 125%}</style>
-    <body style="margin:0;background:transparent"><span id="w" style="display:inline-block;padding:24px 32px;font:800 240px/1 A;font-stretch:125%;font-variation-settings:'wght' 800,'wdth' 125;letter-spacing:-0.02em;color:${t.ink}">YSAD</span></body>`);
+  await page.setContent(`<style>@font-face{font-family:A;src:url(data:font/woff2;base64,${font}) format('woff2');font-weight:100 900}</style>
+    <body style="margin:0;background:transparent"><span id="w" style="display:inline-block;padding:24px 32px;font:900 240px/1 A;letter-spacing:-0.02em;color:${t.ink}">YSAD</span></body>`);
   await page.evaluate(() => document.fonts.ready);
   await page.locator('#w').screenshot({ path: new URL(`ysad-wordmark-${name}.png`, out).pathname, omitBackground: true });
   console.log(`docs/brand/ysad-wordmark-${name}.png`);
