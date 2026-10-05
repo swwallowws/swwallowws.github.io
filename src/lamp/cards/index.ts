@@ -4,7 +4,9 @@ import type { CardDef } from '../engine.js';
 import { comingUndone } from './coming-undone.js';
 import { readySet } from './ready-set.js';
 import { rearranged } from './rearranged.js';
+import { sessionNotes } from './session-notes.js';
 import { starling } from './starling.js';
+import { tagline } from './tagline.js';
 import { ysad } from './ysad.js';
 
 export const LAMP_CARDS: Record<string, CardDef> = {
@@ -13,4 +15,6 @@ export const LAMP_CARDS: Record<string, CardDef> = {
   rearranged,
   tabridge: readySet,
   ysad,
+  'session-notes': sessionNotes,
+  intentional: tagline,
 };
