@@ -239,13 +239,13 @@ function drawStream(list: HTMLOListElement): void {
    differ without anything looking random; the sequence repeats if the list
    grows. */
 const RHYTHM: { visual: number; align: 'center' | 'start' | 'end'; gapTop: number }[] = [
-  // YSAD: a near-square loop, so a narrower column keeps it from looming.
+  // YSAD: its card is a circle, so a narrower column keeps it from looming.
   { visual: 1.2, align: 'center', gapTop: 40 },
   { visual: 1.45, align: 'start', gapTop: 88 },
   { visual: 1.9, align: 'end', gapTop: 72 },
   { visual: 1.5, align: 'center', gapTop: 104 },
   { visual: 1.8, align: 'start', gapTop: 80 },
-  // Session Notes: a tall capture, so a narrower visual with the text centred.
+  // Session Notes: a narrower visual with the text centred.
   { visual: 1.35, align: 'center', gapTop: 96 },
   { visual: 1.55, align: 'center', gapTop: 76 },
 ];

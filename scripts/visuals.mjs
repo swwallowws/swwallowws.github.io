@@ -61,14 +61,10 @@ function shotStems(files) {
 // A shot marked `local: true` (a frozen demo on a copyrighted test song) is
 // gitignored, so it is never picked as a thumb: neither the committed index
 // nor a committed card may point at a file a fresh clone does not have.
-// A welcome-page loop's poster (loop-*.png, scripts/loops.mjs) wins when there
-// is one: it is a frame of the same real product, re-recorded whenever the
-// product changes, so the cards never lag behind the site.
 function findThumb(project) {
   const dir = out(project);
   if (!existsSync(dir)) return undefined;
   const shots = shotStems(readdirSync(dir));
-  if (shots.includes("loop")) return "loop";
   return manifest.shots.find((s) => s.project === project && s.thumb && !s.local && shots.includes(s.name))?.name;
 }
 

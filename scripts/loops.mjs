@@ -12,7 +12,8 @@
 // content, not kept in the loop) and `show` (actions that are the loop). The
 // `show` part is recorded with Chrome's own screencast (timestamped frames, no
 // extra download), then encoded with the system ffmpeg to
-// public/visuals/<project>/loop-<theme>.mp4 (H.264, 720 px wide, silent, fast
+// .local-visuals/<project>/loop-<theme>.mp4 (gitignored; copied by hand into the
+// project's repo, media/) (H.264, 720 px wide, silent, fast
 // start) with loop-<theme>.png, its first frame (or the one at `poster`
 // seconds, when the loop starts empty), for readers who ask for reduced motion
 // and while the video loads.
@@ -124,7 +125,7 @@ try {
       list.push(`file '${frames.at(-1).file}'`);
       const listFile = join(dir, "frames.txt");
       writeFileSync(listFile, list.join("\n") + "\n");
-      const out = join(root, "public/visuals", r.project);
+      const out = join(root, ".local-visuals", r.project);
       mkdirSync(out, { recursive: true });
       const mp4 = join(out, `loop-${theme}.mp4`);
       const png = join(out, `loop-${theme}.png`);

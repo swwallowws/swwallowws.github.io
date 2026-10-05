@@ -54,9 +54,6 @@ export interface ProjectEntry {
   /** The page head's own summary and parts, where a tool has them: then the
       head shows these in place of the from → to line and the lead. */
   summary?: string;
-  /** A silent loop of the real product for the welcome page, in place of the
-      still: `public/visuals/<id>/<loop>-paper|night.mp4` with `.png` posters. */
-  loop?: string;
   /** Where the full product is coming, while it has no public home yet: shown
       unlinked in place of the way to the full version ("Full version coming soon"). */
   comingTo?: string;
@@ -154,7 +151,6 @@ export const projects: ProjectEntry[] = [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/starling', name: 'Starling on GitHub' },
     ],
-    loop: 'loop',
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/starling' },
   },
@@ -192,7 +188,6 @@ export const projects: ProjectEntry[] = [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/coming-undone', name: 'Coming Undone on GitHub' },
     ],
-    loop: 'loop',
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/coming-undone' },
   },
@@ -226,7 +221,6 @@ export const projects: ProjectEntry[] = [
     page: 'rearranged/',
     live: { url: DEMOS.rearranged },
     get: [{ label: 'Open the studio', href: 'https://swwallowws.github.io/rearranged-web/', name: 'Open the Rearranged studio' }],
-    loop: 'loop',
     video: VIDEO_COMING,
     code: { placeholder: 'code: public soon' },
   },
@@ -262,7 +256,6 @@ export const projects: ProjectEntry[] = [
     credit: 'Ece K. T., for the idea that brought a premium karaoke experience.',
     page: 'tabridge/',
     live: { url: DEMOS.tabridge },
-    loop: 'loop',
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/ready-set' },
     get: [
@@ -305,7 +298,6 @@ export const projects: ProjectEntry[] = [
     // coming soon"; then add them here, e.g.
     // get: [{ label: 'Full version', href: '<store page>', name: 'YSAD, full version' }],
     // and set the demo's FULL_PRODUCT and FULL_LIVE.
-    loop: 'loop',
     video: VIDEO_COMING,
     code: { placeholder: 'code: coming' },
   },
