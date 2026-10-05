@@ -88,8 +88,12 @@ export const ysad: CardDef = {
     const d = (((hand(s) - t) % 1) + 1) % 1;
     return d < 0.25 ? (1 - d / 0.25) ** 2 : 0;
   },
+  // Idle, the lamp circles and slowly breathes in and out across the rings, from
+  // the innermost to the outermost, so its label visits every drum in turn.
   wander: (s, sec) => {
-    const { cx, cy, R } = geo(s), a = sec * 0.3 + s.seed, r = R * 0.6;
+    const lo = RING_R[0]!, hi = RING_R[RING_R.length - 1]!;
+    const { cx, cy, R } = geo(s), a = sec * 0.3 + s.seed;
+    const r = R * ((lo + hi) / 2 + ((hi - lo) / 2) * Math.sin(sec * 0.17 + s.seed * 2));
     return [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
   },
   backdrop: (s, o) => {

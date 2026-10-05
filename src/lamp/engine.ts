@@ -197,11 +197,17 @@ export function mountCard(host: HTMLElement, def: CardDef, opts: MountOptions): 
     press();
   });
   if (opts.playOnView && !opts.still) {
+    // Once most of the card is on screen and stays there a moment (scrolling past
+    // doesn't count), it plays, once.
+    let wait = 0;
     const seen = new IntersectionObserver(([e]) => {
-      if (!e?.isIntersecting) return;
-      seen.disconnect();
-      if (!calm()) play(m);
-    }, { threshold: 0.6 });
+      clearTimeout(wait);
+      if (!e || e.intersectionRatio < 0.85) return;
+      wait = window.setTimeout(() => {
+        seen.disconnect();
+        if (!calm()) play(m);
+      }, 350);
+    }, { threshold: [0, 0.85, 1] });
     seen.observe(canvas);
   }
 
