@@ -10,6 +10,7 @@ import { projects } from './data/projects.js';
 import { renderBar, renderFooter } from './ui/chrome.js';
 import { renderHome } from './ui/home.js';
 import { renderProject } from './ui/project.js';
+import { markTerms } from './ui/terms.js';
 
 const app = document.getElementById('app');
 if (!app) throw new Error('#app mount point is missing');
@@ -29,3 +30,5 @@ if (pageId === 'home') {
 }
 
 app.append(bar, main, renderFooter());
+// Technical terms explain themselves at their first use on the page.
+markTerms(main, pageId);

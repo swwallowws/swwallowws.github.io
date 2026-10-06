@@ -57,9 +57,6 @@ export interface ProjectEntry {
   /** Where the full product is coming, while it has no public home yet: shown
       unlinked in place of the way to the full version ("Full version coming soon"). */
   comingTo?: string;
-  /** Words that explain themselves on hover or focus, at their first use in
-      the summary or the Give it / It / Get rows. */
-  terms?: { word: string; text: string }[];
   parts?: { give: string; does: string; get: string };
   /** The page, beat by beat. */
   story?: Beat[];
@@ -269,7 +266,6 @@ export const projects: ProjectEntry[] = [
     fullName: 'You Suck At Drums',
     line: 'simply groove.',
     summary: 'A drum pattern generator you play live.',
-    terms: [{ word: 'drum', text: 'Drums first, but it sends MIDI, so the same patterns can also play a synth, chop up a sample or drive visuals.' }],
     parts: {
       give: 'a style, and how busy each drum should be.',
       does: 'plays the beat live, lets you change it hit by hit, and draws it around a circle.',
@@ -310,7 +306,6 @@ export const projects: ProjectEntry[] = [
     lead: 'Notes that live with the set. Lyrics that land on the arrangement.',
     line: 'simply sketch.',
     summary: 'Notes that live with the set. Lyrics that land on the arrangement.',
-    terms: [{ word: 'locators', text: 'Named markers on Ableton Live’s timeline.' }],
     parts: {
       give: 'lyrics, ideas and to-dos, typed inside Ableton Live.',
       does: 'keeps them with the set; a line tagged [17] or [1:04] goes to that bar or time.',

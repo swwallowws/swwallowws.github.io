@@ -249,20 +249,48 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 /* The title's row: the name, and the way to the full product at the far right. */
 .head-top { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--space) * 2); flex-wrap: wrap; }
 .btn-try .ext { color: inherit; }
-/* A term that explains itself: dotted underline, the note above on hover or
-   focus (and on tap, which focuses it). */
+/* A term that explains itself (ui/terms.ts): dotted underline, the note above
+   on hover or focus (and on tap, which focuses it). The note stays open while
+   the pointer is on it, so its "Got it" can be pressed; a transparent strip
+   bridges the gap between the word and the note. */
 .term { position: relative; text-decoration: underline dotted var(--acc); text-underline-offset: 4px; cursor: help; }
 .term:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .term-note {
-  position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 2;
+  position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 3;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space);
   width: max-content; max-width: min(36ch, 80vw);
   padding: var(--space) calc(var(--space) * 1.5);
   background: var(--ground-2); border: var(--hairline); border-radius: var(--radius);
-  font-size: 0.9rem; line-height: 1.4; color: var(--ink);
-  opacity: 0; pointer-events: none; transition: opacity .2s ease-in-out;
+  font: 400 0.9rem/1.4 var(--font-sans); letter-spacing: normal; text-transform: none; color: var(--ink);
+  /* closed notes take no room (a closed note near the edge would widen the page) */
+  display: none; translate: var(--shift, 0) 0;
 }
-.term:is(:hover, :focus) .term-note { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .term-note { transition: none; } }
+.term-note::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 10px; }
+.term-note img { width: 100%; max-width: 32ch; border-radius: var(--radius); }
+.term:is(:hover, :focus-within) .term-note { display: flex; animation: term-in .2s ease-in-out; }
+@keyframes term-in { from { opacity: 0; } }
+.term-got {
+  align-self: flex-end; border: none; background: transparent; padding: 0; cursor: pointer;
+  font: 600 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); color: var(--acc);
+}
+.term-got:hover { text-decoration: underline; }
+.term-got:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+/* Retired with "Got it", or all notes off with the switch: plain text again. */
+.term.seen, :root[data-terms="off"] .term { text-decoration: none; cursor: inherit; }
+.term.seen .term-note, :root[data-terms="off"] .term-note { display: none; }
+@media (prefers-reduced-motion: reduce) { .term:is(:hover, :focus-within) .term-note { animation: none; } }
+/* The top bar's "Explain terms" switch, beside the colour modes. */
+.bar-end { display: flex; align-items: center; gap: calc(var(--space) * 1.5); }
+.terms-switch {
+  border: var(--hairline); border-radius: var(--radius); background: transparent; padding: 4px 8px; cursor: pointer;
+  font: 600 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); color: var(--ink-mut);
+}
+.terms-switch[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-mut); }
+.terms-switch[aria-pressed="true"]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: var(--acc); vertical-align: 1px; }
+.terms-switch:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.terms-switch { white-space: nowrap; }
+/* narrow phones: "Terms", so the bar keeps one line */
+@media (max-width: 420px) { .terms-switch .long { display: none; } }
 /* A short title (YSAD) swaps to its long name on hover or focus. */
 .head.has-full { cursor: default; }
 .head.has-full .long { display: none; }

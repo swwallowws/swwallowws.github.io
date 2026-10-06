@@ -66,8 +66,8 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
   if (p.parts) {
     // The details: the summary, what you give it, what it does, what you get,
     // then what it is available as and works in, one labelled block.
-    const noted = termNotes(p.terms ?? []);
-    text.append(el('p', { class: 'lede' }, ...noted(p.summary ?? p.lead)));
+    // Technical terms get their notes after the page is drawn (ui/terms.ts).
+    text.append(el('p', { class: 'lede' }, p.summary ?? p.lead));
     // The details, then the facts. Available as, Works in and Built with
     // start folded to their label and open sideways on hover or focus.
     const dl = el('dl', { class: 'labelled big details' });
@@ -76,9 +76,9 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
       const dt = el('dt', fold ? { class: 'fold', tabindex: '0' } : {}, label);
       dl.append(dt, dd);
     };
-    row('Give it', noted(p.parts.give));
-    row('It', noted(p.parts.does));
-    row('Get', noted(p.parts.get));
+    row('Give it', p.parts.give);
+    row('It', p.parts.does);
+    row('Get', p.parts.get);
     if (p.availableAs?.length) row('Available as', badges(p.availableAs), true);
     if (p.worksIn?.length) row('Works in', badges(p.worksIn), true);
     if (p.builtWith?.length) row('Built with', badges(p.builtWith), true);
@@ -177,41 +177,6 @@ function titleEl(p: ProjectEntry): HTMLElement {
     el('span', { class: 'short', 'aria-hidden': 'true' }, p.name),
     el('span', { class: 'long', 'aria-hidden': 'true' }, p.fullName),
   );
-}
-
-/** Marks each term at its first use on the page as one that explains itself
-    on hover or keyboard focus: a quiet dotted underline, the note in a small
-    box above it. Returns a function that does this to one piece of text at a
-    time, in page order, so a term is marked once however often it appears. */
-function termNotes(terms: { word: string; text: string }[]): (text: string) => (Node | string)[] {
-  const left = [...terms];
-  return (text) => {
-    const out: (Node | string)[] = [];
-    let rest = text;
-    for (;;) {
-      // the earliest term still unmarked in what is left of this text
-      let best = -1, at = Infinity;
-      left.forEach((t, i) => {
-        const j = rest.indexOf(t.word);
-        if (j >= 0 && j < at) { at = j; best = i; }
-      });
-      if (best < 0) break;
-      const t = left.splice(best, 1)[0]!;
-      const id = `term-note-${terms.indexOf(t)}`;
-      out.push(
-        rest.slice(0, at),
-        el(
-          'span',
-          { class: 'term', tabindex: '0', 'aria-describedby': id },
-          t.word,
-          el('span', { class: 'term-note', id, role: 'tooltip' }, t.text),
-        ),
-      );
-      rest = rest.slice(at + t.word.length);
-    }
-    out.push(rest);
-    return out;
-  };
 }
 
 function visualFor(beat: Beat, p: ProjectEntry): HTMLElement | null {
