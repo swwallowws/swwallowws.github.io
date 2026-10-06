@@ -16,16 +16,12 @@ export interface Term {
 }
 
 export const GLOSSARY: Term[] = [
-  { id: 'midi', words: ['MIDI'], text: 'Music as data: which note, when, how long and how loud. Any synth can play it, and every note stays editable.' },
+  { id: 'midi', words: ['MIDI'], text: 'Music as data: which note, when, how long, how loud. Any synth can play it, every note is editable.' },
   { id: 'mpe', words: ['MPE'], text: 'MIDI Polyphonic Expression: each note carries its own bend and pressure, so a slide on one note leaves the others alone.' },
-  { id: 'tuning', words: ['tuning'], text: 'Which pitches count as notes. Standard tuning splits the octave into 12 equal steps; other traditions use more steps, or unequal ones.' },
-  { id: 'makam', words: ['makam'], text: 'The modal system of Turkish classical music. Its scales use pitches between the piano’s keys, as fine as a ninth of a whole tone.' },
-  { id: 'vibrato', words: ['vibrato'], text: 'A small, quick wobble in pitch on a held note.' },
-  { id: 'synth', words: ['synth'], text: 'A synthesizer: an instrument that makes its sound electronically. Fed MIDI, it plays the notes.' },
+  { id: 'tuning', words: ['tuning'], text: 'Which pitches count as notes. Standard tuning splits the octave into 12 equal steps. There are tunings with more steps or unequal ones.' },
+  { id: 'makam', words: ['makam'], text: 'The system of scales in Turkish classical music. Many of its notes sit between the piano’s keys, so a piano can’t play them in tune.' },
+  { id: 'synth', words: ['synth'], text: 'A synthesizer: an instrument that makes its sound electronically. Takes in MIDI, plays the notes.' },
   { id: 'sample', words: ['sample'], text: 'A recorded sound, played back as an instrument.' },
-  { id: 'tempo', words: ['tempo'], text: 'The speed of the beat, in beats per minute.' },
-  { id: 'tab', words: ['tab'], text: 'Tablature: guitar or bass music written as which string and fret to play.' },
-  { id: 'score', words: ['score'], text: 'Sheet music, here as a file: MusicXML from a notation app, or Guitar Pro.' },
   { id: 'guitar-pro', words: ['Guitar Pro'], text: 'A tab editor. Its files carry the notes, the tuning and how each note is played: bends, slides, hammer-ons.' },
   { id: 'musicxml', words: ['MusicXML'], text: 'The open file format notation apps use to share scores.' },
   { id: 'time-signature', words: ['time signature'], text: 'How a bar is counted: 4/4 is four quarter notes, 7/8 is seven eighth notes, grouped in twos and threes.' },
@@ -39,8 +35,6 @@ export const GLOSSARY: Term[] = [
   { id: 'clips', words: ['clips'], only: ['session-notes'], text: 'Blocks of notes or audio on an Ableton Live track.' },
   { id: 'bar', words: ['bar'], only: ['session-notes'], text: 'One measure of music: in 4/4, four beats.' },
   { id: 'crate', words: ['crate'], only: ['intentional'], text: 'A DJ’s collection of tracks to play from, named after record crates.' },
-  { id: 'tags', words: ['tags'], only: ['intentional'], text: 'Labels written into each music file, like genre, mood or energy, which DJ software can search.' },
-  { id: 'obsidian', words: ['Obsidian'], text: 'A notes app that keeps everything as plain text files on your own computer.' },
 ];
 
 export type Piece = string | { term: Term; word: string };

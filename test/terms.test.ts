@@ -12,7 +12,7 @@ test('a term is marked at its first use on a page, once', () => {
 });
 
 test('only whole words, as written', () => {
-  assert.equal(words(marksIn('tabs and a tab-like thing, then a tab.', 'tabridge', new Set())), 'tabs and a tab-like thing, then a [tab].');
+  assert.equal(words(marksIn('synths and a synth-like thing, then a synth.', 'ysad', new Set())), 'synths and a synth-like thing, then a [synth].');
   assert.equal(words(marksIn('midi, then MIDI', 'x', new Set())), 'midi, then [MIDI]');
 });
 
