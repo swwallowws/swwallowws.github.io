@@ -47,7 +47,7 @@
         { "click": "#go" },
         { "waitFor": "#switches button", "timeout": 120000 },
         { "inject": [
-          "body > :not(main), #override-row, #versions, #results, #mode-switches, #mode-blind, main > .grid:not(#switches), main > .row:has(#progress), details.keys, #song-hint, #song-switches, #section-note, #song-list-box, #song-status { display: none !important; }",
+          "body > :not(main), main > .back, #override-row, #versions, #results, #mode-switches, #mode-blind, main > .grid:not(#switches), main > .row:has(#progress), details.keys, #song-hint, #song-switches, #section-note, #song-list-box, #song-status { display: none !important; }",
           "main { padding-top: 56px !important; margin-top: 0 !important; }"
         ] },
         { "scrollTo": 0 },
@@ -109,7 +109,7 @@
       "crop": "960:676:0:0",
       "poster": 7,
       "inject": [
-        ".hero, body > .bar, .uses, .ways, #online, footer, #template-state { display: none !important; }",
+        ".ds-header, .note-bar, .example, .uses, .ways, #online, footer, #template-state { display: none !important; }",
         "main { padding: 56px 24px 24px !important; margin: 0 !important; max-width: none !important; }",
         "#tool { margin-top: 0 !important; padding-top: 0 !important; }"
       ],
