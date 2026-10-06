@@ -1,0 +1,35 @@
+name: Refresh pictures
+
+# Every few hours: re-record the loops and README stills of any product whose live
+# site changed since its picture, and propose them as pull requests on the product's
+# repo (media/) and on this one (visuals/sources.json). Recipes CI can't record are
+# listed in the log for a person (scripts/refresh-visuals.mjs). Needs the
+# VISUALS_PR_TOKEN secret (Contents and Pull requests write on the product repos and
+# this one).
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-visuals
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: ffmpeg, for encoding the loops
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - name: Re-record what changed and propose it
+        env:
+          VISUALS_PR_TOKEN: ${{ secrets.VISUALS_PR_TOKEN }}
+        run: node scripts/refresh-visuals.mjs
