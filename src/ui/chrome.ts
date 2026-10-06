@@ -4,6 +4,7 @@
 import { themeSwitch } from '../../vendor/design/themeswitch.js';
 import { homeMarkSvg } from './glyphs.js';
 import { el, href } from './shared.js';
+import { termsSwitch } from './terms.js';
 
 /** Fired on window after the mode changes, so framed demos can follow it. */
 export const THEME_EVENT = 'showcase-theme';
@@ -20,7 +21,12 @@ export function renderBar(): HTMLElement {
   return el(
     'header',
     { class: 'bar' },
-    el('div', { class: 'bar-inner' }, el('a', { class: 'wordmark', href: href('') }, mark, 'swwallowws'), modes),
+    el(
+      'div',
+      { class: 'bar-inner' },
+      el('a', { class: 'wordmark', href: href('') }, mark, 'swwallowws'),
+      el('div', { class: 'bar-end' }, termsSwitch(), modes),
+    ),
   );
 }
 
