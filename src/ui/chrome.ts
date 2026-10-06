@@ -10,10 +10,8 @@ export const THEME_EVENT = 'showcase-theme';
 
 export function renderBar(): HTMLElement {
   const modes = el('div', { class: 'modes' });
-  themeSwitch(modes, {
-    storageKey: 'showcase:mode',
-    onChange: () => window.dispatchEvent(new Event(THEME_EVENT)),
-  });
+  // saved under the key every product shares (THEME_KEY), so the studios open in the same mode
+  themeSwitch(modes, { onChange: () => window.dispatchEvent(new Event(THEME_EVENT)) });
 
   // The swwallowws mark (the same one as the welcome page's tab icon) sits
   // before the name; it's decorative, the link's name is the text.
