@@ -3,9 +3,10 @@ name: Refresh pictures
 # Every few hours: re-record the loops and README stills of any product whose live
 # site changed since its picture, and propose them as pull requests on the product's
 # repo (media/) and on this one (visuals/sources.json). Recipes CI can't record are
-# listed in the log for a person (scripts/refresh-visuals.mjs). Needs the
-# VISUALS_PR_TOKEN secret (Contents and Pull requests write on the product repos and
-# this one).
+# listed in the log for a person (scripts/refresh-visuals.mjs). Also keeps the
+# showcase's copy of YSAD's demo current (job ysad-demo). Needs the VISUALS_PR_TOKEN
+# secret (Contents and Pull requests write on the product repos and this one,
+# Contents read on you-suck-at-drums).
 on:
   schedule:
     - cron: "41 */6 * * *"
@@ -33,3 +34,36 @@ jobs:
         env:
           VISUALS_PR_TOKEN: ${{ secrets.VISUALS_PR_TOKEN }}
         run: node scripts/refresh-visuals.mjs
+
+  # YSAD's repo is private, so the showcase carries a copy of its demo
+  # (public/demos/ysad, scripts/ysad-demo.sh). When the demo changed, propose the
+  # new copy as a pull request. The token needs Contents read on you-suck-at-drums.
+  ysad-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch YSAD's demo
+        env:
+          TOKEN: ${{ secrets.VISUALS_PR_TOKEN }}
+        run: git clone --quiet --depth 1 "https://x-access-token:${TOKEN}@github.com/swwallowws/you-suck-at-drums.git" ../ysad
+      - name: Copy it in
+        run: bash scripts/ysad-demo.sh ../ysad
+      - name: Propose it, if it changed
+        env:
+          GH_TOKEN: ${{ secrets.VISUALS_PR_TOKEN }}
+        run: |
+          if [ -z "$(git status --porcelain public/demos/ysad)" ]; then echo "YSAD's demo copy is current"; exit 0; fi
+          rev="$(git -C ../ysad rev-parse --short HEAD)"
+          branch="ysad-demo/$rev"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then echo "$branch already proposed"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q -b "$branch"
+          git add -A public/demos/ysad
+          git commit -q -m "YSAD demo: you-suck-at-drums $rev"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/swwallowws/swwallowws.github.io.git" "$branch"
+          gh pr create --repo swwallowws/swwallowws.github.io --head "$branch" --base main \
+            --title "YSAD demo: you-suck-at-drums $rev" \
+            --body "YSAD's demo changed in its private repo, so this updates the showcase's copy (public/demos/ysad). Try it on the preview, then merge. Proposed by the Refresh pictures workflow."
