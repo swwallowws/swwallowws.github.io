@@ -33,7 +33,6 @@ export const GLOSSARY: Term[] = [
   { id: 'arrangement-view', words: ['arrangement'], only: ['session-notes'], text: 'Ableton Live’s timeline view, where a song is laid out from start to end.' },
   { id: 'locators', words: ['locators'], only: ['session-notes'], text: 'Named markers on Ableton Live’s timeline.' },
   { id: 'clips', words: ['clips'], only: ['session-notes'], text: 'Blocks of notes or audio on an Ableton Live track.' },
-  { id: 'bar', words: ['bar'], only: ['session-notes'], text: 'One measure of music: in 4/4, four beats.' },
   { id: 'crate', words: ['crate'], only: ['intentional'], text: 'A DJ’s collection of tracks to play from, named after record crates.' },
 ];
 

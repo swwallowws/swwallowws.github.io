@@ -279,18 +279,32 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .term.seen, :root[data-terms="off"] .term { text-decoration: none; cursor: inherit; }
 .term.seen .term-note, :root[data-terms="off"] .term-note { display: none; }
 @media (prefers-reduced-motion: reduce) { .term:is(:hover, :focus-within) .term-note { animation: none; } }
-/* The top bar's "Explain terms" switch, beside the colour modes. */
-.bar-end { display: flex; align-items: center; gap: calc(var(--space) * 1.5); }
-.terms-switch {
-  border: var(--hairline); border-radius: var(--radius); background: transparent; padding: 4px 8px; cursor: pointer;
-  font: 600 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); color: var(--ink-mut);
+/* The "Explain terms" switch floats in the window's lower right corner, clear of
+   phones' rounded corners and home bar, so it's at hand at any scroll position.
+   A labelled on/off switch (role="switch"), 44 px tall for a thumb. */
+.terms-dock {
+  position: fixed; z-index: 20;
+  right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
 }
-.terms-switch[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-mut); }
-.terms-switch[aria-pressed="true"]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: var(--acc); vertical-align: 1px; }
-.terms-switch:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-.terms-switch { white-space: nowrap; }
-/* narrow phones: "Terms", so the bar keeps one line */
-@media (max-width: 420px) { .terms-switch .long { display: none; } }
+.terms-toggle {
+  display: inline-flex; align-items: center; gap: var(--space); min-height: 44px; padding: 0 14px 0 10px;
+  border: var(--hairline); border-radius: 22px; background: var(--ground-2); color: var(--ink); cursor: pointer;
+  font: 600 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); white-space: nowrap;
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.terms-toggle:hover { border-color: var(--ink-mut); }
+.terms-toggle:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.terms-track { position: relative; width: 28px; height: 16px; border-radius: 8px; background: var(--line); transition: background .2s ease-in-out; }
+.terms-track::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--ground); box-shadow: 0 1px 2px color-mix(in srgb, var(--ink) 30%, transparent); transition: translate .2s ease-in-out;
+}
+.terms-toggle[aria-checked="true"] .terms-track { background: var(--acc); }
+.terms-toggle[aria-checked="true"] .terms-track::after { translate: 12px 0; }
+@media (prefers-reduced-motion: reduce) { .terms-track, .terms-track::after { transition: none; } }
+@media print { .terms-dock { display: none; } }
+/* room under the footer, so the floating switch never covers the page's end */
+body:has(.terms-dock) { padding-bottom: 76px; }
 /* A short title (YSAD) swaps to its long name on hover or focus. */
 .head.has-full { cursor: default; }
 .head.has-full .long { display: none; }

@@ -81,23 +81,26 @@ export function markTerms(root: HTMLElement, page: string): void {
     if (pieces.length === 1 && typeof pieces[0] === 'string') continue;
     t.replaceWith(...pieces.map((p) => (typeof p === 'string' ? p : termEl(p.term, p.word, retired.has(p.term.id)))));
   }
+  // The switch only where there is something to explain.
+  if (seenOnPage.size) document.body.append(termsSwitch());
 }
 
-/** The top bar's "Explain terms" switch. */
-export function termsSwitch(): HTMLElement {
+/** The "Explain terms" switch: on unless this visitor turned it off. It floats in
+    the window's corner, so it's at hand wherever the page is scrolled to. */
+function termsSwitch(): HTMLElement {
   const off = read(OFF_KEY) === '1';
   applyOff(off);
   const b = el(
     'button',
-    { type: 'button', class: 'terms-switch', 'aria-pressed': off ? 'false' : 'true', 'aria-label': 'Explain terms', title: 'Show or hide the notes on technical terms' },
-    el('span', { class: 'long' }, 'Explain '),
-    'terms',
+    { type: 'button', role: 'switch', class: 'terms-toggle', 'aria-checked': off ? 'false' : 'true', title: 'Notes on technical terms' },
+    el('span', { class: 'terms-track', 'aria-hidden': 'true' }),
+    'Explain terms',
   );
   b.addEventListener('click', () => {
-    const nowOff = b.getAttribute('aria-pressed') === 'true';
-    b.setAttribute('aria-pressed', nowOff ? 'false' : 'true');
+    const nowOff = b.getAttribute('aria-checked') === 'true';
+    b.setAttribute('aria-checked', nowOff ? 'false' : 'true');
     write(OFF_KEY, nowOff ? '1' : null);
     applyOff(nowOff);
   });
-  return b;
+  return el('div', { class: 'terms-dock' }, b);
 }
