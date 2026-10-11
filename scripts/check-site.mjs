@@ -12,10 +12,10 @@ import { chromium } from "playwright-core";
 const base = new URL(process.argv[2] ?? "http://localhost:4180/");
 const PAGES = process.argv.length > 3
   ? process.argv.slice(3)
-  : ["", "ysad/", "rearranged/", "voxmpe/", "stemscribe/", "tabridge/", "session-notes/", "intentional/"];
+  : ["", ...["ysad", "rearranged", "starling", "coming-undone", "ready-set", "session-notes", "tagline"].map((p) => `tools/${p}/`)];
 
 // Project pages without a live demo, which show their lamp card instead.
-const NO_DEMO = new Set(["intentional/"]);
+const NO_DEMO = new Set(["tools/tagline/"]);
 
 const problems = [];
 const elsewhere = new Map(); // other sites' URLs that failed, with the pages asking
@@ -76,7 +76,7 @@ try {
         const want = NO_DEMO.has(path) ? 1 : 0;
         const have = await page.locator(".lamp-wide canvas, .flow-lamp canvas").count();
         if (have !== want) problems.push(`${where}: ${have} lamp cards, expected ${want}`);
-        if (path === "intentional/" && (await page.locator(".flow-lamp canvas").count()) !== 1) {
+        if (path === "tools/tagline/" && (await page.locator(".flow-lamp canvas").count()) !== 1) {
           problems.push(`${where}: the card is not merged with the six steps`);
         }
       }

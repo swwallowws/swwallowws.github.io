@@ -70,7 +70,7 @@ export interface ProjectEntry {
   builtWith?: string[];
   /** Thanks to someone who helped, one plain line under Details. */
   credit?: string;
-  /** Page path, e.g. "voxmpe/". Absent for "coming" cards. */
+  /** Page path, e.g. "tools/starling/". Absent for "coming" cards. */
   page?: string;
   live?: Slot;
   video?: Slot;
@@ -142,7 +142,7 @@ export const projects: ProjectEntry[] = [
     availableAs: ['Browser studio', 'Command line'],
     worksIn: ['any browser', 'Ableton Live', 'any MPE synth'],
     builtWith: ['Rust', 'CREPE pitch tracking', 'WebAssembly', 'ONNX Runtime Web'],
-    page: 'voxmpe/',
+    page: 'tools/starling/',
     live: { url: DEMOS.voxmpe },
     get: [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio' },
@@ -179,7 +179,7 @@ export const projects: ProjectEntry[] = [
     availableAs: ['Browser studio', 'Command line'],
     worksIn: ['any music software that opens MIDI'],
     builtWith: ['Python', 'demucs', 'basic-pitch', 'ADT_STR drums'],
-    page: 'stemscribe/',
+    page: 'tools/coming-undone/',
     live: { url: DEMOS.stemscribe },
     get: [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio' },
@@ -215,7 +215,7 @@ export const projects: ProjectEntry[] = [
     worksWith: ['MIDI'],
     availableAs: ['Browser studio', 'Command line'],
     builtWith: ['Python', 'pretty_midi', 'numpy', 'spessasynth'],
-    page: 'rearranged/',
+    page: 'tools/rearranged/',
     live: { url: DEMOS.rearranged },
     get: [{ label: 'Open the studio', href: 'https://swwallowws.github.io/rearranged-web/', name: 'Open the Rearranged studio' }],
     video: VIDEO_COMING,
@@ -251,7 +251,7 @@ export const projects: ProjectEntry[] = [
     worksIn: ['Ableton Live 12', 'any music software that opens MIDI'],
     builtWith: ['Rust', 'WebAssembly', 'Ableton Extensions SDK'],
     credit: 'Ece K. T., for the idea that brought a premium karaoke experience.',
-    page: 'tabridge/',
+    page: 'tools/ready-set/',
     live: { url: DEMOS.tabridge },
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/ready-set' },
@@ -288,7 +288,7 @@ export const projects: ProjectEntry[] = [
     worksIn: ['Ableton Live', 'Ableton Push 3 standalone', 'most music software as plugin'],
     builtWith: ['Max', 'Rust', 'nih-plug'],
     credit: 'Kirkwood West, for the VST3 port.',
-    page: 'ysad/',
+    page: 'tools/ysad/',
     live: { url: DEMOS.ysad },
     // Until the full version's store pages exist, both pages say "Full version
     // coming soon"; then add them here, e.g.
@@ -335,7 +335,7 @@ export const projects: ProjectEntry[] = [
     ],
     worksWith: ['Ableton Live 12', 'Markdown'],
     builtWith: ['TypeScript', 'Ableton Extensions SDK'],
-    page: 'session-notes/',
+    page: 'tools/session-notes/',
     live: { url: DEMOS.sessionNotes },
     get: [
       { label: 'Download', href: 'https://github.com/swwallowws/ableton-session-notes/releases/latest', name: 'Session Notes releases' },
@@ -371,7 +371,7 @@ export const projects: ProjectEntry[] = [
     worksIn: ['Obsidian', 'DJ software, like DJUCED', 'iPhone'],
     worksWith: ['Obsidian', 'DJUCED', 'AIFF / MP3 / FLAC', 'iPhone share sheet'],
     builtWith: ['Rust', 'Obsidian Bases', 'iOS Shortcuts', 'ID3 / FLAC'],
-    page: 'intentional/',
+    page: 'tools/tagline/',
     code: { placeholder: 'code: no public repo yet' },
     flow: [
       { step: 'Capture', detail: 'Phone share sheet: a link and a few words on why it caught you, saved to GitHub.' },

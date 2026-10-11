@@ -1,7 +1,7 @@
 // Look at a page without a browser window: full-page screenshots in Paper and
 // Night at desktop and phone width, into .peek/ (gitignored).
 //   npm run peek                       (the local preview's welcome page)
-//   npm run peek -- http://localhost:4180/session-notes/
+//   npm run peek -- http://localhost:4180/tools/session-notes/
 //   npm run peek -- <url> "<css selector>"   (hover that element first)
 
 import { mkdirSync } from "node:fs";

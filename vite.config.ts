@@ -19,9 +19,11 @@ function linkPreviews(): Plugin {
 }
 
 /* One HTML entry per page so every project has a real path
-   (/voxmpe/, /tabridge/, ...) on a static host. Keep in sync with the
-   `page` fields in src/data/projects.ts. */
-const PAGES = ['voxmpe', 'stemscribe', 'rearranged', 'tabridge', 'ysad', 'session-notes', 'intentional'];
+   (/tools/starling/, /tools/ready-set/, ...) on a static host. Named after the
+   product: the bare names (/starling/, /ready-set/, ...) are the products' own
+   sites, served from their repos. Keep in sync with the `page` fields in
+   src/data/projects.ts. */
+const PAGES = ['starling', 'coming-undone', 'rearranged', 'ready-set', 'ysad', 'session-notes', 'tagline'];
 
 export default defineConfig({
   plugins: [linkPreviews()],
@@ -29,7 +31,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        ...Object.fromEntries(PAGES.map((p) => [p, resolve(__dirname, p, 'index.html')])),
+        ...Object.fromEntries(PAGES.map((p) => [p, resolve(__dirname, 'tools', p, 'index.html')])),
       },
     },
   },
