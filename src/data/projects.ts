@@ -248,7 +248,7 @@ export const projects: ProjectEntry[] = [
     worksWith: ['Guitar Pro', 'MusicXML', 'Ableton Live 12'],
     // The extension isn't released yet: its website says "coming soon" too.
     availableAs: ['Browser studio', 'Ableton Live extension (coming soon)'],
-    worksIn: ['Ableton Live 12', 'any music software that opens MIDI'],
+    worksIn: ['Ableton Live 12.4.15 beta or later', 'any music software that opens MIDI'],
     builtWith: ['Rust', 'WebAssembly', 'Ableton Extensions SDK'],
     credit: 'Ece K. T., for the idea that brought a premium karaoke experience.',
     page: 'tools/ready-set/',
