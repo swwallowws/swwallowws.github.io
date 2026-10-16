@@ -326,7 +326,7 @@ export const projects: ProjectEntry[] = [
       },
     ],
     availableAs: ['Ableton Live extension'],
-    worksIn: ['Ableton Live 12'],
+    worksIn: ['Ableton Live 12.4.15 beta or later'],
     keys: [
       { code: '[17]', meaning: 'bar 17' },
       { code: '[17.3]', meaning: 'beat 3 of bar 17' },
