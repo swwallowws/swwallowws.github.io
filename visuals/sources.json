@@ -13,14 +13,14 @@
   },
   "tabridge/loop": {
     "site": "https://swwallowws.github.io/ready-set/",
-    "content": "78955b7c5ce1ffd3",
-    "commit": "f4b3b4fea71cca526bdfc26da759a88cdb1e216e",
-    "recorded": "2026-10-06"
+    "content": "64fbe4352a8a0d19",
+    "commit": "0b3b29c32f233954cf8ac8619068afe8245863a5",
+    "recorded": "2026-10-22"
   },
   "voxmpe/loop": {
     "site": "https://swwallowws.github.io/starling/",
-    "content": "d4f5298c72a56829",
-    "commit": "7d7ffb4ab37c76989b6fb31082ddb0fefab66fba",
-    "recorded": "2026-10-06"
+    "content": "2024472e85f0e0ea",
+    "commit": "9d7afaad8f3e9afb91197ad50a09c6e82e55019f",
+    "recorded": "2026-10-22"
   }
 }

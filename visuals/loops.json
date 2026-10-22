@@ -116,7 +116,7 @@
       "setup": [],
       "show": [
         { "wait": 800 },
-        { "upload": "#file", "file": "../tabridge/spike/gp_serenade/serenade.gp" },
+        { "upload": "#file", "file": "../ready-set-public/spike/gp_serenade/serenade.gp" },
         { "waitFor": "#preview:not([disabled])", "timeout": 30000 },
         { "wait": 900 },
         { "click": "#preview" },
