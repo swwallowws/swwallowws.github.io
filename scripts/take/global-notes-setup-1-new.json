@@ -1,0 +1,13 @@
+{
+  "app": "Live",
+  "before": "\"whole again\" in front with the pad open (picker closed). Not recorded: closes the pad with Done (it keeps keyboard focus otherwise), asks for a new Live Set and stops on the save prompt for a check.",
+  "steps": [
+    { "key": "escape" },
+    { "wait": 600 },
+    { "click": [1290, 1006] },
+    { "wait": 1200 },
+    { "key": "n", "mods": ["cmd"] },
+    { "wait": 1500 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/global-setup-1-prompt.png" }
+  ]
+}

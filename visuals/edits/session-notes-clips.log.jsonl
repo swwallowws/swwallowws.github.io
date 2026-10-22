@@ -1,0 +1,11 @@
+{"app":"Live","dry":false,"step":"start","t":5.15}
+{"name":"view","step":"mark","t":5.151}
+{"at":[978,1006],"step":"click","t":7.643}
+{"name":"send-open","step":"mark","t":7.947}
+{"at":[1177,944],"step":"click","t":9.524}
+{"name":"clips-sent","step":"mark","t":9.826}
+{"at":[1290,1006],"step":"click","t":12.111}
+{"name":"done","step":"mark","t":12.417}
+{"step":"park","t":12.919}
+{"name":"end","step":"mark","t":16.126}
+{"step":"end","t":16.126}

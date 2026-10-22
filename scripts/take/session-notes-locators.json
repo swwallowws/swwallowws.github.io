@@ -1,0 +1,42 @@
+{
+  "app": "Live",
+  "before": "Set with no locators or lyric clips; the pad open on Lyrics in View, verse untagged (# whole again, blank line, the three lines); pointer parked bottom right.",
+  "steps": [
+    { "mark": "view" },
+    { "wait": 1400 },
+
+    { "key": "e", "mods": ["cmd"] },
+    { "mark": "edit" },
+    { "wait": 500 },
+    { "click": [652, 457.5] },
+    { "type": "[4] " },
+    { "wait": 400 },
+    { "key": "e", "mods": ["cmd"] },
+    { "mark": "view-bar" },
+    { "park": true },
+    { "wait": 1600 },
+
+    { "key": "e", "mods": ["cmd"] },
+    { "mark": "edit-retag" },
+    { "wait": 500 },
+    { "click": [683, 457.5] },
+    { "key": "delete" },
+    { "type": "0:08" },
+    { "wait": 400 },
+    { "key": "e", "mods": ["cmd"] },
+    { "mark": "view-time" },
+    { "wait": 1800 },
+
+    { "click": [978, 1006] },
+    { "mark": "send-open" },
+    { "wait": 700 },
+    { "click": [1072, 944] },
+    { "mark": "locators-sent" },
+    { "wait": 1400 },
+    { "click": [1290, 1006] },
+    { "mark": "done" },
+    { "park": true },
+    { "wait": 3200 },
+    { "mark": "end" }
+  ]
+}

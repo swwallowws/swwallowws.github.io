@@ -1,0 +1,11 @@
+{
+  "app": "Live",
+  "before": "\"whole again\" saved (by hand) and the new default set open. Opens the save panel and stops for a check.",
+  "steps": [
+    { "wait": 500 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/global-setup-2-newset.png" },
+    { "key": "s", "mods": ["cmd"] },
+    { "wait": 1500 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/global-setup-2-panel.png" }
+  ]
+}

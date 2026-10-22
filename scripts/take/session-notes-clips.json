@@ -1,0 +1,20 @@
+{
+  "app": "Live",
+  "before": "Set with no locators or lyric clips; the pad open on Lyrics in View, verse tagged [0:08].",
+  "steps": [
+    { "mark": "view" },
+    { "wait": 1600 },
+
+    { "click": [978, 1006] },
+    { "mark": "send-open" },
+    { "wait": 700 },
+    { "click": [1177, 944] },
+    { "mark": "clips-sent" },
+    { "wait": 1400 },
+    { "click": [1290, 1006] },
+    { "mark": "done" },
+    { "park": true },
+    { "wait": 3200 },
+    { "mark": "end" }
+  ]
+}

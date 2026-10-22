@@ -1,0 +1,15 @@
+{
+  "app": "Live",
+  "before": "The new default set open, the pad open on its Session note; pointer parked bottom right. Recorded: opens the note picker so This set (Session) and Global notes (Ideas) show.",
+  "steps": [
+    { "mark": "view" },
+    { "wait": 1200 },
+    { "click": [671, 1006] },
+    { "mark": "picker-open" },
+    { "park": true },
+    { "wait": 1500 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/global-2-new-set.png" },
+    { "wait": 3500 },
+    { "mark": "end" }
+  ]
+}

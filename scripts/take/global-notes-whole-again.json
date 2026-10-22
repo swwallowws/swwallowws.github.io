@@ -1,0 +1,15 @@
+{
+  "app": "Live",
+  "before": "\"whole again\" open, the pad open on Lyrics in View; pointer parked bottom right. Recorded: opens the note picker so This set and Global notes show.",
+  "steps": [
+    { "mark": "view" },
+    { "wait": 1200 },
+    { "click": [671, 1006] },
+    { "mark": "picker-open" },
+    { "park": true },
+    { "wait": 1500 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/global-1-whole-again.png" },
+    { "wait": 3500 },
+    { "mark": "end" }
+  ]
+}

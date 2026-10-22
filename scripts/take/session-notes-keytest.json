@@ -1,0 +1,33 @@
+{
+  "app": "Live",
+  "before": "The pad open on Lyrics in View, verse untagged; pointer parked bottom right. Same tagging as the locators take, then Cancel: nothing is sent or saved.",
+  "steps": [
+    { "wait": 1000 },
+    { "key": "e", "mods": ["cmd"] },
+    { "wait": 500 },
+    { "click": [652, 457.5] },
+    { "type": "[4] " },
+    { "wait": 400 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/keytest-1-typed.png" },
+    { "key": "e", "mods": ["cmd"] },
+    { "park": true },
+    { "wait": 1600 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/keytest-2-tagged.png" },
+    { "key": "e", "mods": ["cmd"] },
+    { "wait": 500 },
+    { "click": [683, 457.5] },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/keytest-2b-caret.png" },
+    { "key": "delete" },
+    { "type": "0:08" },
+    { "wait": 400 },
+    { "key": "e", "mods": ["cmd"] },
+    { "wait": 1000 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/keytest-3-retagged.png" },
+    { "wait": 1500 },
+    { "click": [1191, 1006] },
+    { "mark": "cancelled" },
+    { "park": true },
+    { "wait": 800 },
+    { "shot": "/Users/tokamak/Playground/showcase/visuals/raw/_sheets/keytest-4-cancelled.png" }
+  ]
+}

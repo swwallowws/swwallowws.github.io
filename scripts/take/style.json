@@ -1,0 +1,10 @@
+{
+  "typeMs": 65,
+  "typeJitterMs": 15,
+  "tagBeatMs": 120,
+  "moveMs": 600,
+  "arc": 0.04,
+  "restMs": 300,
+  "park": [1560, 1000],
+  "leadInMs": 5000
+}

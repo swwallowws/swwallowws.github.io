@@ -1,0 +1,28 @@
+{"recording":"/Users/tokamak/Movies/Showcase/2026-10-22 16-28-50.mp4"}
+{"app":"Live","dry":false,"step":"start","t":5.202}
+{"name":"view","step":"mark","t":5.205}
+{"key":"e","mods":["cmd"],"step":"key","t":6.733}
+{"name":"edit","step":"mark","t":6.734}
+{"at":[652,457.5],"step":"click","t":8.523}
+{"step":"type","t":8.829,"text":"[4] "}
+{"step":"typed","t":9.339,"text":"[4] "}
+{"key":"e","mods":["cmd"],"step":"key","t":9.836}
+{"name":"view-bar","step":"mark","t":9.839}
+{"step":"park","t":10.786}
+{"key":"e","mods":["cmd"],"step":"key","t":12.476}
+{"name":"edit-retag","step":"mark","t":12.478}
+{"at":[683,457.5],"step":"click","t":14.299}
+{"key":"delete","mods":[],"step":"key","t":14.694}
+{"step":"type","t":14.696,"text":"0:08"}
+{"step":"typed","t":15.094,"text":"0:08"}
+{"key":"e","mods":["cmd"],"step":"key","t":15.591}
+{"name":"view-time","step":"mark","t":15.599}
+{"at":[978,1006],"step":"click","t":18.549}
+{"name":"send-open","step":"mark","t":18.855}
+{"at":[1072,944],"step":"click","t":20.468}
+{"name":"locators-sent","step":"mark","t":20.774}
+{"at":[1290,1006],"step":"click","t":23.068}
+{"name":"done","step":"mark","t":23.373}
+{"step":"park","t":23.888}
+{"name":"end","step":"mark","t":27.096}
+{"step":"end","t":27.097}
