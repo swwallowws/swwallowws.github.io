@@ -3,6 +3,8 @@
 export interface ProjectVisuals {
   shots: string[];
   videos: string[];
+  /** Videos with no audio track. */
+  silent?: string[];
   thumb?: string;
   /** File stems for the social cards, keyed by format; each is `<stem>-paper.png` / `<stem>-night.png`. */
   cards?: Partial<Record<'thumb' | 'og' | 'square' | 'story', string>>;
@@ -49,7 +51,14 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "global-notes",
+      "send-a-verse"
+    ],
+    "silent": [
+      "global-notes",
+      "send-a-verse"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",

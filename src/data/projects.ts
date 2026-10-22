@@ -34,6 +34,10 @@ export interface Beat {
   title: string;
   text?: string;
   show?: Show;
+  /** With show 'video': which encoded recording (its name, no extension); the first one otherwise. */
+  video?: string;
+  /** Which side a beside visual sits on; beats alternate sides when it's unset. */
+  side?: 'left' | 'right';
 }
 
 export interface ProjectEntry {
@@ -317,12 +321,18 @@ export const projects: ProjectEntry[] = [
         text: 'Tag a lyric line with where it goes. The lines under it follow a bar apart.',
         show: 'live',
       },
-      { title: 'What the tags do', text: 'Tagging the first line of a verse is enough.', show: 'keys' },
-      { title: 'Notes that live with the set', text: 'Set notes travel with the set; global notes are in every set.' },
       {
         title: 'Sending a verse to the arrangement in Ableton Live',
         text: 'Send a verse to the arrangement, as locators or as clips.',
         show: 'video',
+        video: 'send-a-verse',
+      },
+      { title: 'What the tags do', text: 'Tagging the first line of a verse is enough.', show: 'keys', side: 'right' },
+      {
+        title: 'Notes that live with the set',
+        text: 'Set notes travel with the set; global notes are in every set.',
+        show: 'video',
+        video: 'global-notes',
       },
     ],
     availableAs: ['Ableton Live extension'],

@@ -1,20 +1,22 @@
 /* One project page: a contained first screen (the head beside the live
    demo), then the project's story beat by beat.
    Each beat pairs a heading and a sentence or two with the visual that shows
-   it, so text and visuals alternate. Wide visuals (live tools, videos, flows,
-   screenshot rows) sit under their text at full width; the rest sit beside
-   it, alternating sides. Empty
+   it, so text and visuals alternate. Wide visuals (live tools, flows,
+   screenshot rows) sit under their text at full width; the rest (videos
+   included) sit beside it, alternating sides. Empty
    slots render as labelled placeholders, so filling one later is a data change. */
 
 import { categoryLabel, type Beat, type ProjectEntry, type Slot } from '../data/projects.js';
 import { LAMP_CARDS, LAMP_FLOW_CARDS } from '../lamp/cards/index.js';
 import { mountCard, type CardDef } from '../lamp/engine.js';
+import { Maximize, Minimize, Pause, Play, Volume2, VolumeX, type IconNode } from 'lucide';
 import { VISUALS } from '../data/visuals.generated.js';
 import { actions, FULL_VERSION } from './actions.js';
 import { THEME_EVENT } from './chrome.js';
+import { lucideSymbolSvg } from './glyphs.js';
 import { badges, el, eyebrow, href, whereRows } from './shared.js';
 
-const WIDE = new Set(['live', 'video', 'flow', 'shots']);
+const WIDE = new Set(['live', 'flow', 'shots']);
 
 /* A project with a live demo opens on one contained screen: the name, lead
    and three or four highlights on the left, the demo on the right at a modest
@@ -152,7 +154,11 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
         );
     let layout = 'beat';
     if (visual && beat.show && WIDE.has(beat.show)) layout += ' wide';
-    else if (visual) layout += side++ % 2 ? ' beside flip' : ' beside';
+    else if (visual) {
+      const flip = beat.side ? beat.side === 'left' : side % 2 === 1;
+      side++;
+      layout += flip ? ' beside flip' : ' beside';
+    }
     const attrs: Record<string, string> = { class: layout, id: beatId(beat) };
     if (beat.show) attrs['data-show'] = beat.show;
     main.append(el('section', attrs, text, ...(visual ? [visual] : [])));
@@ -185,10 +191,12 @@ function visualFor(beat: Beat, p: ProjectEntry): HTMLElement | null {
       return p.live ? liveSlot(p.live) : null;
     case 'video': {
       // A recording encoded by `npm run visuals` wins over the data's slot.
-      const rec = VISUALS[p.id]?.videos[0];
+      const vis = VISUALS[p.id];
+      const videos = vis?.videos ?? [];
+      const rec = beat.video ? videos.find((v) => v === beat.video) : videos[0];
       if (rec) {
         const base = href(`visuals/${p.id}/${rec}`);
-        return el('video', { src: `${base}.mp4`, poster: `${base}.jpg`, controls: '', preload: 'none', title: `${p.name} demo`, class: 'video' });
+        return player({ src: `${base}.mp4`, poster: `${base}.jpg`, title: `${p.name}: ${beat.title}`, silent: !!vis?.silent?.includes(rec) });
       }
       return p.video ? videoSlot(p.video, p.name) : null;
     }
@@ -299,7 +307,108 @@ function beatId(b: Beat): string {
 function videoSlot(slot: Slot, name: string): HTMLElement {
   // A short strip until the video exists: a full 16:9 frame of nothing reads as broken.
   if ('placeholder' in slot) return el('div', { class: 'slot slim' }, slot.placeholder);
-  return el('video', { src: slot.url, controls: '', preload: 'metadata', title: `${name} demo`, class: 'video' });
+  return player({ src: slot.url, title: `${name} demo`, silent: false });
+}
+
+function icon(node: IconNode): HTMLElement {
+  const span = el('span', { class: 'player-icon', 'aria-hidden': 'true' });
+  span.innerHTML = lucideSymbolSvg(node);
+  return span;
+}
+
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+/* The site's own video player, in place of the browser's controls: a play
+   button over the poster, then one slim bar of play/pause, a seekable line in
+   the page's accent, the time, and full screen. A silent video (no audio
+   track) says "no sound" where a volume control would be; one with sound gets
+   a mute button. */
+function player(o: { src: string; poster?: string; title: string; silent: boolean }): HTMLElement {
+  const video = el('video', { src: o.src, preload: 'metadata', playsinline: '', title: o.title, ...(o.poster ? { poster: o.poster } : {}) });
+  video.muted = o.silent;
+  const big = el('button', { class: 'player-big', type: 'button', 'aria-label': 'Play' }, icon(Play));
+  const frame = el('div', { class: 'player-frame' }, video, big);
+  const toggle = el('button', { class: 'player-btn', type: 'button', 'aria-label': 'Play' }, icon(Play));
+  const fill = el('span', { class: 'player-fill' });
+  const track = el('div', { class: 'player-track', role: 'slider', tabindex: '0', 'aria-label': 'Seek', 'aria-valuemin': '0' }, fill);
+  const time = el('span', { class: 'player-time' }, '0:00');
+  const bar = el('div', { class: 'player-bar' }, toggle, track, time);
+  if (o.silent) {
+    bar.append(el('span', { class: 'player-silent', title: 'This video has no sound' }, icon(VolumeX), 'no sound'));
+  } else {
+    const mute = el('button', { class: 'player-btn', type: 'button', 'aria-label': 'Mute' }, icon(Volume2));
+    mute.addEventListener('click', () => {
+      video.muted = !video.muted;
+      mute.setAttribute('aria-label', video.muted ? 'Unmute' : 'Mute');
+      mute.replaceChildren(icon(video.muted ? VolumeX : Volume2));
+    });
+    bar.append(mute);
+  }
+  const full = el('button', { class: 'player-btn', type: 'button', 'aria-label': 'Full screen' }, icon(Maximize));
+  bar.append(full);
+  const fig = el('figure', { class: 'player' }, frame, bar);
+
+  const sync = () => {
+    const playing = !video.paused && !video.ended;
+    fig.classList.toggle('playing', playing);
+    toggle.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+    toggle.replaceChildren(icon(playing ? Pause : Play));
+  };
+  const progress = () => {
+    const d = video.duration || 0;
+    const t = video.currentTime;
+    fill.style.width = d ? `${(t / d) * 100}%` : '0';
+    time.textContent = d ? `${clock(t)} / ${clock(d)}` : clock(t);
+    track.setAttribute('aria-valuenow', String(Math.round(t)));
+    track.setAttribute('aria-valuemax', String(Math.round(d)));
+    track.setAttribute('aria-valuetext', `${clock(t)} of ${clock(d)}`);
+  };
+  const flip = () => (video.paused || video.ended ? void video.play() : video.pause());
+  for (const b of [big, toggle, video]) b.addEventListener('click', flip);
+  for (const e of ['play', 'pause', 'ended']) video.addEventListener(e, sync);
+  for (const e of ['timeupdate', 'loadedmetadata', 'seeked']) video.addEventListener(e, progress);
+  // timeupdate fires a few times a second; follow the frames while playing so the line glides
+  let raf = 0;
+  video.addEventListener('play', () => {
+    const tick = () => {
+      progress();
+      if (!video.paused) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  });
+  video.addEventListener('pause', () => cancelAnimationFrame(raf));
+
+  const seekTo = (x: number) => {
+    const r = track.getBoundingClientRect();
+    const f = Math.min(1, Math.max(0, (x - r.left) / r.width));
+    if (video.duration) video.currentTime = f * video.duration;
+    progress();
+  };
+  track.addEventListener('pointerdown', (e) => {
+    track.setPointerCapture(e.pointerId);
+    seekTo(e.clientX);
+    const move = (m: PointerEvent) => seekTo(m.clientX);
+    track.addEventListener('pointermove', move);
+    track.addEventListener('pointerup', () => track.removeEventListener('pointermove', move), { once: true });
+  });
+  track.addEventListener('keydown', (e) => {
+    const step = e.key === 'ArrowRight' ? 2 : e.key === 'ArrowLeft' ? -2 : 0;
+    if (!step) return;
+    e.preventDefault();
+    video.currentTime = Math.min(video.duration || 0, Math.max(0, video.currentTime + step));
+  });
+
+  full.addEventListener('click', () => {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else if (fig.requestFullscreen) void fig.requestFullscreen();
+    else (video as HTMLVideoElement & { webkitEnterFullscreen?: () => void }).webkitEnterFullscreen?.(); // iPhone
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const on = document.fullscreenElement === fig;
+    full.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+    full.replaceChildren(icon(on ? Minimize : Maximize));
+  });
+  return fig;
 }
 
 function slotLink(slot: Slot, label: string): Node {
