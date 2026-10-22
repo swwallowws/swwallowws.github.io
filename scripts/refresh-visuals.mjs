@@ -104,7 +104,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     run("node", [join(root, "scripts/loops.mjs"), r.project], { stdio: "inherit" });
     run("node", [join(root, "scripts/stills.mjs"), r.project], { stdio: "inherit" });
     const { repo, still } = MEDIA[r.project];
-    const names = ["loop-paper.mp4", "loop-night.mp4", "loop-paper.png", "loop-night.png", `${still}-paper.png`, `${still}-night.png`];
+    const names = ["loop-paper.mp4", "loop-night.mp4", "loop-paper.gif", "loop-night.gif", "loop-paper.png", "loop-night.png", `${still}-paper.png`, `${still}-night.png`];
     const files = names.map((n) => [join(root, ".local-visuals", r.project, n), `media/${n}`]).filter(([from]) => existsSync(from));
     propose(repo, `visuals/${r.live.content}`, files, "README media: today's product",
       `The product changed since its README pictures were recorded (build ${r.live.commit.slice(0, 7)}), so the showcase re-recorded them from ${r.site}.\n\nLook at the loop and stills, then merge. Proposed by the showcase's refresh-visuals workflow.`);

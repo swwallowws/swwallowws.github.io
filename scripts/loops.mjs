@@ -17,7 +17,8 @@
 // project's repo, media/) (H.264, 720 px wide, silent, fast
 // start) with loop-<theme>.png, its first frame (or the one at `poster`
 // seconds, when the loop starts empty), for readers who ask for reduced motion
-// and while the video loads.
+// and while the video loads, and loop-<theme>.gif, which is what the README
+// shows (GitHub doesn't play an MP4 from the repo).
 //
 // Actions are those of visuals/manifest.json (click, fill, press, select,
 // upload, hover, focus, blur, inject, scrollTo, waitFor, wait), plus
@@ -135,6 +136,10 @@ try {
         "-vf", `${crop}scale=720:-2,fps=30`, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "26", "-preset", "slow",
         "-movflags", "+faststart", "-an", mp4]);
       execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", String(r.poster ?? 0), "-i", mp4, "-frames:v", "1", png]);
+      // GitHub doesn't play an MP4 from the repo, so the README shows this GIF of it.
+      execFileSync("ffmpeg", ["-v", "error", "-y", "-i", mp4, "-vf",
+        "fps=15,scale=720:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=128:stats_mode=diff[p];" +
+        "[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle", "-loop", "0", join(out, `loop-${theme}.gif`)]);
       const secs = frames.at(-1).t - frames[0].t;
       console.log(`loop   ${r.project}/loop-${theme}.mp4 (${secs.toFixed(1)} s, ${frames.length} frames)`);
     }
