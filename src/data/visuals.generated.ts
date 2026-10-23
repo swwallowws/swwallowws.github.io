@@ -84,7 +84,12 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "impromptu"
+    ],
+    "silent": [
+      "impromptu"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",

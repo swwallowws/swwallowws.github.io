@@ -10,7 +10,9 @@ between them over `move` seconds. Segments join with a crossfade
 (`crossfade`, or a segment's own `xfade`; 0 is a hard cut). A segment with
 `freeze` and `hold` instead of `in` and `out` holds one source frame, silent,
 with any camera move. A segment's `caption` is drawn centred along the
-bottom; a run of segments with the same caption keeps it steady, fading in
+bottom, or centred on its `captionAt` ([x, y] output pixels); "\n" breaks a
+line, and "box": false in `caption` drops the boxed tile for bare text over a
+soft shadow. A run of segments with the same caption keeps it steady, fading in
 and out where the caption changes. A framing can have a mask (`masks`, keyed
 by framing name: a rounded rectangle of the source, [x0, y0, x1, y1, radius]):
 everything outside it is painted the ground colour, so only that window
@@ -45,7 +47,7 @@ import subprocess
 import sys
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 cut = json.load(open(sys.argv[1]))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # the showcase
@@ -109,20 +111,30 @@ _cap_cache = {}
 
 
 def caption_tile(text):
-    """The caption as an RGBA tile: ground with a hairline, ink text."""
+    """The caption as an RGBA tile: ground with a hairline, ink text. With
+    "box": false, bare ink text over a soft ground shadow. "\\n" breaks lines."""
     if text not in _cap_cache:
-        l, t, r, b = FONT.getbbox(text)
-        px, py = 16, 10
+        boxed = CAP.get("box", True)
+        spacing = round(FONT.size * 0.2)
+        probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+        l, t, r, b = (round(v) for v in probe.multiline_textbbox((0, 0), text, font=FONT, spacing=spacing, align="center"))
+        px, py = (16, 10) if boxed else (FONT.size, FONT.size)
         w, h = r - l + 2 * px, b - t + 2 * py
-        tile = Image.new("RGBA", (w, h), GROUND + (230,))
-        d = ImageDraw.Draw(tile)
-        d.rectangle([0, 0, w - 1, h - 1], outline=LINE + (255,), width=1)
-        d.text((px - l, py - t), text, font=FONT, fill=INK + (255,))
+        pos = (px - l, py - t)
+        if boxed:
+            tile = Image.new("RGBA", (w, h), GROUND + (230,))
+            ImageDraw.Draw(tile).rectangle([0, 0, w - 1, h - 1], outline=LINE + (255,), width=1)
+        else:
+            shadow = Image.new("RGBA", (w, h), GROUND + (0,))
+            ImageDraw.Draw(shadow).multiline_text(pos, text, font=FONT, fill=GROUND + (255,), spacing=spacing, align="center")
+            tile = shadow.filter(ImageFilter.GaussianBlur(FONT.size * 0.35))
+        ImageDraw.Draw(tile).multiline_text(pos, text, font=FONT, fill=INK + (255,), spacing=spacing, align="center")
         _cap_cache[text] = tile
     return _cap_cache[text]
 
 
-def draw_caption(img, text, alpha):
+def draw_caption(img, text, alpha, at=None):
+    """At the bottom centre, or centred on `at` ([x, y] output pixels)."""
     if not text or alpha <= 0:
         return img
     tile = caption_tile(text)
@@ -130,7 +142,10 @@ def draw_caption(img, text, alpha):
         tile = tile.copy()
         tile.putalpha(tile.getchannel("A").point(lambda v: int(v * alpha)))
     img = img.convert("RGBA")
-    img.alpha_composite(tile, ((OW - tile.width) // 2, OH - 32 - tile.height))
+    if at:
+        img.alpha_composite(tile, (round(at[0] - tile.width / 2), round(at[1] - tile.height / 2)))
+    else:
+        img.alpha_composite(tile, ((OW - tile.width) // 2, OH - 32 - tile.height))
     return img.convert("RGB")
 
 
@@ -243,7 +258,7 @@ def frames(i, start_box):
                 alpha = min(alpha, ease((t - (0 if swap_in else 0.15)) / CAP_FADE))
             if fade_out:
                 alpha = min(alpha, ease((dur - t - (0 if swap_out else 0.1)) / CAP_FADE))
-            out = draw_caption(out, text, alpha)
+            out = draw_caption(out, text, alpha, seg.get("captionAt"))
         yield np.asarray(out)
         n += 1
     proc.stdout.close()

@@ -245,8 +245,9 @@ export const projects: ProjectEntry[] = [
       { title: 'Keeping the slides and bends', text: 'Slides and bends survive.' },
       {
         title: 'From a tab to an Ableton Live set',
-        text: 'From a tab to a set you can play along with.',
+        text: 'From a tab or a score to a set you can play along with.',
         show: 'video',
+        video: 'impromptu',
       },
     ],
     worksWith: ['Guitar Pro', 'MusicXML', 'Ableton Live 12'],
