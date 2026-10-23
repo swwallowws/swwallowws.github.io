@@ -26,7 +26,7 @@ export interface Shot {
 }
 
 /** What a story beat shows next to its text. */
-export type Show = 'live' | 'image' | 'video' | 'flow' | 'shots' | 'keys';
+export type Show = 'live' | 'image' | 'video' | 'flow' | 'shots' | 'keys' | 'clip';
 
 /** One beat of a project page: a heading, a sentence or two, and the visual
     that shows it. Text and visuals alternate, so no part reads as a wall. */
@@ -36,6 +36,8 @@ export interface Beat {
   show?: Show;
   /** With show 'video': which encoded recording (its name, no extension); the first one otherwise. */
   video?: string;
+  /** With show 'clip': the URL of a small playable piece of the product, framed with ?embed=1. */
+  clip?: string;
   /** Which side a beside visual sits on; beats alternate sides when it's unset. */
   side?: 'left' | 'right';
 }
@@ -241,13 +243,20 @@ export const projects: ProjectEntry[] = [
     },
     story: [
       { title: 'Open a file', text: 'Drop in a tab or a score and hear it.', show: 'live' },
-      { title: 'A set that plays straight away', text: 'A set that plays straight away.' },
-      { title: 'Keeping the slides and bends', text: 'Slides and bends survive.' },
+      { title: 'A set that plays straight away', text: 'A set that plays straight away.', show: 'video', video: 'straight-away', side: 'right' },
+      {
+        title: 'Keeping the slides and bends',
+        text: 'Slides and bends survive.',
+        show: 'clip',
+        clip: 'https://swwallowws.github.io/ready-set/?clip=example',
+        side: 'right',
+      },
       {
         title: 'From a tab to an Ableton Live set',
         text: 'From a tab or a score to a set you can play along with.',
         show: 'video',
         video: 'impromptu',
+        side: 'right',
       },
     ],
     worksWith: ['Guitar Pro', 'MusicXML', 'Ableton Live 12'],

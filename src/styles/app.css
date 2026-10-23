@@ -440,7 +440,7 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
    page at its top. */
 .live { scroll-margin-top: calc(var(--space) * 3); }
 @media (min-width: 1240px) { .live { scroll-margin-top: 100vh; } }
-.live iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: inherit; }
+.live iframe, .clip iframe { display: block; width: 100%; border: 0; background: transparent; color-scheme: inherit; }
 .live p { margin: var(--space) 0 0; padding-left: 4px; }
 /* The site's video player (project.ts player()): the picture, then one slim
    bar in the interface's mono capitals. Square, hairlined, on the page's ground. */

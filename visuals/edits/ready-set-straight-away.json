@@ -1,0 +1,29 @@
+{
+  "sources": {
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-23 01-24-53.mp4"
+  },
+  "out": "visuals/raw/tabridge/straight-away.mp4",
+  "size": [1600, 1000],
+  "fps": 60,
+  "crossfade": 0.3,
+  "audio": false,
+  "caption": { "font": "vendor/design/fonts/InterTight.woff2", "weight": 600, "size": 54, "fade": 0.3, "box": false },
+  "framings": {
+    "web": [530, 360, 2400],
+    "live": [0, 100, 3456]
+  },
+  "masks": {
+    "web": [800, 500, 2660, 1430, 0],
+    "live": [20, 180, 3436, 1530, 0]
+  },
+  "segments": [
+    { "source": "take", "in": 7.0, "out": 9.6, "framing": "web",
+      "caption": "drop in a tab", "captionAt": [800, 840] },
+    { "source": "take", "in": 10.3, "out": 12.2, "framing": "web",
+      "caption": "pick your key", "captionAt": [800, 840] },
+    { "source": "take", "in": 12.6, "out": 13.9, "framing": "web",
+      "caption": "download the set", "captionAt": [800, 840] },
+    { "source": "take", "in": 41.0, "out": 49.3, "framing": "live",
+      "caption": "open it, and it plays", "captionAt": [800, 830] }
+  ]
+}

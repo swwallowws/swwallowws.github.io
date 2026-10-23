@@ -85,10 +85,12 @@ export const VISUALS: Record<string, ProjectVisuals> = {
       "lamp"
     ],
     "videos": [
-      "impromptu"
+      "impromptu",
+      "straight-away"
     ],
     "silent": [
-      "impromptu"
+      "impromptu",
+      "straight-away"
     ],
     "thumb": "lamp",
     "cards": {

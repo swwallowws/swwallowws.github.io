@@ -209,6 +209,8 @@ function visualFor(beat: Beat, p: ProjectEntry): HTMLElement | null {
       return p.shots ? shots(p.shots) : null;
     case 'keys':
       return p.keys ? keys(p.keys) : null;
+    case 'clip':
+      return beat.clip ? clip(beat.clip, `${p.name}: ${beat.title}`) : null;
     default:
       return null;
   }
@@ -298,6 +300,22 @@ function liveDemo(url: string, name: string, title: string): { node: HTMLElement
     apply();
   };
   return { node, fit };
+}
+
+/* A small playable piece of the product beside a beat, framed like a demo: it
+   posts { type: 'demo-height', height } and the frame takes that height. */
+function clip(url: string, title: string): HTMLElement {
+  const frame = el('iframe', { src: frameUrl(url), title, allow: 'autoplay' });
+  frame.style.height = '280px';
+  window.addEventListener(THEME_EVENT, () => {
+    frame.src = frameUrl(url);
+  });
+  window.addEventListener('message', (e: MessageEvent) => {
+    if (e.source !== frame.contentWindow) return;
+    const d = e.data as { type?: string; height?: number } | null;
+    if (d && d.type === 'demo-height' && typeof d.height === 'number' && d.height > 0) frame.style.height = `${Math.ceil(d.height)}px`;
+  });
+  return el('div', { class: 'clip' }, frame);
 }
 
 function beatId(b: Beat): string {
@@ -419,9 +437,11 @@ function slotLink(slot: Slot, label: string): Node {
 /* Paper and Night each get their own screenshot; CSS shows the one that
    matches the current mode, including an explicit toggle choice. */
 function picture(img: NonNullable<ProjectEntry['image']>): HTMLElement {
+  // A relative src is site-internal (e.g. an encoded shot under visuals/).
+  const url = (src: string) => (/^(https?:|\/)/.test(src) ? src : href(src));
   const wrap = el('div', { class: 'shot' });
-  wrap.append(el('img', { src: img.src, alt: img.alt, class: img.srcDark ? 'for-paper' : '', loading: 'lazy' }));
-  if (img.srcDark) wrap.append(el('img', { src: img.srcDark, alt: img.alt, class: 'for-night', loading: 'lazy' }));
+  wrap.append(el('img', { src: url(img.src), alt: img.alt, class: img.srcDark ? 'for-paper' : '', loading: 'lazy' }));
+  if (img.srcDark) wrap.append(el('img', { src: url(img.srcDark), alt: img.alt, class: 'for-night', loading: 'lazy' }));
   return wrap;
 }
 
