@@ -1,0 +1,79 @@
+{
+  "sources": {
+    "voice": "/Users/tokamak/Movies/Showcase/2026-10-25 22-23-16.mp4",
+    "rec": "/Users/tokamak/Movies/Showcase/2026-10-26 04-10-18.mp4",
+    "song": "/Users/tokamak/Movies/Showcase/2026-10-25 22-21-28.mp4",
+    "tuning": "/Users/tokamak/Movies/Showcase/2026-10-25 22-31-14.mp4",
+    "live": "/Users/tokamak/Movies/Showcase/2026-10-25 22-34-13.mp4"
+  },
+  "out": "visuals/raw/voxmpe/one-take.mp4",
+  "size": [
+    1600,
+    1000
+  ],
+  "fps": 30,
+  "crossfade": 0.3,
+  "caption": {
+    "font": "vendor/design/fonts/InterTight.woff2",
+    "weight": 600,
+    "size": 48,
+    "fade": 0.3,
+    "box": false
+  },
+  "framings": {
+    "rec": [
+      0,
+      240,
+      1500
+    ],
+    "rec2": [
+      0,
+      298,
+      1500
+    ],
+    "studio": [
+      0,
+      240,
+      3456
+    ],
+    "live": [
+      0,
+      74,
+      3456
+    ]
+  },
+  "masks": {
+    "rec": [
+      0,
+      240,
+      3456,
+      2234,
+      0
+    ],
+    "rec2": [
+      0,
+      298,
+      3456,
+      2234,
+      0
+    ],
+    "studio": [
+      0,
+      240,
+      3456,
+      2234,
+      0
+    ]
+  },
+  "segments": [
+    {"source": "rec", "in": 2.1, "out": 5.45, "framing": "rec2", "speed": 1.5, "caption": "sing a phrase", "captionAt": [652.0, 690.0]},
+    {"source": "voice", "in": 21.2, "out": 23.6, "framing": "studio", "from": "rec", "move": 1.0, "moveAt": 0.2, "xfade": 0.3, "caption": "it becomes expressive MIDI", "captionAt": [652.0, 690.0]},
+    {"source": "voice", "in": 30.6, "out": 37.0, "framing": "studio", "xfade": 0.15, "caption": "every slide stays in", "captionAt": [652.0, 690.0]},
+    {"source": "song", "in": 25.9, "out": 28.2, "framing": "studio", "xfade": 0.5, "caption": "hear your voice with the MIDI", "captionAt": [652.0, 690.0]},
+    {"source": "song", "in": 36.57, "out": 40.4, "framing": "studio", "xfade": 0, "caption": "or the MIDI alone", "captionAt": [652.0, 690.0]},
+    {"source": "tuning", "in": 21.6, "out": 24.6, "framing": "studio", "xfade": 0.5, "caption": "any tuning, like 53-EDO", "captionAt": [652.0, 690.0]},
+    {"source": "tuning", "in": 25.0, "out": 27.6, "framing": "studio", "xfade": 0.15, "caption": "any tuning, like 53-EDO", "captionAt": [652.0, 690.0]},
+    {"source": "tuning", "in": 48.6, "out": 51.4, "framing": "studio", "caption": "save the MIDI with its tuning", "captionAt": [652.0, 690.0]},
+    {"source": "live", "in": 0.3, "out": 4.9, "framing": "live", "xfade": 0.5, "caption": "the tuning opens in your studio of choice", "captionAt": [960.0, 740.0]}
+  ]
+}

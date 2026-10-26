@@ -1,0 +1,11 @@
+{
+  "source": "visuals/raw/rearranged/two-songs.mp4",
+  "segments": [[5.6, 24.5]],
+  "canvas": [1000, 930],
+  "bg": "auto",
+  "panels": [
+    { "crop": [290, 150, 1024, 340], "at": [18, 90], "scale": 0.94 },
+    { "crop": [290, 610, 600, 230], "at": [65, 480], "scale": 1.45 }
+  ],
+  "out": "visuals/raw/rearranged/hook.mp4"
+}

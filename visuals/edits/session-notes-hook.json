@@ -1,0 +1,18 @@
+{
+  "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-45-27.mp4",
+  "segments": [
+    { "t": [97.4, 100.6], "panels": [
+      { "crop": [1250, 635, 1437, 1434], "at": [19, 110], "scale": 0.6 }
+    ] },
+    { "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-44-14.mp4", "t": [46.5, 49.8], "panels": [
+      { "crop": [20, 240, 2540, 820], "at": [0, 395], "scale": 0.354 }
+    ] },
+    { "t": [56.8, 59.6], "panels": [
+      { "crop": [20, 240, 2540, 820], "at": [0, 395], "scale": 0.354 }
+    ] }
+  ],
+  "canvas": [900, 1080],
+  "bg": "#131018",
+  "fade": 0.18,
+  "out": "visuals/raw/session-notes/hook.mp4"
+}

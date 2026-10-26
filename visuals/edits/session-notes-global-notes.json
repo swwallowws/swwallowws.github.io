@@ -1,7 +1,6 @@
 {
   "sources": {
-    "whole": "/Users/tokamak/Movies/Showcase/2026-10-22 17-18-34.mp4",
-    "fresh": "/Users/tokamak/Movies/Showcase/2026-10-22 17-32-34.mp4"
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-25 21-45-27.mp4"
   },
   "out": "visuals/raw/session-notes/global-notes.mp4",
   "size": [1600, 1000],
@@ -13,12 +12,12 @@
     "set": [518, 421, 2900]
   },
   "segments": [
-    { "source": "whole", "in": 13.8, "out": 15.15, "framing": "set" },
-    { "source": "whole", "in": 15.15, "out": 18.4, "framing": "set", "xfade": 0, "caption": "global notes come along",
-      "highlight": { "rect": [1279, 1702, 1987, 1858, 8], "dim": 0.7, "at": 0.1 } },
-    { "source": "fresh", "in": 10.6, "out": 12.8, "framing": "set", "xfade": 0.6, "caption": "global notes come along",
+    { "source": "take", "in": 95.9, "out": 97.6, "framing": "set" },
+    { "source": "take", "in": 97.6, "out": 100.4, "framing": "set", "xfade": 0, "caption": "global notes come along",
+      "highlight": { "rect": [1279, 1702, 1987, 1858, 8], "dim": 0.7, "at": 0.3 } },
+    { "source": "take", "in": 125.0, "out": 127.0, "framing": "set", "xfade": 0.6, "caption": "global notes come along",
       "highlight": { "rect": [1279, 1702, 1987, 1858, 8], "dim": 0.7, "at": -1 } },
-    { "source": "fresh", "in": 12.8, "out": 17.0, "framing": "set", "xfade": 0, "caption": "each set has its own notes",
+    { "source": "take", "in": 127.0, "out": 128.5, "framing": "set", "xfade": 0, "caption": "each set has its own notes",
       "highlight": { "rect": [1279, 1541, 1987, 1690, 8], "dim": 0.6, "at": -0.3 } }
   ]
 }

@@ -1,0 +1,11 @@
+{
+  "source": "visuals/raw/tabridge/impromptu.mp4",
+  "segments": [
+    { "t": [7.6, 14.2], "panels": [
+      { "crop": [776, 80, 764, 840], "at": [99, 24], "scale": 1.05 }
+    ] }
+  ],
+  "canvas": [1000, 930],
+  "bg": "auto",
+  "out": "visuals/raw/tabridge/hook.mp4"
+}

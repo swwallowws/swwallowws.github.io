@@ -1,37 +1,38 @@
 {
   "sources": {
-    "take": "/Users/tokamak/Movies/Showcase/2026-10-23 00-50-13.mp4"
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-25 22-53-50.mp4"
   },
   "out": "visuals/raw/tabridge/impromptu.mp4",
   "size": [1600, 1000],
   "fps": 60,
   "crossfade": 0.3,
-  "audio": false,
+  "pitch": -2,
   "caption": { "font": "vendor/design/fonts/InterTight.woff2", "weight": 600, "size": 54, "fade": 0.3, "box": false },
   "framings": {
-    "menu": [756, 350, 2700],
-    "window": [158, 270, 3600],
-    "full": [0, 37, 3456]
+    "menu": [0, 80, 2200],
+    "window": [118, 579, 2500],
+    "closer": [268, 673, 2200],
+    "full": [0, 74, 3456]
   },
   "masks": {
-    "window": [1270, 338, 2646, 2232, 16]
+    "window": [1330, 704, 2524, 2016, 16],
+    "closer": [1330, 704, 2524, 2016, 16]
   },
   "segments": [
-    { "source": "take", "in": 2.5, "out": 5.1, "framing": "menu" },
-    { "source": "take", "in": 8.8, "out": 10.6, "framing": "window",
-      "caption": "search free,\npublic-domain scores", "captionAt": [800, 690] },
-    { "source": "take", "in": 11.2, "out": 12.6, "framing": "window", "xfade": 0,
-      "caption": "search free,\npublic-domain scores", "captionAt": [800, 690] },
-    { "source": "take", "in": 13.1, "out": 17.6, "framing": "window",
-      "caption": "search free,\npublic-domain scores", "captionAt": [800, 690] },
-    { "source": "take", "in": 17.6, "out": 18.6, "framing": "window", "xfade": 0,
-      "caption": "hear it in any key", "captionAt": [800, 690] },
-    { "source": "take", "in": 22.5, "out": 27.8, "framing": "window",
-      "caption": "hear it in any key", "captionAt": [800, 690] },
-    { "source": "take", "in": 30.3, "out": 31.3, "framing": "full" },
-    { "source": "take", "in": 31.3, "out": 34.0, "framing": "full", "xfade": 0,
-      "caption": "one click,\nand it's in your set", "captionAt": [1155, 790] },
-    { "source": "take", "in": 38.5, "out": 46.5, "framing": "full",
-      "caption": "play along", "captionAt": [1155, 790] }
+    { "source": "take", "in": 2.4, "out": 4.6, "framing": "menu" },
+    { "source": "take", "in": 9.9, "out": 11.4, "framing": "window",
+      "caption": "search free,\npublic-domain scores", "captionAt": [430, 500] },
+    { "source": "take", "in": 20.5, "out": 26.4, "framing": "window", "speed": 1.4,
+      "caption": "search free,\npublic-domain scores", "captionAt": [430, 500] },
+    { "source": "take", "in": 29.5, "out": 33.15, "pictureOut": 31.8, "fadeOut": 0.35, "framing": "window", "xfade": 0.15, "speed": 2,
+      "caption": "listen before you pick", "captionAt": [430, 500] },
+    { "source": "take", "in": 37.6, "out": 38.6, "framing": "window", "xfade": 0.1, "speed": 2,
+      "caption": "listen before you pick", "captionAt": [430, 500] },
+    { "source": "take", "in": 47.7, "out": 53.55, "framing": "window", "xfade": 0.1, "speed": 2,
+      "caption": "pick your key,\nit's built into the MIDI", "captionAt": [430, 500] },
+    { "source": "take", "in": 53.55, "out": 58.6, "framing": "window", "xfade": 0, "speed": 2,
+      "caption": "one click,\nand it's in your set", "captionAt": [430, 500] },
+    { "source": "take", "in": 82.0, "out": 87.3, "framing": "full", "xfade": 0.6,
+      "caption": "play along", "captionAt": [640, 820] }
   ]
 }

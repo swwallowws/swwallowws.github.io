@@ -1,6 +1,6 @@
 {
   "sources": {
-    "clips": "/Users/tokamak/Movies/Showcase/2026-10-22 16-37-48.mp4"
+    "clips": "/Users/tokamak/Movies/Showcase/2026-10-25 21-45-27.mp4"
   },
   "out": "visuals/raw/_sheets/session-notes-loop.mp4",
   "size": [1600, 1000],
@@ -15,10 +15,8 @@
     "pad": [1250, 635, 2687, 2069, 20]
   },
   "segments": [
-    { "source": "clips", "in": 7.2, "out": 9.0, "framing": "pad" },
-    { "source": "clips", "in": 9.0, "out": 11.65, "framing": "pad", "xfade": 0 },
-    { "source": "clips", "in": 12.3, "out": 14.45, "framing": "pad", "xfade": 0.15 },
-    { "source": "clips", "in": 14.5, "out": 18.0, "framing": "result", "xfade": 0.3,
-      "highlight": { "rect": [144, 940, 2554, 1044, 8], "dim": 0.6, "at": 0.4 } }
+    { "source": "clips", "in": 50.2, "out": 55.4, "framing": "pad" },
+    { "source": "clips", "in": 56.8, "out": 59.6, "framing": "result", "xfade": 0.3,
+      "highlight": { "rect": [30, 940, 2556, 1044, 8], "dim": 0.6, "at": 0.4 } }
   ]
 }

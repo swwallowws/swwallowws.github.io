@@ -20,8 +20,20 @@ shows, and the camera may then frame past the source's edges. The mask fades
 in over a camera move into its framing. A segment's `highlight` ({"rect":
 [x0, y0, x1, y1, radius], "dim": 0.6, "at": 0.4}) dims everything outside
 its rectangle to that opacity of the ground colour, fading in from `at`
-seconds into the segment. The audio is cut and crossfaded to match, or left
-out entirely with "audio": false (a silent video with no audio track).
+seconds into the segment. A segment's `speed` (default 1) plays it faster
+or slower, so a slow stretch can run quicker without a cut; its camera move,
+caption and highlight timings are in output seconds. `pitch` (semitones, on
+the cut list for all segments or on one segment) shifts the sound's pitch
+without changing its timing. A segment's `pictureOut` (source seconds) ends
+its picture there while its sound plays on to `out`: the picture from `in`
+to `pictureOut` is slowed to fill the segment, so a phrase can finish without
+showing what the cursor does next, and without a still frame. A segment's `replace` (a list of
+{"rect": [x0, y0, x1, y1], "text": "...", "at": [x, baseline], "size": px,
+"weight": 900, "tracking": em, "align": "center"}) paints each source rectangle with the colour
+at its top-left corner and sets the text there in the caption font, so a
+file name on screen can read as the song's name. The audio is cut and
+crossfaded to match (tempo-changed with `speed`), or left out entirely with
+"audio": false (a silent video with no audio track).
 
     {
       "sources": { "a": "/path/take-a.mp4", "b": "/path/take-b.mp4" },
@@ -40,6 +52,7 @@ sub-pixel box, so camera moves glide instead of stepping a pixel at a time)
 and piped back to ffmpeg for encoding. No OpenCV, and works with ffmpeg 4.2
 (no xfade filter needed). Paths in the cut list are relative to the showcase.
 """
+import functools
 import json
 import math
 import os
@@ -51,7 +64,7 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 cut = json.load(open(sys.argv[1]))
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # the showcase
-SOURCES = cut.get("sources") or {"main": cut["source"]}
+SOURCES = {k: os.path.join(ROOT, p) for k, p in (cut.get("sources") or {"main": cut["source"]}).items()}
 OUT = os.path.join(ROOT, cut["out"])
 OW, OH = cut["size"]
 FPS = cut["fps"]
@@ -88,10 +101,11 @@ HL_FADE = 0.5  # seconds for a highlight's dimming to fade in
 INK, GROUND, LINE = (236, 230, 238), (21, 18, 26), (47, 41, 54)  # design Night tokens
 
 
-def caption_font():
-    """Pillow can't read woff2: make a static TTF of the design font once."""
-    woff2 = os.path.join(ROOT, CAP["font"])
-    weight = CAP.get("weight", 600)
+@functools.lru_cache(maxsize=None)
+def caption_font(weight=None, size=None):
+    """Pillow can't read woff2: make a static TTF of the design font once (per weight)."""
+    woff2 = os.path.join(ROOT, (CAP or {}).get("font", "vendor/design/fonts/InterTight.woff2"))
+    weight = weight or CAP.get("weight", 600)
     ttf = os.path.join(ROOT, "visuals/raw/_fonts", f"{os.path.splitext(os.path.basename(woff2))[0]}-{weight}.ttf")
     if not os.path.exists(ttf):
         from fontTools.ttLib import TTFont
@@ -103,7 +117,26 @@ def caption_font():
             instancer.instantiateVariableFont(font, {"wght": weight}, inplace=True)
         font.flavor = None
         font.save(ttf)
-    return ImageFont.truetype(ttf, CAP.get("size", 26))
+    return ImageFont.truetype(ttf, size or CAP.get("size", 26))
+
+
+def replace_text(img, reps):
+    """Paints each rectangle with its own ground and sets the new text there."""
+    img = img.copy()
+    d = ImageDraw.Draw(img)
+    for r in reps:
+        x0, y0, x1, y1 = r["rect"]
+        d.rectangle([x0, y0, x1, y1], fill=img.getpixel((x0, y0)))
+        if r.get("text"):
+            font = caption_font(r.get("weight", 900), r.get("size", 60))
+            x, base = r["at"]
+            track = r.get("tracking", -0.02) * font.size
+            if r.get("align") == "center":  # "at" is then the text's centre
+                x -= (sum(font.getlength(ch) for ch in r["text"]) + track * (len(r["text"]) - 1)) / 2
+            for ch in r["text"]:  # letter by letter, for the heading's tight tracking
+                d.text((x, base), ch, font=font, fill=tuple(r.get("color", INK)), anchor="ls")
+                x += font.getlength(ch) + track
+    return img
 
 
 FONT = caption_font() if CAP else None
@@ -198,7 +231,8 @@ def apply_mask(img, mask, cam, alpha):
 
 
 def duration(seg):
-    return seg["hold"] if "freeze" in seg else seg["out"] - seg["in"]
+    """In output seconds."""
+    return seg["hold"] if "freeze" in seg else (seg["out"] - seg["in"]) / seg.get("speed", 1)
 
 
 def frames(i, start_box):
@@ -213,7 +247,8 @@ def frames(i, start_box):
         start_box = box(seg["from"])
     begin = start_box if move > 0 and start_box is not None else target
     mask = MASKS.get(seg["framing"])
-    moving_in = begin != target
+    # a move between two framings with the same window keeps the mask on throughout
+    moving_in = begin != target and MASKS.get(seg.get("from") or (SEGS[i - 1]["framing"] if i else "")) != mask
     hl = seg.get("highlight")
     text = seg.get("caption")
     fade_in = text and (i == 0 or SEGS[i - 1].get("caption") != text)
@@ -222,10 +257,14 @@ def frames(i, start_box):
     swap_in = fade_in and i > 0 and SEGS[i - 1].get("caption")
     swap_out = fade_out and i + 1 < len(SEGS) and SEGS[i + 1].get("caption")
     at = seg["freeze"] if "freeze" in seg else seg["in"]
-    span = ["-frames:v", "1"] if "freeze" in seg else ["-t", str(dur)]
+    pic_out = seg.get("pictureOut", seg.get("out"))
+    span = ["-frames:v", "1"] if "freeze" in seg else ["-t", str(pic_out - seg["in"])]
+    # the picture's pace: the speed, or slower when it ends early (pictureOut)
+    speed = (pic_out - seg["in"]) / dur if "pictureOut" in seg else seg.get("speed", 1)
+    retime = f"setpts=PTS/{speed}," if speed != 1 else ""
     proc = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-ss", str(at), "-i", src(seg), *span,
-         "-vf", f"fps={FPS}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+         "-vf", f"{retime}fps={FPS}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
         stdout=subprocess.PIPE,
     )
     size = SW * SH * 3
@@ -244,6 +283,8 @@ def frames(i, start_box):
         t = n / FPS
         s = ease((t - move_at) / move) if move > 0 else 1.0
         img = Image.frombuffer("RGB", (SW, SH), raw, "raw", "RGB", 0, 1)
+        if "replace" in seg:
+            img = replace_text(img, seg["replace"])
         cam = camera(begin, target, s, clamp=mask is None)
         out = frame(img, cam)
         if mask:
@@ -265,6 +306,20 @@ def frames(i, start_box):
     proc.wait()
 
 
+def atempo(speed):
+    """An atempo chain for a speed (each atempo stage takes 0.5 to 2)."""
+    stages = []
+    while speed > 2:
+        stages.append(2.0)
+        speed /= 2
+    while speed < 0.5:
+        stages.append(0.5)
+        speed /= 0.5
+    if speed != 1:
+        stages.append(speed)
+    return "".join(f",atempo={s}" for s in stages)
+
+
 def audio(path):
     """The segments' audio, joined with the same crossfades, as a WAV."""
     names = list(SOURCES)
@@ -274,7 +329,14 @@ def audio(path):
             parts.append(f"aevalsrc=0|0:c=stereo:s=48000:d={seg['hold']}[a{i}]")
         else:
             k = names.index(seg.get("source", FIRST))
-            parts.append(f"[{k}:a]atrim={seg['in']}:{seg['out']},asetpts=PTS-STARTPTS[a{i}]")
+            # a pitch shift: resample by r (pitch and pace move together), then the tempo puts the pace back
+            r = 2 ** (seg.get("pitch", cut.get("pitch", 0)) / 12)
+            shift = f",asetrate={round(48000 * r)},aresample=48000" if r != 1 else ""
+            # "fadeOut": seconds, for a sound the take itself cuts short
+            fo = seg.get("fadeOut", 0)
+            fade = f",afade=t=out:st={duration(seg) - fo:.3f}:d={fo}" if fo else ""
+            parts.append(f"[{k}:a]atrim={seg['in']}:{seg['out']},asetpts=PTS-STARTPTS,aresample=48000{shift}"
+                         f"{atempo(seg.get('speed', 1) / r)}{fade}[a{i}]")
     prev = "a0"
     for i in range(1, len(SEGS)):
         d = SEGS[i].get("xfade", XF)

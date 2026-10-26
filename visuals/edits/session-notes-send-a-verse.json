@@ -1,7 +1,7 @@
 {
   "sources": {
-    "locators": "/Users/tokamak/Movies/Showcase/2026-10-22 16-28-50.mp4",
-    "clips": "/Users/tokamak/Movies/Showcase/2026-10-22 16-37-48.mp4"
+    "locators": "/Users/tokamak/Movies/Showcase/2026-10-25 21-44-14.mp4",
+    "clips": "/Users/tokamak/Movies/Showcase/2026-10-25 21-45-27.mp4"
   },
   "out": "visuals/raw/session-notes/send-a-verse.mp4",
   "size": [1600, 1000],
@@ -10,7 +10,7 @@
   "audio": false,
   "caption": { "font": "vendor/design/fonts/InterTight.woff2", "weight": 600, "size": 26 },
   "framings": {
-    "wide": [0, 70, 3456],
+    "menu": [1056, 700, 2400],
     "pad": [534, 508, 2868],
     "result": [0, 90, 2840]
   },
@@ -18,20 +18,18 @@
     "pad": [1250, 635, 2687, 2069, 20]
   },
   "segments": [
-    { "source": "locators", "in": 8.6, "out": 10.0, "framing": "wide" },
-    { "source": "locators", "in": 10.0, "out": 12.1, "framing": "pad", "move": 1.0, "moveAt": 0.1, "xfade": 0 },
-    { "source": "locators", "in": 12.1, "out": 14.6, "framing": "pad", "xfade": 0, "caption": "[4] means bar 4" },
-    { "source": "locators", "in": 15.7, "out": 18.0, "framing": "pad", "xfade": 0.15, "caption": "[4] means bar 4" },
-    { "source": "locators", "in": 18.0, "out": 19.8, "framing": "pad", "xfade": 0, "caption": "[0:08] means 8 seconds in" },
-    { "source": "locators", "in": 20.8, "out": 23.9, "framing": "pad", "xfade": 0.15, "caption": "send lyrics as locators" },
-    { "source": "locators", "in": 24.5, "out": 26.6, "framing": "pad", "xfade": 0.15, "caption": "send lyrics as locators" },
-    { "source": "locators", "in": 26.7, "out": 30.5, "framing": "result", "xfade": 0.3, "caption": "send lyrics as locators",
-      "highlight": { "rect": [120, 328, 2556, 392, 8], "dim": 0.6, "at": 0.5 } },
+    { "source": "locators", "in": 3.2, "out": 6.9, "framing": "menu", "speed": 1.5 },
+    { "source": "locators", "in": 7.6, "out": 10.4, "framing": "pad", "move": 0.8, "moveAt": 0.05, "xfade": 0.15, "speed": 1.5 },
+    { "source": "locators", "in": 10.4, "out": 14.2, "framing": "pad", "xfade": 0, "speed": 1.6, "caption": "[4] means bar 4" },
+    { "source": "locators", "in": 18.0, "out": 20.8, "framing": "pad", "xfade": 0.15, "speed": 1.6, "caption": "[4] means bar 4" },
+    { "source": "locators", "in": 24.6, "out": 29.8, "framing": "pad", "xfade": 0.15, "speed": 1.6, "caption": "[0:08] means 8 seconds in" },
+    { "source": "locators", "in": 30.0, "out": 32.4, "framing": "pad", "xfade": 0, "speed": 1.6, "caption": "[0:08] means 8 seconds in" },
+    { "source": "locators", "in": 40.6, "out": 43.9, "framing": "pad", "xfade": 0.15, "speed": 1.4, "caption": "send lyrics as locators" },
+    { "source": "locators", "in": 45.5, "out": 50.0, "framing": "result", "xfade": 0.3, "caption": "send lyrics as locators",
+      "highlight": { "rect": [30, 330, 2556, 390, 8], "dim": 0.6, "at": 0.5 } },
 
-    { "source": "clips", "in": 7.2, "out": 9.0, "framing": "pad", "xfade": 0.5, "caption": "send lyrics as clips" },
-    { "source": "clips", "in": 9.0, "out": 11.65, "framing": "pad", "xfade": 0, "caption": "send lyrics as clips" },
-    { "source": "clips", "in": 12.3, "out": 14.45, "framing": "pad", "xfade": 0.15, "caption": "send lyrics as clips" },
-    { "source": "clips", "in": 14.5, "out": 18.4, "framing": "result", "xfade": 0.3, "caption": "send lyrics as clips",
-      "highlight": { "rect": [144, 940, 2554, 1044, 8], "dim": 0.6, "at": 0.5 } }
+    { "source": "clips", "in": 50.2, "out": 55.1, "framing": "pad", "xfade": 0.5, "speed": 1.4, "caption": "send lyrics as clips" },
+    { "source": "clips", "in": 56.8, "out": 59.6, "framing": "result", "xfade": 0.3, "caption": "send lyrics as clips",
+      "highlight": { "rect": [30, 940, 2556, 1044, 8], "dim": 0.6, "at": 0.5 } }
   ]
 }
