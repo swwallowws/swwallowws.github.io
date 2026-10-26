@@ -1,6 +1,6 @@
 {
   "sources": {
-    "take": "/Users/tokamak/Movies/Showcase/2026-10-23 01-24-53.mp4"
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-26 12-42-46.mp4"
   },
   "out": "visuals/raw/tabridge/straight-away.mp4",
   "size": [1600, 1000],
@@ -9,21 +9,21 @@
   "audio": false,
   "caption": { "font": "vendor/design/fonts/InterTight.woff2", "weight": 600, "size": 54, "fade": 0.3, "box": false },
   "framings": {
-    "web": [530, 360, 2400],
-    "live": [0, 100, 3456]
+    "web": [528, 61, 2400],
+    "live": [0, 74, 3456]
   },
   "masks": {
-    "web": [800, 500, 2660, 1430, 0],
-    "live": [20, 180, 3436, 1530, 0]
+    "web": [800, 440, 2660, 1180, 0],
+    "live": [0, 120, 3456, 1530, 0]
   },
   "segments": [
-    { "source": "take", "in": 7.0, "out": 9.6, "framing": "web",
-      "caption": "drop in a tab", "captionAt": [800, 840] },
-    { "source": "take", "in": 10.3, "out": 12.2, "framing": "web",
-      "caption": "pick your key", "captionAt": [800, 840] },
-    { "source": "take", "in": 12.6, "out": 13.9, "framing": "web",
-      "caption": "download the set", "captionAt": [800, 840] },
-    { "source": "take", "in": 41.0, "out": 49.3, "framing": "live",
+    { "source": "take", "in": 4.7, "out": 6.6, "framing": "web",
+      "caption": "drop in a tab", "captionAt": [800, 860] },
+    { "source": "take", "in": 6.6, "out": 8.8, "framing": "web", "xfade": 0,
+      "caption": "pick your key", "captionAt": [800, 860] },
+    { "source": "take", "in": 8.8, "out": 10.15, "framing": "web", "xfade": 0,
+      "caption": "download the set", "captionAt": [800, 860] },
+    { "source": "take", "in": 29.4, "out": 35.7, "framing": "live", "xfade": 0.5,
       "caption": "open it, and it plays", "captionAt": [800, 830] }
   ]
 }
