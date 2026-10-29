@@ -25,7 +25,8 @@ const probes = new Set();
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 try {
-  for (const theme of ["paper", "night"]) {
+  // The site is Night only (every page sets data-theme="night").
+  for (const theme of ["night"]) {
     for (const path of PAGES) {
       const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
       const url = new URL(path, base);
@@ -89,12 +90,6 @@ try {
         // The way in sits with the other buttons, one per tool.
         const tries = await page.locator(".actions .btn-try").count();
         if (tries !== 7) problems.push(`${where}: ${tries} "Try the demo" or "Read how it works" buttons beside the summaries, expected 7`);
-        // The cards draw in the theme's colours: in Paper the ground is light.
-        if (theme === "paper" && cards) {
-          const [r, g, b] = await page.locator(".lamp-host canvas").first()
-            .evaluate((c) => [...c.getContext("2d").getImageData(3, 3, 1, 1).data]);
-          if (r + g + b < 3 * 160) problems.push(`${where}: a lamp card's ground is dark (${r}, ${g}, ${b}) in Paper`);
-        }
         await checkCards(page, where);
         await checkMap(page, where);
       }
@@ -118,19 +113,19 @@ try {
   await browser.close();
 }
 
-console.log(`checked ${PAGES.length} pages in Paper and Night, ${linked.size} links within the site`);
+console.log(`checked ${PAGES.length} pages, ${linked.size} links within the site`);
 
-/* The welcome page's cards: each plays once by itself when it comes into view
-   (the card reports data-playing), and a click opens the same place as the
-   "Try the demo" button beside it. */
+/* The welcome page's hooks (home.ts videoSide): a row's hook plays once the row
+   comes to the middle of the window, and a click opens the same place as the
+   Demo chip beside it. */
 async function checkCards(page, where) {
-  const host = page.locator(".lamp-host").nth(1);
-  await host.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(700);
-  if ((await host.getAttribute("data-playing")) !== "1") problems.push(`${where}: a card did not play when it came into view`);
   const li = page.locator(".wants > li").nth(1);
+  const thumb = li.locator(".video-thumb a");
+  await thumb.evaluate((a) => a.scrollIntoView({ block: "center" }));
+  await page.waitForTimeout(1200);
+  if (await li.locator(".video-thumb video").evaluate((v) => v.paused)) problems.push(`${where}: a hook did not play when it came to the middle`);
   const want = new URL(await li.locator(".actions .btn-try").getAttribute("href"), page.url()).href;
-  await host.locator("canvas").click();
+  await thumb.click({ position: { x: 24, y: 24 } }); // off the sound button in the middle
   await page.waitForURL((u) => u.href !== new URL("/", page.url()).href, { timeout: 5000 }).catch(() => {});
   if (page.url() !== want) problems.push(`${where}: clicking a card went to ${page.url()}, expected ${want}`);
   await page.goBack({ waitUntil: "networkidle" });
@@ -141,6 +136,10 @@ async function checkCards(page, where) {
    pointer (the map reports the tool in data-focus), and a click glides to that
    tool's item. */
 async function checkMap(page, where) {
+  // the map is drawn only with ?map, for the GitHub profile's picture (scripts/profile-map.mjs)
+  const url = new URL(page.url());
+  url.searchParams.set("map", "");
+  await page.goto(url.toString(), { waitUntil: "networkidle" });
   const map = page.locator(".map");
   if ((await map.count()) !== 1) return problems.push(`${where}: no map`);
   await map.scrollIntoViewIfNeeded();

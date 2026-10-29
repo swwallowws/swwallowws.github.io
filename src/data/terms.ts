@@ -24,7 +24,6 @@ export const GLOSSARY: Term[] = [
   { id: 'sample', words: ['sample'], text: 'A recorded sound, played back as an instrument.' },
   { id: 'guitar-pro', words: ['Guitar Pro'], text: 'A tab editor. Its files carry the notes, the tuning and how each note is played: bends, slides, hammer-ons.' },
   { id: 'musicxml', words: ['MusicXML'], text: 'The open file format notation apps use to share scores.' },
-  { id: 'time-signature', words: ['time signature'], text: 'How a bar is counted: 4/4 is four quarter notes, 7/8 is seven eighth notes, grouped in twos and threes.' },
   { id: 'odd-meters', words: ['Odd meters', 'odd meters'], text: 'Time signatures with an uneven count, like 5/8 or 7/8. They lean and limp in a way 4/4 doesn’t.' },
   { id: 'swing', words: ['swing'], text: 'Every other note played a little late, so a straight beat bounces.' },
   { id: 'push', words: ['Ableton Push 3'], text: 'Ableton’s instrument with 64 pads. It can also run on its own, without a computer.' },
