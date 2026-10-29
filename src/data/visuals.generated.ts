@@ -40,8 +40,7 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     ],
     "videos": [
       "hook",
-      "two-songs-plain",
-      "two-songs"
+      "two-songs-plain"
     ],
     "thumb": "lamp",
     "cards": {
@@ -79,8 +78,7 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     ],
     "videos": [
       "hook",
-      "studio-plain",
-      "studio"
+      "studio-plain"
     ],
     "thumb": "lamp",
     "cards": {
@@ -97,9 +95,7 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "videos": [
       "hook",
       "impromptu-plain",
-      "impromptu",
-      "straight-away-plain",
-      "straight-away"
+      "straight-away-plain"
     ],
     "thumb": "lamp",
     "cards": {
@@ -116,7 +112,6 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "videos": [
       "hook",
       "live",
-      "one-take",
       "slides",
       "tuning"
     ],
