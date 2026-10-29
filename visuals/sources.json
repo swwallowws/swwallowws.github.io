@@ -1,10 +1,4 @@
 {
-  "rearranged/loop": {
-    "site": "https://swwallowws.github.io/rearranged-web/",
-    "content": "743159e9e1f4a1a3",
-    "commit": "e8a5179f143834ba6d15e07142829adbd9f0cd2d",
-    "recorded": "2026-10-29"
-  },
   "coming-undone/loop": {
     "site": "https://swwallowws.github.io/coming-undone/",
     "content": "1db2da26751c03bf",
@@ -13,8 +7,14 @@
   },
   "ready-set/loop": {
     "site": "https://swwallowws.github.io/ready-set/",
-    "content": "d6a71126992a316c",
-    "commit": "82ce1d4040271c0563bad195b189e9a688812fe3",
+    "content": "61d9d3bb694b229d",
+    "commit": "937ea666da65d229f8bb82cef1888435496242fe",
+    "recorded": "2026-10-29"
+  },
+  "rearranged/loop": {
+    "site": "https://swwallowws.github.io/rearranged-web/",
+    "content": "743159e9e1f4a1a3",
+    "commit": "e8a5179f143834ba6d15e07142829adbd9f0cd2d",
     "recorded": "2026-10-29"
   },
   "starling/loop": {
