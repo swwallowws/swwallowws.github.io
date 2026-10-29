@@ -3,7 +3,7 @@
 
    A tool's ways in are said once: each format it ships as, named as itself
    and linking to where it lives ("browser studio ↗", "ableton live extension
-   ↗"), then GitHub where the code is open. "Command line" isn't named: the
+   ↗"), then, on the tool's own page, GitHub where the code is open. "Command line" isn't named: the
    tools that have one are open source, so GitHub stands for it. Formats with
    nowhere to go yet are plain text, ending ", coming soon".
 
@@ -15,6 +15,7 @@ import type { ProjectEntry } from '../data/projects.js';
 import { el } from './shared.js';
 
 const MAX_GET = 4;
+const isGitHub = (href: string): boolean => href.startsWith('https://github.com/');
 /** Formats left unnamed (see above). */
 const UNNAMED = new Set(['Command line']);
 
@@ -35,7 +36,7 @@ function out(label: string, href: string, spoken: string, className: string): HT
 
 /** The tool's formats as links (`format` class), then its other links such as
     GitHub (`other`), then any formats with nowhere to go yet as one plain line (`plain`). */
-export function formatLinks(p: ProjectEntry, cls: { format: string; other: string; plain: string }): HTMLElement[] {
+export function formatLinks(p: ProjectEntry, cls: { format: string; other: string; plain: string }, github = true): HTMLElement[] {
   const live = !!p.live && 'url' in p.live;
   const get = (p.get ?? []).slice(0, MAX_GET);
   const nodes: HTMLElement[] = [];
@@ -45,7 +46,7 @@ export function formatLinks(p: ProjectEntry, cls: { format: string; other: strin
     if (g) nodes.push(out(f, g.href, g.name ?? `${p.name}: ${f}`, cls.format));
     else unlinked.push(f);
   }
-  for (const g of get.filter((g) => !g.as)) nodes.push(out(g.label, g.href, g.name ?? `${g.label}: ${p.name}`, cls.other));
+  for (const g of get.filter((g) => !g.as && (github || !isGitHub(g.href)))) nodes.push(out(g.label, g.href, g.name ?? `${g.label}: ${p.name}`, cls.other));
   if (unlinked.length && (live || p.comingTo)) {
     const soon = p.comingTo ? `, coming soon to ${p.comingTo}` : ', coming soon';
     nodes.push(el('span', { class: cls.plain }, unlinked.join(' · ') + soon));
@@ -65,6 +66,7 @@ export function actions(p: ProjectEntry, page: string): HTMLElement {
       el('span', { class: 'ext', 'aria-hidden': 'true' }, '→'),
     ),
   );
-  if (!p.ways) row.append(...formatLinks(p, { format: 'btn btn-quiet', other: 'btn btn-quiet', plain: 'format' }));
+  // GitHub is said on the tool's own page, not here
+  if (!p.ways) row.append(...formatLinks(p, { format: 'btn btn-quiet', other: 'btn btn-quiet', plain: 'format' }, false));
   return row;
 }

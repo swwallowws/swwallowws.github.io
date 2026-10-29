@@ -296,6 +296,7 @@ export const projects: ProjectEntry[] = [
     get: [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/ready-set/', name: 'Open the Ready Set studio', as: 'Browser studio' },
       { label: 'Ableton Live extension', href: 'https://github.com/swwallowws/ready-set/releases/latest', name: 'The Ready Set extension for Ableton Live', as: 'Ableton Live extension' },
+      { label: 'GitHub', href: 'https://github.com/swwallowws/ready-set', name: 'Ready Set on GitHub' },
     ],
   },
   {
