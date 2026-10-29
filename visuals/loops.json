@@ -18,7 +18,7 @@
       ],
       "crop": "960:430:0:0",
       "setup": [
-        { "click": "#sample" },
+        { "click": "#sample-link" },
         { "waitFor": "#empty", "state": "hidden", "timeout": 60000 },
         { "waitFor": "#smoothing-row", "timeout": 30000 },
         { "wait": 1500 }
@@ -45,10 +45,10 @@
         { "upload": "#parts", "file": "visuals/staging/rearranged/parts.json" },
         { "waitFor": "#parts-strip .seg" },
         { "click": "#go" },
-        { "waitFor": "#switches button", "timeout": 120000 },
+        { "waitFor": "#switches button[data-k]", "timeout": 120000 },
         { "inject": [
-          "body > :not(main), main > .back, #override-row, #versions, #results, #mode-switches, #mode-blind, main > .grid:not(#switches), main > .row:has(#progress), details.keys, #song-hint, #song-switches, #section-note, #song-list-box, #song-status { display: none !important; }",
-          "main { padding-top: 56px !important; margin-top: 0 !important; }"
+          "body > :not(main), main > .back, #status, #sub, #keep, #download, label:has(#own), #own-note, .rating, #covers-box, #sf-row, footer { display: none !important; }",
+          "main { padding-top: 40px !important; margin-top: 0 !important; }"
         ] },
         { "scrollTo": 0 },
         { "wait": 1500 }
@@ -57,21 +57,18 @@
         { "wait": 700 },
         { "click": "#play" },
         { "wait": 2500 },
-        { "click": "#switches button[data-f='guitar']:not(.on)" },
-        { "wait": 3000 },
-        { "click": "#use-part", "ifEnabled": true },
-        { "waitFor": "#use-part:has-text('whole song uses')", "timeout": 60000 },
-        { "wait": 600 },
-        { "click": "#song-play" },
-        { "wait": 1800 },
-        { "click": "#sections .sec[data-i='1']" },
-        { "wait": 2200 },
-        { "click": "#sections .sec[data-i='2']" },
-        { "wait": 2200 }
+        { "click": "#switches button[data-k='guitar']:not(.on)" },
+        { "wait": 2800 },
+        { "click": "#switches .ds-switch-track[data-k='bass']" },
+        { "wait": 2800 },
+        { "click": "#switches button[data-k='feel']:not(.on)" },
+        { "wait": 2800 },
+        { "click": "#switches button[data-k='lead']:not(.on)" },
+        { "wait": 2800 }
       ]
     },
     {
-      "$comment": "From the full local app (stemscribe-web on 8002): the live site's runs are capped and slow.",
+      "$comment": "From the full local app (stemscribe-web on 8002): the live site's runs are capped and slow. The result's lanes alone, playing; the comping goes off and comes back.",
       "project": "stemscribe",
       "url": "http://localhost:8002/",
       "site": "https://swwallowws.github.io/coming-undone/",
@@ -79,26 +76,25 @@
       "crop": "1000:500:0:0",
       "setup": [
         { "upload": "#file", "file": "../stemscribe/try-dist/try/mix.mp3" },
-        { "fill": "#duration", "text": "20" },
         { "click": "#backend-choice button >> text=basic-pitch" },
         { "click": "#go" },
-        { "waitFor": "#results", "timeout": 900000 },
+        { "waitFor": "#run:not(.hidden):not([data-live])", "timeout": 900000 },
         { "inject": [
-          "#form, #prog-panel, #timing-note, #results > .panel ~ .panel, #dl { display: none !important; }",
+          ".ds-header, #form, .run-head, #tempo-box, #run-details, .cu-foot { display: none !important; }",
+          "#run { margin-top: 0 !important; }",
           "#parts { --lane-h: 64px !important; }"
         ] },
-        { "click": "#view-choice button >> text=together" },
         { "scrollTo": 0 },
         { "wait": 1500 }
       ],
       "show": [
         { "wait": 700 },
         { "click": "#pl-play" },
-        { "wait": 2500 },
-        { "click": "#view-choice button >> text=by part" },
         { "wait": 3000 },
-        { "click": "#pl-stems button >> text=drums" },
-        { "wait": 3000 }
+        { "click": ".lane-name >> text=Comping" },
+        { "wait": 2500 },
+        { "click": ".lane-name >> text=Comping" },
+        { "wait": 2500 }
       ]
     },
     {
@@ -106,7 +102,7 @@
       "url": "https://swwallowws.github.io/ready-set/",
       "site": "https://swwallowws.github.io/ready-set/",
       "viewport": [960, 680],
-      "crop": "960:676:0:0",
+      "crop": "960:432:0:0",
       "poster": 7,
       "inject": [
         ".ds-header, .note-bar, .example, .uses, .ways, #online, footer, #template-state { display: none !important; }",
@@ -117,9 +113,6 @@
       "show": [
         { "wait": 800 },
         { "upload": "#file", "file": "../ready-set-public/spike/gp_serenade/serenade.gp" },
-        { "waitFor": "#preview:not([disabled])", "timeout": 30000 },
-        { "wait": 900 },
-        { "click": "#preview" },
         { "waitFor": "#player-host:not([hidden])", "timeout": 30000 },
         { "wait": 2500 },
         { "focus": "#semitones" },
@@ -130,7 +123,6 @@
         { "press": "ArrowUp" },
         { "wait": 600 },
         { "blur": true },
-        { "click": "#preview" },
         { "wait": 3000 }
       ]
     }

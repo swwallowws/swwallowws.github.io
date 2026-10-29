@@ -24,9 +24,11 @@ import { recordSource } from "./sources.mjs";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const manifest = JSON.parse(readFileSync(join(root, "visuals/manifest.json"), "utf8"));
 // `npm run visuals -- <project>` does one project; `-- cards` only re-renders
-// the cards and the index from the pictures already there (no servers needed).
+// the cards and the index from the pictures already there (no servers needed);
+// `-- index` only rewrites the index.
 const cardsOnly = process.argv[2] === "cards";
-const only = cardsOnly ? undefined : process.argv[2];
+const indexOnly = process.argv[2] === "index";
+const only = cardsOnly || indexOnly ? undefined : process.argv[2];
 const out = (project) => join(root, "public/visuals", project);
 // Shots marked `local: true` (frozen demos on copyrighted test songs) are
 // written outside public/, so Vite can never copy them into dist.
@@ -280,11 +282,13 @@ function writeIndex() {
   log(`index  src/data/visuals.generated.ts (${Object.keys(index).length} projects)`);
 }
 
-if (!cardsOnly) {
-  await captureShots();
-  encodeRecordings();
+if (!indexOnly) {
+  if (!cardsOnly) {
+    await captureShots();
+    encodeRecordings();
+  }
+  await captureCards();
 }
-await captureCards();
 writeIndex();
 if (problems.length) {
   console.error(`\n${problems.length} problem(s):\n- ${problems.join("\n- ")}`);

@@ -38,7 +38,11 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "hook",
+      "two-songs-plain",
+      "two-songs"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
@@ -53,10 +57,12 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     ],
     "videos": [
       "global-notes",
+      "hook",
       "send-a-verse"
     ],
     "silent": [
       "global-notes",
+      "hook",
       "send-a-verse"
     ],
     "thumb": "lamp",
@@ -71,7 +77,11 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "hook",
+      "studio-plain",
+      "studio"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
@@ -85,11 +95,10 @@ export const VISUALS: Record<string, ProjectVisuals> = {
       "lamp"
     ],
     "videos": [
+      "hook",
+      "impromptu-plain",
       "impromptu",
-      "straight-away"
-    ],
-    "silent": [
-      "impromptu",
+      "straight-away-plain",
       "straight-away"
     ],
     "thumb": "lamp",
@@ -104,7 +113,13 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "hook",
+      "live",
+      "one-take",
+      "slides",
+      "tuning"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
@@ -117,7 +132,13 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "hook",
+      "odd-meters",
+      "same-settings-same-beat",
+      "trailer",
+      "why-a-circle"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",

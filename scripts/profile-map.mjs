@@ -14,7 +14,7 @@ for (const theme of ["paper", "night"]) {
     viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2, reducedMotion: "reduce",
     colorScheme: theme === "night" ? "dark" : "light",
   });
-  await page.goto(`https://swwallowws.github.io/?theme=${theme}`, { waitUntil: "networkidle" });
+  await page.goto(`https://swwallowws.github.io/?map&theme=${theme}`, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
   const map = page.locator(".map").first();
   await map.scrollIntoViewIfNeeded();
