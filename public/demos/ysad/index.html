@@ -79,9 +79,9 @@
       throw e;
     }
 
-    // Where the full product lives: its store page, set when it exists (with
-    // FULL_LIVE below). The showcase's head links the same place.
-    const FULL_PRODUCT = '';
+    // Where the full product lives: its store page (with FULL_LIVE below).
+    // The showcase's head links the same place.
+    const FULL_PRODUCT = 'https://www.musehub.com/plugin/ysad';
 
     const DEFAULT_STYLE = 'Half-time';
     const DEFAULT_STYLE_NAME = data.presets.includes(DEFAULT_STYLE) ? DEFAULT_STYLE : data.presets[0];
@@ -224,7 +224,7 @@
     // After the tour: the way to the full product, in a new tab so the demo
     // stays where it is, with the same words as the showcase's button. Until
     // the store pages exist, it says it's coming instead (FULL_LIVE).
-    const FULL_LIVE = false;
+    const FULL_LIVE = true;
     const fullLink = document.createElement(FULL_LIVE ? 'a' : 'span');
     fullLink.className = 'full-link';
     if (FULL_LIVE) {
