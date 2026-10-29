@@ -1,26 +1,26 @@
 {
   "rearranged/loop": {
     "site": "https://swwallowws.github.io/rearranged-web/",
-    "content": "8b8cf7458faeab4c",
-    "commit": "d2a832962933a1281fe939c3c0d44b10256e3666",
-    "recorded": "2026-10-26"
+    "content": "743159e9e1f4a1a3",
+    "commit": "e8a5179f143834ba6d15e07142829adbd9f0cd2d",
+    "recorded": "2026-10-29"
   },
   "stemscribe/loop": {
     "site": "https://swwallowws.github.io/coming-undone/",
-    "content": "ec553ece76f2c705",
-    "commit": "002c849f6042220f02b9f462fa4c87cb9dfd1dc6",
-    "recorded": "2026-10-26"
+    "content": "1db2da26751c03bf",
+    "commit": "46d9aacc81371a0dd098f5dfb3435379c4de9158",
+    "recorded": "2026-10-29"
   },
   "tabridge/loop": {
     "site": "https://swwallowws.github.io/ready-set/",
-    "content": "0ff9635aed54c0b7",
-    "commit": "e1a7240c5e92069749b326e5cc6a2c04386c9d1e",
-    "recorded": "2026-10-28"
+    "content": "d6a71126992a316c",
+    "commit": "82ce1d4040271c0563bad195b189e9a688812fe3",
+    "recorded": "2026-10-29"
   },
   "voxmpe/loop": {
     "site": "https://swwallowws.github.io/starling/",
-    "content": "95acffde9f3a3ac1",
-    "commit": "402d462af35502409eca6ef1e2cf86373abec2e9",
-    "recorded": "2026-10-26"
+    "content": "216b0f3280452a44",
+    "commit": "7c88a983397f67946d8a4e38f9b7c602313e7ad8",
+    "recorded": "2026-10-29"
   }
 }
