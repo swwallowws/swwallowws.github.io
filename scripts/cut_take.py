@@ -46,7 +46,9 @@ source, softly. In `caption`, "tracking" (em) spaces the letters and
 ([r, g, b]) colours its caption, which fades where its text, place or ink
 changes. A segment's `labels` ([{"text", "at", "size", "weight", "font",
 "ink", "tracking"}], `font` a design font path) are set like the caption and
-come and go with it.
+come and go with it. `overlay` ([{"png", "at"}], source pixels) pastes a
+picture onto every source frame; `ground` ([r, g, b]) replaces the ground
+colour (masks, caption shadows).
 
     {
       "sources": { "a": "/path/take-a.mp4", "b": "/path/take-b.mp4" },
@@ -114,6 +116,8 @@ CAP = cut.get("caption")
 CAP_FADE = (CAP or {}).get("fade", 0.4)
 HL_FADE = 0.5  # seconds for a highlight's dimming to fade in
 INK, GROUND, LINE = (236, 230, 238), (21, 18, 26), (47, 41, 54)  # design Night tokens
+# "ground" ([r, g, b]) replaces the ground colour, e.g. to match a recorded app's own background
+GROUND = tuple(cut.get("ground", GROUND))
 
 
 @functools.lru_cache(maxsize=None)
@@ -313,6 +317,9 @@ def shade_factor():
 
 
 SHADE = shade_factor()
+# "overlay" ([{"png", "at": [x, y]}], source pixels) pastes pictures onto every source frame,
+# e.g. a logo a recording lost
+OVERLAYS = [(Image.open(os.path.join(ROOT, o["png"])).convert("RGBA"), tuple(o["at"])) for o in cut.get("overlay", [])]
 
 
 def frames(i, start_box):
@@ -371,6 +378,10 @@ def frames(i, start_box):
         img = Image.frombuffer("RGB", (SW, SH), raw, "raw", "RGB", 0, 1)
         if SHADE is not None:
             img = Image.fromarray((np.asarray(img) * SHADE).astype(np.uint8))
+        if OVERLAYS:
+            img = img.copy()
+            for pic, pos in OVERLAYS:
+                img.paste(pic, pos, pic)
         if "replace" in seg:
             img = replace_text(img, seg["replace"])
         cam = camera(begin, target, s, clamp=mask is None)
