@@ -1,4 +1,4 @@
-/* Every tool's symbol, drawn once. voxmpe and yousuckatdrums get hand-built
+/* Every tool's symbol, drawn once. starling and yousuckatdrums get hand-built
    glyphs (a microtonal ladder with a gliding line; sixteen steps around a
    circle); the rest use a Lucide icon. map.ts builds the live map's DOM
    glyphs from this geometry, and scripts/visuals.mjs (via Node's built-in
@@ -12,7 +12,7 @@
 
 import { AudioLines, FileMusic, Music, NotebookPen, Shuffle, Tag, type IconNode } from 'lucide';
 
-// ---- voxmpe: a microtonal ladder with a sung line gliding into vibrato ----
+// ---- starling: a microtonal ladder with a sung line gliding into vibrato ----
 
 export const MPE_LADDER_Y = [-17, -11, -5, 3, 10, 18];
 export const MPE_LADDER_X = 23;
@@ -66,11 +66,11 @@ export function patternSymbolSvg(): string {
 // ---- the rest: one Lucide icon per tool, keyed by project id ------------
 
 export const TOOL_ICONS: Record<string, IconNode> = {
-  stemscribe: AudioLines,
+  'coming-undone': AudioLines,
   rearranged: Shuffle,
-  tabridge: FileMusic,
+  'ready-set': FileMusic,
   'session-notes': NotebookPen,
-  intentional: Tag,
+  tagline: Tag,
   home: Music, // the welcome page's own site card, not a project
 };
 
@@ -91,7 +91,7 @@ export function lucideSymbolSvg(icon: IconNode): string {
     markup ready to drop into a card's `data.symbol`. `undefined` for an id
     with no icon. */
 export function cardSymbol(id: string): string | undefined {
-  if (id === 'voxmpe') return mpeSymbolSvg();
+  if (id === 'starling') return mpeSymbolSvg();
   if (id === 'ysad') return patternSymbolSvg();
   const icon = TOOL_ICONS[id];
   return icon ? lucideSymbolSvg(icon) : undefined;
@@ -115,7 +115,7 @@ export function homeMarkSvg(): string {
   return `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='currentColor' stroke='none'><path d='${d}'/></svg>`;
 }
 
-/** voxmpe at tab size: three ladder rungs instead of six, and one line that
+/** starling at tab size: three ladder rungs instead of six, and one line that
     glides up from below and settles into a short vibrato between two rungs. */
 export function mpeFaviconSvg(): string {
   const rungs = [4, 12, 20].map((y) => `<line x1='2' y1='${y}' x2='22' y2='${y}' stroke-width='1.5' opacity='0.4'/>`).join('');
@@ -142,7 +142,7 @@ export function patternFaviconSvg(): string {
     `currentColor`; scripts/favicons.mjs adds the Paper/Night colours. */
 export function faviconSymbol(id: string): string | undefined {
   if (id === 'home') return homeMarkSvg();
-  if (id === 'voxmpe') return mpeFaviconSvg();
+  if (id === 'starling') return mpeFaviconSvg();
   if (id === 'ysad') return patternFaviconSvg();
   const icon = TOOL_ICONS[id];
   return icon ? lucideSymbolSvg(icon) : undefined;

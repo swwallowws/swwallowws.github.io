@@ -15,15 +15,15 @@ mkdirSync(out, { recursive: true });
 
 // Where to hold the lamp (fractions of the card) and what its label must say there.
 const EXPECT = {
-  voxmpe: [[0.5, 0.5, /^([A-G]#?\d|slide )/]],
-  stemscribe: [[0.5, 0.15, /^vocals · written as notes$/], [0.5, 0.83, /^drums · written as notes$/]],
+  starling: [[0.5, 0.5, /^([A-G]#?\d|slide )/]],
+  "coming-undone": [[0.5, 0.15, /^vocals · written as notes$/], [0.5, 0.83, /^drums · written as notes$/]],
   rearranged: [[0.5, 0.2, /^before/], [0.5, 0.8, /^after · /]],
-  tabridge: [[0.5, 0.24, /^your part · /], [0.5, 0.86, /^drums$/]],
+  "ready-set": [[0.5, 0.24, /^your part · /], [0.5, 0.86, /^drums$/]],
   ysad: [[0.5, 0.09, /^hats/]],
   "session-notes": [[0.2, 0.23, /^\[1\] · a clip on bar 1$/]],
-  intentional: [[0.5, 0.5, /(kept|dropped)/]],
+  tagline: [[0.5, 0.5, /(kept|dropped)/]],
   // Tagline's page card: its six columns are the six steps.
-  "intentional-flow": [[0.08, 0.5, /^Capture · /], [0.42, 0.5, /^Triage · /], [0.75, 0.35, /^Sync · /]],
+  "tagline-flow": [[0.08, 0.5, /^Capture · /], [0.42, 0.5, /^Triage · /], [0.75, 0.35, /^Sync · /]],
 };
 
 const problems = [];

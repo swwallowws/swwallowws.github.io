@@ -13,7 +13,7 @@ const nearestPart = (s: CardState, y: number): number =>
   LANE.reduce((b, v, i) => (Math.abs(s.V(v) - y) < Math.abs(s.V(LANE[b]!) - y) ? i : b), 0);
 
 export const comingUndone: CardDef = {
-  id: 'stemscribe',
+  id: 'coming-undone',
   category: 'transcribe',
   still: [0.62, 0.5],
   strings: 12,

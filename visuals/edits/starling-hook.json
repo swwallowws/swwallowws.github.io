@@ -9,5 +9,5 @@
   "panels": [
     { "crop": [0, 0, 1304, 885], "at": [0, 126], "scale": 0.767 }
   ],
-  "out": "visuals/raw/voxmpe/hook.mp4"
+  "out": "visuals/raw/starling/hook.mp4"
 }

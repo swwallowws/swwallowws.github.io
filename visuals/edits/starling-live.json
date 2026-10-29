@@ -4,7 +4,7 @@
     "tuning": "/Users/tokamak/Movies/Showcase/starling/takes/2026-10-25 22-31-14.mp4",
     "live": "/Users/tokamak/Movies/Showcase/starling/takes/2026-10-25 22-34-13.mp4"
   },
-  "out": "visuals/raw/voxmpe/live.mp4",
+  "out": "visuals/raw/starling/live.mp4",
   "size": [1600, 1000],
   "fps": 30,
   "crossfade": 0.3,

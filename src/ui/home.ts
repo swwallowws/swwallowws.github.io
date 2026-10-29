@@ -37,17 +37,17 @@ const WANTS: Want[] = [
   },
   {
     want: 'simply jam.',
-    project: 'tabridge',
+    project: 'ready-set',
     name: 'Ready Set',
   },
   {
     want: 'simply sing.',
-    project: 'voxmpe',
+    project: 'starling',
     name: 'Starling',
   },
   {
     want: 'simply split.',
-    project: 'stemscribe',
+    project: 'coming-undone',
     name: 'Coming Undone',
   },
   {
@@ -57,7 +57,7 @@ const WANTS: Want[] = [
   },
   {
     want: 'simply tag.',
-    project: 'intentional',
+    project: 'tagline',
     name: 'Tagline',
   },
   {
@@ -112,7 +112,7 @@ const MEDIA_ASPECT = 1.08;
 // the shares of a hook cut off its top or left edge in the stage, where the
 // hook shows the tool's own name and the band names it already
 const HOOK_CROP: Record<string, { top?: number; left?: number }> = {
-  ysad: { top: 0.075 }, tabridge: { top: 0.15 }, voxmpe: { left: 0.09 },
+  ysad: { top: 0.075 }, 'ready-set': { top: 0.15 }, starling: { left: 0.09 },
 };
 // how long the stage rests on each tool when nothing points at it
 const STEP_MS = 4500;
@@ -304,6 +304,14 @@ function wireFocus(list: HTMLOListElement): void {
   queue();
 }
 
+/* Items once had their code names as ids; links shared before the rename still arrive. */
+const FORMER_IDS: Record<string, string> = {
+  voxmpe: 'starling',
+  stemscribe: 'coming-undone',
+  tabridge: 'ready-set',
+  intentional: 'tagline',
+};
+
 /* Going to a tool's item (from the map, or a shared #link): glide there on an
    ease-in-out curve, quicker than the browser's own smooth scroll, and centre
    the item in the window (an item taller than the window aligns to the top).
@@ -312,9 +320,12 @@ function wireGlide(): void {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   let raf = 0;
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-  function glideTo(id: string, push: boolean): void {
+  function glideTo(asked: string, push: boolean): void {
+    const id = FORMER_IDS[asked] ?? asked;
     const li = document.getElementById(id);
     if (!li) return;
+    // An old shared link (#tabridge): land on the renamed item and show its current link.
+    if (id !== asked) history.replaceState(null, '', `#${id}`);
     for (const x of document.querySelectorAll('.wants > li.arrived')) x.classList.remove('arrived');
     li.classList.add('arrived');
     if (push && location.hash !== `#${id}`) history.pushState(null, '', `#${id}`);

@@ -3,7 +3,7 @@
   "loops": [
     {
       "$comment": "From the live demo (Bengisu, 1 Oct: the studio's side controls put people off): the starling's song, then smoothing all the way up.",
-      "project": "voxmpe",
+      "project": "starling",
       "url": "https://swwallowws.github.io/starling/try/?embed=1",
       "site": "https://swwallowws.github.io/starling/",
       "viewport": [960, 600],
@@ -69,7 +69,7 @@
     },
     {
       "$comment": "From the full local app (stemscribe-web on 8002): the live site's runs are capped and slow. The result's lanes alone, playing; the comping goes off and comes back.",
-      "project": "stemscribe",
+      "project": "coming-undone",
       "url": "http://localhost:8002/",
       "site": "https://swwallowws.github.io/coming-undone/",
       "viewport": [1000, 700],
@@ -98,7 +98,7 @@
       ]
     },
     {
-      "project": "tabridge",
+      "project": "ready-set",
       "url": "https://swwallowws.github.io/ready-set/",
       "site": "https://swwallowws.github.io/ready-set/",
       "viewport": [960, 680],

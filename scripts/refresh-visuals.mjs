@@ -23,10 +23,10 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 
 /** Where each project's recorded pictures go: its repo, and its README still's name. */
 export const MEDIA = {
-  voxmpe: { repo: "swwallowws/starling", still: "studio" },
+  starling: { repo: "swwallowws/starling", still: "studio" },
   rearranged: { repo: "swwallowws/rearranged", still: "lab" },
-  tabridge: { repo: "swwallowws/ready-set", still: "site" },
-  stemscribe: { repo: "swwallowws/coming-undone", still: "full" },
+  "ready-set": { repo: "swwallowws/ready-set", still: "site" },
+  "coming-undone": { repo: "swwallowws/coming-undone", still: "full" },
 };
 const SHOWCASE = "swwallowws/swwallowws.github.io";
 

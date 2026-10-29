@@ -1,7 +1,7 @@
 {
   "$comment": "Starling page clip: a sung phrase as MIDI, its slides kept. Framing as starling-one-take.json; no captions, the page's line says it.",
   "sources": { "voice": "/Users/tokamak/Movies/Showcase/starling/takes/2026-10-25 22-23-16.mp4" },
-  "out": "visuals/raw/voxmpe/slides.mp4",
+  "out": "visuals/raw/starling/slides.mp4",
   "size": [1600, 1000],
   "fps": 30,
   "crossfade": 0.3,

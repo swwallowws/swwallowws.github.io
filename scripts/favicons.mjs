@@ -34,10 +34,10 @@ const { faviconSymbol } = await import(pathToFileURL(join(root, "src/ui/glyphs.t
 // Page id -> its tool's static folder in the sibling repo (from this root).
 const COPY = {
   ysad: "../yousuckatdrums/demo/favicons",
-  voxmpe: "../voxmpe/studio-ui/favicons",
-  tabridge: "../tabridge/web/favicons",
+  starling: "../voxmpe/studio-ui/favicons",
+  "ready-set": "../tabridge/web/favicons",
   "session-notes": "../ableton-session-notes/demo/favicons",
-  stemscribe: "../stemscribe/src/stemscribe/web/static/favicons",
+  "coming-undone": "../stemscribe/src/stemscribe/web/static/favicons",
   rearranged: "../rearranged/src/rearranged/web/favicons",
 };
 
