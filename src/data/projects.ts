@@ -332,7 +332,7 @@ export const projects: ProjectEntry[] = [
     live: { url: DEMOS.ysad },
     // VST3 on MuseHub, VST3 and CLAP on Gumroad, the Max for Live device on Gumroad only.
     get: [
-      { label: 'VST3 plugin', href: 'https://www.musehub.com/plugin/ysad', name: 'YSAD on MuseHub', as: 'VST3 plugin' },
+      { label: 'VST3 plugin', href: 'https://www.musehub.com/plugin/ysad?utm_medium=PT&utm_source=WS&utm_campaign=MH_WW_PT_WS_WEB_ALL_291026_', name: 'YSAD on MuseHub', as: 'VST3 plugin' },
       { label: 'CLAP plugin', href: 'https://swwallowws.gumroad.com/l/ysad', name: 'YSAD for VST3 and CLAP on Gumroad', as: 'CLAP plugin' },
       { label: 'Max for Live device', href: 'https://swwallowws.gumroad.com/l/ysad-m4l', name: 'YSAD for Max for Live on Gumroad', as: 'Max for Live device' },
       { label: 'Bundle', href: 'https://swwallowws.gumroad.com/l/ysad-bundle', name: 'YSAD bundle on Gumroad: the plugin and the Max for Live device' },
