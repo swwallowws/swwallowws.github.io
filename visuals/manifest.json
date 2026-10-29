@@ -4,12 +4,12 @@
   "$posters": "Seconds into a recording for its poster (default 1), where the first second is an intro card.",
   "posters": { "ysad/push": 38, "ysad/trailer": 21 },
   "shots": [
-    { "project": "voxmpe", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=voxmpe&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
-    { "project": "stemscribe", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=stemscribe&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
+    { "project": "starling", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=starling&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
+    { "project": "coming-undone", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=coming-undone&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
     { "project": "rearranged", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=rearranged&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
-    { "project": "tabridge", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=tabridge&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
+    { "project": "ready-set", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=ready-set&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
     { "project": "ysad", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=ysad&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
     { "project": "session-notes", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=session-notes&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true },
-    { "project": "intentional", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=intentional&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true }
+    { "project": "tagline", "name": "lamp", "url": "http://localhost:4317/lamp-gallery.html?card=tagline&still=1", "viewport": [1200, 750], "selector": ".lamp-host", "actions": [{ "waitFor": ".lamp-host[data-ready='1']" }, { "wait": 400 }], "thumb": true }
   ]
 }

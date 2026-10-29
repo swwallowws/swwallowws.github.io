@@ -7,8 +7,8 @@ const words = (pieces: Piece[]) => pieces.map((p) => (typeof p === 'string' ? p 
 
 test('a term is marked at its first use on a page, once', () => {
   const seen = new Set<string>();
-  assert.equal(words(marksIn('Sing, get MIDI with MPE.', 'voxmpe', seen)), 'Sing, get [MIDI] with [MPE].');
-  assert.equal(words(marksIn('More MIDI later.', 'voxmpe', seen)), 'More MIDI later.');
+  assert.equal(words(marksIn('Sing, get MIDI with MPE.', 'starling', seen)), 'Sing, get [MIDI] with [MPE].');
+  assert.equal(words(marksIn('More MIDI later.', 'starling', seen)), 'More MIDI later.');
 });
 
 test('only whole words, as written', () => {
@@ -20,7 +20,7 @@ test('a word with two meanings explains the one of its page', () => {
   const on = (page: string) => marksIn('the arrangement', page, new Set()).find((p) => typeof p !== 'string');
   assert.equal((on('rearranged') as { term: { id: string } }).term.id, 'arrangement-style');
   assert.equal((on('session-notes') as { term: { id: string } }).term.id, 'arrangement-view');
-  assert.equal(on('voxmpe'), undefined);
+  assert.equal(on('starling'), undefined);
 });
 
 test('every term is used somewhere in the site copy, and ids are unique', () => {

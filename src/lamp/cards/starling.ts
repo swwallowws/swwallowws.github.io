@@ -54,7 +54,7 @@ function say(x: number): string | null {
 }
 
 export const starling: CardDef = {
-  id: 'voxmpe',
+  id: 'starling',
   category: 'transcribe',
   still: [0.42, 0.42],
   strings: 9,

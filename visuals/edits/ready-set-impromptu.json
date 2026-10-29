@@ -2,7 +2,7 @@
   "sources": {
     "take": "/Users/tokamak/Movies/Showcase/ready-set/takes/2026-10-25 22-53-50.mp4"
   },
-  "out": "visuals/raw/tabridge/impromptu.mp4",
+  "out": "visuals/raw/ready-set/impromptu.mp4",
   "size": [1600, 1000],
   "fps": 60,
   "crossfade": 0.3,

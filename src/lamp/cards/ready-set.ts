@@ -26,7 +26,7 @@ const t2 = (t: number): number => clamp((t - X0) / (X1 - X0), 0, 1);
 const TRIADS: Record<string, number[]> = { Am: [57, 60, 64], F: [53, 57, 60], C: [55, 60, 64], G: [55, 59, 62] };
 
 export const readySet: CardDef = {
-  id: 'tabridge',
+  id: 'ready-set',
   category: 'transform',
   still: [0.4, 0.45],
   strings: 5,

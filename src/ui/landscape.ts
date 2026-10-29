@@ -55,13 +55,13 @@ export const ROWS: Row[] = [
   { id: 'ysad', stops: [['margin', 'style', true], ['mid'], ['set']] },
   { id: 'rearranged', stops: [], loop: { rx: 68, ry: 12, dy: -6, from: 0.62 * Math.PI, sweep: 1.72 * Math.PI } },
   // (stops in expressive's band, right of the centre: Starling climbs past to the peak)
-  { id: 'tabridge', stops: [['score', '', true], ['midR'], ['set']] },
-  { id: 'voxmpe', stops: [['sound', '', true], ['mid'], ['set']] },
+  { id: 'ready-set', stops: [['score', '', true], ['midR'], ['set']] },
+  { id: 'starling', stops: [['sound', '', true], ['mid'], ['set']] },
   // (stops in plain MIDI's band, short of the centre, so Starling can climb past it)
-  { id: 'stemscribe', stops: [['sound', '', true], ['midL']] },
+  { id: 'coming-undone', stops: [['sound', '', true], ['midL']] },
   { id: 'odoroki', stops: [['sound', '', true], ['mid', '', true], ['out', 'live visuals']] },
   { id: 'session-notes', stops: [['margin', 'lyrics', true], ['set']] },
-  { id: 'intentional', stops: [['margin', 'link', true], ['out', 'DJ crate']] },
+  { id: 'tagline', stops: [['margin', 'link', true], ['out', 'DJ crate']] },
 ];
 
 /** The nested sets, each holding the next. Each ring is broken where its name sits

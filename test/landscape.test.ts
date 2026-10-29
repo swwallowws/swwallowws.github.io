@@ -93,7 +93,7 @@ test('marks of different tools stay 30 px apart', () => {
 
 test('the tools that never touch MIDI stay 30 px clear of its ring, foot and top', () => {
   const off = ROWS.map((r, i) => [r, i] as const).filter(([r]) => !r.loop && !r.stops.some(([k]) => k.startsWith('mid')));
-  assert.deepEqual(off.map(([r]) => r.id).sort(), ['intentional', 'session-notes']);
+  assert.deepEqual(off.map(([r]) => r.id).sort(), ['session-notes', 'tagline']);
   for (const v of views) {
     const midi = [...ring(v, RINGS[0]!, 0), ...ring(v, RINGS[0]!, LIFT)];
     for (const [r, i] of off) for (const [x, y, z] of trackPts(r, i)) {

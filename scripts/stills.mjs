@@ -13,7 +13,7 @@ import { chromium } from "playwright-core";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const STILLS = [
   {
-    project: "voxmpe", name: "studio", url: "https://swwallowws.github.io/starling/",
+    project: "starling", name: "studio", url: "https://swwallowws.github.io/starling/",
     go: async (p) => {
       await p.click("#sample-link");
       await p.waitForFunction(() => /\d+ notes/.test(document.getElementById("note-count")?.textContent || ""), null, { timeout: 90000 });
@@ -36,7 +36,7 @@ const STILLS = [
     },
   },
   {
-    project: "tabridge", name: "site", url: "https://swwallowws.github.io/ready-set/",
+    project: "ready-set", name: "site", url: "https://swwallowws.github.io/ready-set/",
     go: async (p) => {
       await p.setInputFiles("#file", join(root, "../tabridge/spike/gp_serenade/serenade.gp"));
       await p.waitForSelector("#preview:not([disabled])", { timeout: 30000 });

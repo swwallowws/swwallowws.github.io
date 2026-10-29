@@ -24,7 +24,7 @@ export async function liveVersion(site) {
   return res.json();
 }
 
-/** Note that `key` (e.g. "voxmpe/loop") was just recorded from what `site` serves now. */
+/** Note that `key` (e.g. "starling/loop") was just recorded from what `site` serves now. */
 export async function recordSource(key, site) {
   const v = await liveVersion(site);
   const all = readSources();

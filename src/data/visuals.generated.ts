@@ -11,6 +11,22 @@ export interface ProjectVisuals {
 }
 
 export const VISUALS: Record<string, ProjectVisuals> = {
+  "coming-undone": {
+    "shots": [
+      "lamp"
+    ],
+    "videos": [
+      "hook",
+      "studio-plain"
+    ],
+    "thumb": "lamp",
+    "cards": {
+      "thumb": "card-thumb",
+      "og": "card-og",
+      "square": "card-square",
+      "story": "card-story"
+    }
+  },
   "home": {
     "shots": [],
     "videos": [],
@@ -21,11 +37,15 @@ export const VISUALS: Record<string, ProjectVisuals> = {
       "story": "card-story"
     }
   },
-  "intentional": {
+  "ready-set": {
     "shots": [
       "lamp"
     ],
-    "videos": [],
+    "videos": [
+      "hook",
+      "impromptu-plain",
+      "straight-away-plain"
+    ],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",
@@ -72,40 +92,7 @@ export const VISUALS: Record<string, ProjectVisuals> = {
       "story": "card-story"
     }
   },
-  "stemscribe": {
-    "shots": [
-      "lamp"
-    ],
-    "videos": [
-      "hook",
-      "studio-plain"
-    ],
-    "thumb": "lamp",
-    "cards": {
-      "thumb": "card-thumb",
-      "og": "card-og",
-      "square": "card-square",
-      "story": "card-story"
-    }
-  },
-  "tabridge": {
-    "shots": [
-      "lamp"
-    ],
-    "videos": [
-      "hook",
-      "impromptu-plain",
-      "straight-away-plain"
-    ],
-    "thumb": "lamp",
-    "cards": {
-      "thumb": "card-thumb",
-      "og": "card-og",
-      "square": "card-square",
-      "story": "card-story"
-    }
-  },
-  "voxmpe": {
+  "starling": {
     "shots": [
       "lamp"
     ],
@@ -115,6 +102,19 @@ export const VISUALS: Record<string, ProjectVisuals> = {
       "slides",
       "tuning"
     ],
+    "thumb": "lamp",
+    "cards": {
+      "thumb": "card-thumb",
+      "og": "card-og",
+      "square": "card-square",
+      "story": "card-story"
+    }
+  },
+  "tagline": {
+    "shots": [
+      "lamp"
+    ],
+    "videos": [],
     "thumb": "lamp",
     "cards": {
       "thumb": "card-thumb",

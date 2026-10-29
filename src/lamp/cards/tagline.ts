@@ -24,7 +24,7 @@ const restY = (s: CardState, k: number, t: number, sec: number): number =>
 const pillX = (s: CardState, j: number): number => s.U(0.08 + j * 0.17);
 
 export const tagline: CardDef = {
-  id: 'intentional',
+  id: 'tagline',
   category: 'workflow',
   still: [0.2, 0.42],
   strings: CAPS.length,

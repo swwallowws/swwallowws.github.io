@@ -4,7 +4,7 @@
 // doing one meaningful thing, in Paper and Night, like YSAD's (made from its plugin by
 // yousuckatdrums/m4l/tools/make-loop.sh).
 //   node scripts/loops.mjs            (every loop in visuals/loops.json)
-//   node scripts/loops.mjs voxmpe     (one project)
+//   node scripts/loops.mjs starling     (one project)
 //
 // Each recipe in visuals/loops.json: `url` (the product, served locally or live),
 // `site` (the live site it stands for: its version.json is kept in

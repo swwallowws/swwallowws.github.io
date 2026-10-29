@@ -72,7 +72,7 @@ function say(step: number, c: Capture): string {
 }
 
 export const taglineFlow: CardDef = {
-  id: 'intentional',
+  id: 'tagline',
   category: 'workflow',
   still: [0.5, 0.45],
   strings: CAPS.length,

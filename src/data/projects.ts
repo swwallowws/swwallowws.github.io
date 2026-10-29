@@ -117,20 +117,20 @@ const VIDEO_COMING: Slot = { placeholder: 'video: coming' };
    to rearranged-web; YSAD's is private too, so its built demo is copied into
    public/demos/ and the site carries it. */
 const DEMOS = {
-  voxmpe: 'https://swwallowws.github.io/starling/try/',
+  starling: 'https://swwallowws.github.io/starling/try/',
   sessionNotes: 'https://swwallowws.github.io/ableton-session-notes/try/',
-  tabridge: 'https://swwallowws.github.io/ready-set/try/',
+  'ready-set': 'https://swwallowws.github.io/ready-set/try/',
   // Its repo is private, so the site carries the demo itself (public/demos/ysad/,
   // copied by scripts/ysad-demo.sh).
   // index.html by name: Vite's dev server answers a bare folder with the welcome page.
   ysad: `${location.origin}${import.meta.env.BASE_URL}demos/ysad/index.html`,
-  stemscribe: 'https://swwallowws.github.io/coming-undone/try/',
+  'coming-undone': 'https://swwallowws.github.io/coming-undone/try/',
   rearranged: 'https://swwallowws.github.io/rearranged-web/try/', // rearranged: tools/deploy-web.sh
 } as const;
 
 export const projects: ProjectEntry[] = [
   {
-    id: 'voxmpe',
+    id: 'starling',
     name: 'Starling',
     categories: ['transcribe'],
     from: 'a sung phrase',
@@ -158,7 +158,7 @@ export const projects: ProjectEntry[] = [
     worksIn: ['any browser', 'Ableton Live', 'any MPE synth'],
     builtWith: ['Rust', 'CREPE pitch tracking', 'WebAssembly', 'ONNX Runtime Web'],
     page: 'tools/starling/',
-    live: { url: DEMOS.voxmpe },
+    live: { url: DEMOS.starling },
     get: [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio', as: 'Browser studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/starling', name: 'Starling on GitHub' },
@@ -167,7 +167,7 @@ export const projects: ProjectEntry[] = [
     code: { url: 'https://github.com/swwallowws/starling' },
   },
   {
-    id: 'stemscribe',
+    id: 'coming-undone',
     name: 'Coming Undone',
     categories: ['transcribe'],
     from: 'a recording',
@@ -198,7 +198,7 @@ export const projects: ProjectEntry[] = [
     worksIn: ['any music software that opens MIDI'],
     builtWith: ['Python', 'demucs', 'basic-pitch', 'ADT_STR drums'],
     page: 'tools/coming-undone/',
-    live: { url: DEMOS.stemscribe },
+    live: { url: DEMOS['coming-undone'] },
     get: [
       { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio', as: 'Browser studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/coming-undone', name: 'Coming Undone on GitHub' },
@@ -247,7 +247,7 @@ export const projects: ProjectEntry[] = [
     code: { placeholder: 'code: public soon' },
   },
   {
-    id: 'tabridge',
+    id: 'ready-set',
     name: 'Ready Set',
     categories: ['transform'],
     from: 'a tab or a score',
@@ -290,7 +290,7 @@ export const projects: ProjectEntry[] = [
     builtWith: ['Rust', 'WebAssembly', 'Ableton Extensions SDK'],
     credit: 'Ece K. T., for the idea that brought a premium karaoke experience.',
     page: 'tools/ready-set/',
-    live: { url: DEMOS.tabridge },
+    live: { url: DEMOS['ready-set'] },
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/ready-set' },
     get: [
@@ -394,7 +394,7 @@ export const projects: ProjectEntry[] = [
     code: { url: 'https://github.com/swwallowws/ableton-session-notes' },
   },
   {
-    id: 'intentional',
+    id: 'tagline',
     name: 'Tagline',
     categories: ['workflow'],
     from: 'a track you just heard',

@@ -11,17 +11,17 @@ import { taglineFlow } from './tagline-flow.js';
 import { ysad } from './ysad.js';
 
 export const LAMP_CARDS: Record<string, CardDef> = {
-  voxmpe: starling,
-  stemscribe: comingUndone,
+  starling: starling,
+  'coming-undone': comingUndone,
   rearranged,
-  tabridge: readySet,
+  'ready-set': readySet,
   ysad,
   'session-notes': sessionNotes,
-  intentional: tagline,
+  tagline: tagline,
 };
 
 /* Cards merged with a project page's flow of steps (the card's width is the
    steps' columns), for pages without a live demo. */
 export const LAMP_FLOW_CARDS: Record<string, CardDef> = {
-  intentional: taglineFlow,
+  tagline: taglineFlow,
 };
