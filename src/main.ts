@@ -4,10 +4,9 @@
 import '../vendor/design/tokens.css';
 import '../vendor/design/badges.css';
 import '../vendor/design/iconbutton.css';
-import '../vendor/design/themeswitch.css';
 import './styles/app.css';
 import { projects } from './data/projects.js';
-import { renderBar, renderFooter } from './ui/chrome.js';
+import { renderBar } from './ui/chrome.js';
 import { renderHome } from './ui/home.js';
 import { renderProject } from './ui/project.js';
 import { markTerms } from './ui/terms.js';
@@ -16,8 +15,8 @@ const app = document.getElementById('app');
 if (!app) throw new Error('#app mount point is missing');
 
 const pageId = document.body.dataset['page'] ?? 'home';
-// The bar applies the saved or ?theme= mode, so build it before any page
-// content that reads the mode (framed demos).
+// The bar sets Night, so build it before any page content that reads the
+// mode (framed demos get ?theme=night).
 const bar = renderBar();
 const main = document.createElement('main');
 
@@ -29,6 +28,6 @@ if (pageId === 'home') {
   renderProject(main, project);
 }
 
-app.append(bar, main, renderFooter());
+app.append(bar, main);
 // Technical terms explain themselves at their first use on the page.
 markTerms(main, pageId);

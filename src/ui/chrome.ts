@@ -1,18 +1,16 @@
-/* Top bar and footer shared by every page. The colour mode switch is the
-   design system's (System, Paper, Night as symbols). */
+/* Top bar and footer shared by every page. The site is Night only (every
+   video and the stage are dark, so a light page framed them as boxes): each
+   page entry sets data-theme="night", and there is no colour mode switch. */
 
-import { themeSwitch } from '../../vendor/design/themeswitch.js';
 import { homeMarkSvg } from './glyphs.js';
 import { el, href } from './shared.js';
-import { termsSwitch } from './terms.js';
 
-/** Fired on window after the mode changes, so framed demos can follow it. */
+/** Fired on window after the mode changes, so framed demos can follow it
+    (kept for project.ts; with Night only it no longer fires). */
 export const THEME_EVENT = 'showcase-theme';
 
 export function renderBar(): HTMLElement {
-  const modes = el('div', { class: 'modes' });
-  // saved under the key every product shares (THEME_KEY), so the studios open in the same mode
-  themeSwitch(modes, { onChange: () => window.dispatchEvent(new Event(THEME_EVENT)) });
+  document.documentElement.dataset['theme'] = 'night';
 
   // The swwallowws mark (the same one as the welcome page's tab icon) sits
   // before the name; it's decorative, the link's name is the text.
@@ -25,20 +23,8 @@ export function renderBar(): HTMLElement {
       'div',
       { class: 'bar-inner' },
       el('a', { class: 'wordmark', href: href('') }, mark, 'swwallowws'),
-      el('div', { class: 'bar-end' }, termsSwitch(), modes),
-    ),
-  );
-}
-
-export function renderFooter(): HTMLElement {
-  return el(
-    'footer',
-    { class: 'foot' },
-    el(
-      'div',
-      { class: 'foot-inner' },
-      el('span', {}, 'swwallowws'),
-      el('a', { href: 'https://github.com/swwallowws' }, 'GitHub'),
+      // the one link out of the site as a whole; there is no footer
+      el('a', { class: 'bar-link', href: 'https://github.com/swwallowws' }, 'GitHub', el('span', { class: 'ext', 'aria-hidden': 'true' }, '↗')),
     ),
   );
 }
