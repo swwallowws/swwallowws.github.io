@@ -15,7 +15,8 @@ Multi-page build: a welcome page plus one page per project.
   studio or website first, GitHub as the fallback (`get` in
   `src/data/projects.ts`).
 - Project pages are story beats: a one-line lead, then short heading + text
-  pairs that alternate with the visual that shows them.
+  pairs, each with the visual that shows it: text on the left, visual on the
+  right, on every page (a beat can opt out with `side: 'left'`).
 - Brands appear as text badges only, never logos.
 
 ## Demos
@@ -35,5 +36,12 @@ Multi-page build: a welcome page plus one page per project.
   `npm run peek -- <url> [hover-selector]`.
 - `npm run visuals` captures shots from `visuals/manifest.json` and encodes
   raw recordings from `visuals/raw/<project>/`.
+- Welcome-page carousel hooks (`visuals/raw/<project>/hook.mp4`) show the
+  product itself and nothing else: crop its own panels out of a take (no
+  captions, help text, desktop or other apps unless the product lives there,
+  e.g. building into an Ableton Live set), re-lay them to fill the open band's
+  near-square frame (rows that run across get stacked), and show the one
+  flow that sells it. Cut them with `python3 scripts/hook.py
+  visuals/edits/<project>-hook.json`, then `npm run visuals`.
 
 See `CLAUDE.local.md` (not committed) for where private planning lives.
