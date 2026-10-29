@@ -1,6 +1,6 @@
 {
   "$comment": "Starling page clip: the same phrase in another tuning (53-EDO). Framing as starling-one-take.json; no captions.",
-  "sources": { "tuning": "/Users/tokamak/Movies/Showcase/2026-10-25 22-31-14.mp4" },
+  "sources": { "tuning": "/Users/tokamak/Movies/Showcase/starling/takes/2026-10-25 22-31-14.mp4" },
   "out": "visuals/raw/voxmpe/tuning.mp4",
   "size": [1600, 1000],
   "fps": 30,

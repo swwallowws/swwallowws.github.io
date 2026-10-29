@@ -1,6 +1,6 @@
 {
   "$comment": "From the take, three stretches picked in scripts/chop.mjs, joined so the song runs on without going back: each join on a bar line measured from the playhead (bar 3 sits at x 133 of the roll crop, 70 px a bar, ~1.576 s a bar). 1: the first play, bars 3 and 4 (kept short: no bass yet). 2: bars 5 to 10 of a later pass, the bass in throughout, strummed coming in. 3: bars 11 to 18, the bass and feel changes.",
-  "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-53-19.mp4",
+  "source": "/Users/tokamak/Movies/Showcase/rearranged/takes/2026-10-25 21-53-19.mp4",
   "segments": [[36.36, 39.52], [67.0, 76.45], [89.35, 102.07]],
   "canvas": [1000, 930],
   "bg": "auto",
