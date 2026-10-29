@@ -1,0 +1,17 @@
+{
+  "$comment": "Starling page clip: save the MIDI with its tuning, and it opens in Ableton Live. Framing as starling-one-take.json; no captions.",
+  "sources": {
+    "tuning": "/Users/tokamak/Movies/Showcase/2026-10-25 22-31-14.mp4",
+    "live": "/Users/tokamak/Movies/Showcase/2026-10-25 22-34-13.mp4"
+  },
+  "out": "visuals/raw/voxmpe/live.mp4",
+  "size": [1600, 1000],
+  "fps": 30,
+  "crossfade": 0.3,
+  "framings": { "studio": [0, 240, 3456], "live": [0, 74, 3456] },
+  "masks": { "studio": [0, 240, 3456, 2234, 0] },
+  "segments": [
+    { "source": "tuning", "in": 48.6, "out": 51.4, "framing": "studio", "fadeIn": 0.15 },
+    { "source": "live", "in": 0.3, "out": 4.9, "framing": "live", "xfade": 0.5, "fadeOut": 0.4 }
+  ]
+}

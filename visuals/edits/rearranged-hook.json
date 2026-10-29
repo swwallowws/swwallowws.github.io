@@ -1,11 +1,16 @@
 {
-  "source": "visuals/raw/rearranged/two-songs.mp4",
-  "segments": [[5.6, 24.5]],
+  "$comment": "From the take, three stretches picked in scripts/chop.mjs, joined so the song runs on without going back: each join on a bar line measured from the playhead (bar 3 sits at x 133 of the roll crop, 70 px a bar, ~1.576 s a bar). 1: the first play, bars 3 and 4 (kept short: no bass yet). 2: bars 5 to 10 of a later pass, the bass in throughout, strummed coming in. 3: bars 11 to 18, the bass and feel changes.",
+  "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-53-19.mp4",
+  "segments": [[36.36, 39.52], [67.0, 76.45], [89.35, 102.07]],
   "canvas": [1000, 930],
   "bg": "auto",
+  "bgAt": [700, 1950],
+  "gain": 2,
+  "audioFade": 0.3,
+  "audioJoin": 0.015,
   "panels": [
-    { "crop": [290, 150, 1024, 340], "at": [18, 90], "scale": 0.94 },
-    { "crop": [290, 610, 600, 230], "at": [65, 480], "scale": 1.45 }
+    { "crop": [807, 626, 1843, 590], "at": [18, 90], "scale": 0.522 },
+    { "crop": [807, 1468, 1080, 382], "at": [65, 495], "scale": 0.806 }
   ],
   "out": "visuals/raw/rearranged/hook.mp4"
 }

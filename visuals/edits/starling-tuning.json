@@ -1,0 +1,14 @@
+{
+  "$comment": "Starling page clip: the same phrase in another tuning (53-EDO). Framing as starling-one-take.json; no captions.",
+  "sources": { "tuning": "/Users/tokamak/Movies/Showcase/2026-10-25 22-31-14.mp4" },
+  "out": "visuals/raw/voxmpe/tuning.mp4",
+  "size": [1600, 1000],
+  "fps": 30,
+  "crossfade": 0.3,
+  "framings": { "studio": [0, 240, 3456] },
+  "masks": { "studio": [0, 240, 3456, 2234, 0] },
+  "segments": [
+    { "source": "tuning", "in": 21.6, "out": 24.6, "framing": "studio", "fadeIn": 0.15 },
+    { "source": "tuning", "in": 25.0, "out": 27.6, "framing": "studio", "xfade": 0.15, "fadeOut": 0.4 }
+  ]
+}

@@ -1,11 +1,18 @@
 {
-  "source": "visuals/raw/tabridge/impromptu.mp4",
+  "$comment": "From the straight-away take: the key steps up in the studio and the set is made, then Live plays it. The cut lands on the same point in the song (Live runs 43.11 s behind the browser), so the music carries on; the browser plays 12 dB quieter than Live.",
+  "source": "/Users/tokamak/Movies/Showcase/2026-10-27 16-44-25.mp4",
   "segments": [
-    { "t": [7.6, 14.2], "panels": [
-      { "crop": [776, 80, 764, 840], "at": [99, 24], "scale": 1.05 }
+    { "t": [24.0, 28.802], "gain": 2, "panels": [
+      { "crop": [790, 500, 1880, 470], "at": [2, 250], "scale": 0.53 },
+      { "crop": [810, 1055, 960, 110], "at": [20, 540], "scale": 1.0 }
+    ] },
+    { "t": [71.912, 81.6], "gain": -10, "panels": [
+      { "crop": [28, 120, 1772, 1210], "at": [0, 124], "scale": 0.564 }
     ] }
   ],
   "canvas": [1000, 930],
-  "bg": "auto",
+  "bg": "#131018",
+  "audioFade": 0.5,
+  "audioJoin": 0.02,
   "out": "visuals/raw/tabridge/hook.mp4"
 }

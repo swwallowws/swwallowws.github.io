@@ -1,0 +1,14 @@
+{
+  "$comment": "From the raw parts take (the studio cut fades out early): five bars of the song at 74.97 BPM (3.2 s a bar), from its first downbeat to the sixth, so the loop comes round on bar 1. Downbeats sit 0.06 s ahead of the playhead's clock (3.2 s at the song's 0:00). The crop is the studio cut's lanes, mapped back to the take.",
+  "source": "/Users/tokamak/Movies/Showcase/2026-10-26 03-39-14.mp4",
+  "canvas": [1000, 930],
+  "bg": "#100c14",
+  "fade": 0.2,
+  "audioFade": 0.04,
+  "segments": [
+    { "t": [3.14, 19.14], "panels": [
+      { "crop": [812, 1036, 1250, 724], "at": [60, 210], "scale": 0.704 }
+    ] }
+  ],
+  "out": "visuals/raw/stemscribe/hook.mp4"
+}

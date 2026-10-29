@@ -1,0 +1,397 @@
+{
+  "sources": {
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-25 21-53-19.mp4"
+  },
+  "out": "visuals/raw/rearranged/two-songs-plain.mp4",
+  "size": [
+    1600,
+    1000
+  ],
+  "fps": 30,
+  "crossfade": 0.25,
+  "framings": {
+    "page": [
+      285,
+      356,
+      2880
+    ],
+    "parts": [
+      640,
+      700,
+      2160
+    ]
+  },
+  "segments": [
+    {
+      "source": "take",
+      "in": 18.5,
+      "out": 19.4,
+      "framing": "page",
+      "replace": [
+        {
+          "rect": [
+            821,
+            500,
+            2637,
+            648
+          ],
+          "text": "House of the Rising Sun",
+          "at": [
+            1729,
+            586
+          ],
+          "size": 34,
+          "weight": 500,
+          "tracking": 0,
+          "color": [
+            196,
+            189,
+            204
+          ],
+          "align": "center"
+        },
+        {
+          "rect": [
+            805,
+            660,
+            900,
+            715
+          ]
+        },
+        {
+          "rect": [
+            821,
+            864,
+            2637,
+            1012
+          ],
+          "text": "Bolero",
+          "at": [
+            1729,
+            950
+          ],
+          "size": 34,
+          "weight": 500,
+          "tracking": 0,
+          "color": [
+            196,
+            189,
+            204
+          ],
+          "align": "center"
+        },
+        {
+          "rect": [
+            805,
+            1024,
+            900,
+            1080
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1885,
+            2660,
+            1955
+          ]
+        }
+      ]
+    },
+    {
+      "source": "take",
+      "freeze": 19.4,
+      "hold": 1.6,
+      "framing": "page",
+      "xfade": 0,
+      "replace": [
+        {
+          "rect": [
+            821,
+            500,
+            2637,
+            648
+          ],
+          "text": "House of the Rising Sun",
+          "at": [
+            1729,
+            586
+          ],
+          "size": 34,
+          "weight": 500,
+          "tracking": 0,
+          "color": [
+            196,
+            189,
+            204
+          ],
+          "align": "center"
+        },
+        {
+          "rect": [
+            805,
+            660,
+            900,
+            715
+          ]
+        },
+        {
+          "rect": [
+            821,
+            864,
+            2637,
+            1012
+          ],
+          "text": "Bolero",
+          "at": [
+            1729,
+            950
+          ],
+          "size": 34,
+          "weight": 500,
+          "tracking": 0,
+          "color": [
+            196,
+            189,
+            204
+          ],
+          "align": "center"
+        },
+        {
+          "rect": [
+            805,
+            1024,
+            900,
+            1080
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1885,
+            2660,
+            1955
+          ]
+        }
+      ]
+    },
+    {
+      "source": "take",
+      "in": 28.8,
+      "out": 32.4,
+      "framing": "parts",
+      "from": "page",
+      "move": 0.9,
+      "moveAt": 0.1,
+      "speed": 1.4,
+      "xfade": 0.15,
+      "replace": [
+        {
+          "rect": [
+            600,
+            600,
+            2850,
+            880
+          ]
+        },
+        {
+          "rect": [
+            600,
+            1650,
+            2850,
+            1712
+          ]
+        },
+        {
+          "rect": [
+            2575,
+            1560,
+            2655,
+            1630
+          ]
+        }
+      ]
+    },
+    {
+      "source": "take",
+      "in": 63.85,
+      "out": 75.3,
+      "framing": "page",
+      "xfade": 0,
+      "replace": [
+        {
+          "rect": [
+            805,
+            395,
+            1025,
+            450
+          ]
+        },
+        {
+          "rect": [
+            810,
+            470,
+            2000,
+            565
+          ],
+          "text": "House of the Rising Sun rearranged like Bolero",
+          "at": [
+            816,
+            540
+          ],
+          "size": 60
+        },
+        {
+          "rect": [
+            810,
+            568,
+            1300,
+            612
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1305,
+            1400,
+            1464
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1960,
+            1510,
+            2022
+          ]
+        },
+        {
+          "rect": [
+            600,
+            2105,
+            3100,
+            2160
+          ]
+        }
+      ]
+    },
+    {
+      "source": "take",
+      "in": 88.4,
+      "out": 97.4,
+      "framing": "page",
+      "xfade": 0.3,
+      "replace": [
+        {
+          "rect": [
+            805,
+            395,
+            1025,
+            450
+          ]
+        },
+        {
+          "rect": [
+            810,
+            470,
+            2000,
+            565
+          ],
+          "text": "House of the Rising Sun rearranged like Bolero",
+          "at": [
+            816,
+            540
+          ],
+          "size": 60
+        },
+        {
+          "rect": [
+            810,
+            568,
+            1300,
+            612
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1305,
+            1400,
+            1464
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1960,
+            1510,
+            2022
+          ]
+        },
+        {
+          "rect": [
+            600,
+            2105,
+            3100,
+            2160
+          ]
+        }
+      ]
+    },
+    {
+      "source": "take",
+      "in": 141.8,
+      "out": 144.6,
+      "framing": "page",
+      "xfade": 0.2,
+      "replace": [
+        {
+          "rect": [
+            805,
+            366,
+            1025,
+            422
+          ]
+        },
+        {
+          "rect": [
+            810,
+            438,
+            2000,
+            586
+          ],
+          "text": "House of the Rising Sun rearranged like Bolero",
+          "at": [
+            816,
+            511
+          ],
+          "size": 60
+        },
+        {
+          "rect": [
+            805,
+            1277,
+            1400,
+            1436
+          ]
+        },
+        {
+          "rect": [
+            805,
+            1932,
+            1510,
+            1994
+          ]
+        },
+        {
+          "rect": [
+            600,
+            2078,
+            3100,
+            2160
+          ]
+        }
+      ]
+    }
+  ]
+}

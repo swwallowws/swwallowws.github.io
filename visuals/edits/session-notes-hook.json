@@ -2,17 +2,19 @@
   "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-45-27.mp4",
   "segments": [
     { "t": [97.4, 100.6], "panels": [
-      { "crop": [1250, 635, 1437, 1434], "at": [19, 110], "scale": 0.6 }
+      { "crop": [1300, 725, 750, 330], "at": [37, 50], "scale": 1.1 },
+      { "crop": [1272, 1440, 720, 525], "at": [37, 453], "scale": 1.1 }
     ] },
-    { "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-44-14.mp4", "t": [46.5, 49.8], "panels": [
-      { "crop": [20, 240, 2540, 820], "at": [0, 395], "scale": 0.354 }
-    ] },
-    { "t": [56.8, 59.6], "panels": [
-      { "crop": [20, 240, 2540, 820], "at": [0, 395], "scale": 0.354 }
+    { "t": [56.6, 59.4], "panels": [
+      { "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-44-14.mp4", "t": 46.5, "crop": [334, 268, 838, 116], "at": [0, 151], "scale": 1.074 },
+      { "source": "/Users/tokamak/Movies/Showcase/2026-10-25 21-44-14.mp4", "t": 46.5, "crop": [334, 826, 838, 221], "at": [0, 275], "scale": 1.074 },
+      { "crop": [26, 268, 838, 116], "at": [0, 568], "scale": 1.074 },
+      { "crop": [26, 826, 838, 221], "at": [0, 692], "scale": 1.074 }
     ] }
   ],
   "canvas": [900, 1080],
   "bg": "#131018",
   "fade": 0.18,
+  "audio": false,
   "out": "visuals/raw/session-notes/hook.mp4"
 }

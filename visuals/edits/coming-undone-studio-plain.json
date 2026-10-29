@@ -1,0 +1,78 @@
+{
+  "sources": {
+    "cut": "/Users/tokamak/Movies/Showcase/cuts/coming-undone-studio.mp4"
+  },
+  "out": "visuals/raw/stemscribe/studio-plain.mp4",
+  "size": [
+    1600,
+    1000
+  ],
+  "fps": 60,
+  "crossfade": 0.3,
+  "framings": {
+    "full": [
+      0,
+      0,
+      1600
+    ],
+    "sep": [
+      0,
+      0,
+      1600
+    ]
+  },
+  "segments": [
+    {
+      "source": "cut",
+      "in": 0.0,
+      "out": 1.0,
+      "framing": "full"
+    },
+    {
+      "source": "cut",
+      "in": 1.0,
+      "out": 3.9,
+      "framing": "full",
+      "xfade": 0
+    },
+    {
+      "source": "cut",
+      "in": 3.9,
+      "out": 7.92,
+      "framing": "sep",
+      "xfade": 0,
+      "speed": 1.5
+    },
+    {
+      "source": "cut",
+      "in": 7.92,
+      "out": 12.4,
+      "framing": "full",
+      "xfade": 0
+    },
+    {
+      "source": "cut",
+      "in": 12.4,
+      "out": 18.0,
+      "framing": "full",
+      "xfade": 0
+    },
+    {
+      "source": "cut",
+      "in": 18.0,
+      "out": 22.9,
+      "framing": "full",
+      "xfade": 0,
+      "fadeOut": 1.2
+    }
+  ],
+  "masks": {
+    "sep": [
+      0,
+      368,
+      1600,
+      1000,
+      0
+    ]
+  }
+}

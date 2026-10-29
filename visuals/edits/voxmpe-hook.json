@@ -1,9 +1,11 @@
 {
   "source": "visuals/raw/_sheets/starling-clean.mp4",
-  "segments": [[5.4, 10.6], [12.2, 16.6]],
+  "segments": [[4.9, 16.1]],
+  "audioFade": 0.3,
   "canvas": [1000, 930],
   "bg": "auto",
   "fade": 0.2,
+  "gain": 7,
   "panels": [
     { "crop": [0, 0, 1304, 885], "at": [0, 126], "scale": 0.767 }
   ],

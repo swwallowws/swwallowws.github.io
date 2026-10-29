@@ -1,0 +1,113 @@
+{
+  "sources": {
+    "take": "/Users/tokamak/Movies/Showcase/2026-10-25 22-53-50.mp4"
+  },
+  "out": "visuals/raw/tabridge/impromptu-plain.mp4",
+  "size": [
+    1600,
+    1000
+  ],
+  "fps": 60,
+  "crossfade": 0.3,
+  "pitch": -2,
+  "framings": {
+    "menu": [
+      0,
+      80,
+      2200
+    ],
+    "window": [
+      118,
+      579,
+      2500
+    ],
+    "closer": [
+      268,
+      673,
+      2200
+    ],
+    "full": [
+      0,
+      74,
+      3456
+    ]
+  },
+  "masks": {
+    "window": [
+      1330,
+      704,
+      2524,
+      2016,
+      16
+    ],
+    "closer": [
+      1330,
+      704,
+      2524,
+      2016,
+      16
+    ]
+  },
+  "segments": [
+    {
+      "source": "take",
+      "in": 2.4,
+      "out": 4.6,
+      "framing": "menu"
+    },
+    {
+      "source": "take",
+      "in": 9.9,
+      "out": 11.4,
+      "framing": "window"
+    },
+    {
+      "source": "take",
+      "in": 20.5,
+      "out": 26.4,
+      "framing": "window",
+      "speed": 1.4
+    },
+    {
+      "source": "take",
+      "in": 29.5,
+      "out": 33.15,
+      "pictureOut": 31.8,
+      "fadeOut": 0.35,
+      "framing": "window",
+      "xfade": 0.15,
+      "speed": 2
+    },
+    {
+      "source": "take",
+      "in": 37.6,
+      "out": 38.6,
+      "framing": "window",
+      "xfade": 0.1,
+      "speed": 2
+    },
+    {
+      "source": "take",
+      "in": 47.7,
+      "out": 53.55,
+      "framing": "window",
+      "xfade": 0.1,
+      "speed": 2
+    },
+    {
+      "source": "take",
+      "in": 53.55,
+      "out": 58.6,
+      "framing": "window",
+      "xfade": 0,
+      "speed": 2
+    },
+    {
+      "source": "take",
+      "in": 82.0,
+      "out": 87.3,
+      "framing": "full",
+      "xfade": 0.6
+    }
+  ]
+}
