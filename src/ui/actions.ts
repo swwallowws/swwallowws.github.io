@@ -1,19 +1,22 @@
-/* The buttons under a tool's summary (welcome page) and in an older project
-   page's head. On the welcome page the row starts with the way in, an accent
-   button: "Try the demo" where the tool has a live demo, "Read how it works"
-   otherwise. Then up to two quiet outlined buttons out to the full product,
-   each opening in a new tab. The first is always called "Full version", the
-   same words as the project page's button and the end of every demo's tour; a
-   second keeps its own label (GitHub, say). A tool with a demo but no product
-   yet says "Full version coming soon" in the same slot. */
+/* The links to a tool, on the welcome page (under its summary) and in its
+   project page's head, said the same way in both.
+
+   A tool's ways in are said once: each format it ships as, named as itself
+   and linking to where it lives ("browser studio ↗", "ableton live extension
+   ↗"), then GitHub where the code is open. "Command line" isn't named: the
+   tools that have one are open source, so GitHub stands for it. Formats with
+   nowhere to go yet are plain text, ending ", coming soon".
+
+   On the welcome page the row starts with the demo, a filled chip in the
+   tool's colour ("How it works" where there is no demo), and a tool whose
+   formats are one flow says so in one line instead (`ways`, home.ts). */
 
 import type { ProjectEntry } from '../data/projects.js';
 import { el } from './shared.js';
 
 const MAX_GET = 2;
-
-/** The one name for the way to the full product, wherever it appears. */
-export const FULL_VERSION = 'Full version';
+/** Formats left unnamed (see above). */
+const UNNAMED = new Set(['Command line']);
 
 /** Where a tool's way in leads from the welcome page: its demo, where it has one, else its page. */
 export function wayIn(p: ProjectEntry, page: string): { href: string; live: boolean } {
@@ -21,44 +24,47 @@ export function wayIn(p: ProjectEntry, page: string): { href: string; live: bool
   return { href: live ? `${page}#demo` : page, live };
 }
 
-/** `page` is the tool's page URL on the welcome page, or null on the page itself. */
-export function actions(p: ProjectEntry, page: string | null): HTMLElement | null {
+function out(label: string, href: string, spoken: string, className: string): HTMLElement {
+  return el(
+    'a',
+    { class: className, href, target: '_blank', rel: 'noopener', 'aria-label': `${spoken} (opens in a new tab)` },
+    label,
+    el('span', { class: 'ext', 'aria-hidden': 'true' }, '↗'),
+  );
+}
+
+/** The tool's formats as links (`format` class), then its other links such as
+    GitHub (`other`), then any formats with nowhere to go yet as one plain line (`plain`). */
+export function formatLinks(p: ProjectEntry, cls: { format: string; other: string; plain: string }): HTMLElement[] {
   const live = !!p.live && 'url' in p.live;
-  const row = el('div', { class: 'actions' });
-
-  if (page) {
-    const to = wayIn(p, page);
-    row.append(
-      el(
-        'a',
-        { class: 'btn btn-try', href: to.href },
-        to.live ? 'Try the demo' : 'Read how it works',
-        el('span', { class: 'ext', 'aria-hidden': 'true' }, '→'),
-      ),
-    );
-  }
-
   const get = (p.get ?? []).slice(0, MAX_GET);
-  get.forEach((g, i) => {
-    const label = i === 0 ? FULL_VERSION : g.label;
-    row.append(
-      el(
-        'a',
-        {
-          class: 'btn btn-quiet',
-          href: g.href,
-          target: '_blank',
-          rel: 'noopener',
-          'aria-label': `${i === 0 ? `The full version of ${p.name}: ${g.label}` : (g.name ?? `${g.label}: ${p.name}`)} (opens in a new tab)`,
-        },
-        label,
-        el('span', { class: 'ext', 'aria-hidden': 'true' }, '↗'),
-      ),
-    );
-  });
-  if (!get.length && (live || p.comingTo)) {
-    row.append(el('span', { class: 'full-coming' }, p.comingTo ? `Coming soon to ${p.comingTo}` : 'Full version coming soon'));
+  const nodes: HTMLElement[] = [];
+  const unlinked: string[] = [];
+  for (const f of (p.availableAs ?? []).filter((f) => !UNNAMED.has(f))) {
+    const g = get.find((g) => g.as === f);
+    if (g) nodes.push(out(f, g.href, g.name ?? `${p.name}: ${f}`, cls.format));
+    else unlinked.push(f);
   }
+  for (const g of get.filter((g) => !g.as)) nodes.push(out(g.label, g.href, g.name ?? `${g.label}: ${p.name}`, cls.other));
+  if (unlinked.length && (live || p.comingTo)) {
+    const soon = p.comingTo ? `, coming soon to ${p.comingTo}` : ', coming soon';
+    nodes.push(el('span', { class: cls.plain }, unlinked.join(' · ') + soon));
+  }
+  return nodes;
+}
 
-  return row.childElementCount ? row : null;
+/** The welcome page's row under a tool's summary; `page` is the tool's page URL. */
+export function actions(p: ProjectEntry, page: string): HTMLElement {
+  const to = wayIn(p, page);
+  const row = el('div', { class: 'actions' });
+  row.append(
+    el(
+      'a',
+      { class: `btn btn-try${to.live ? ' btn-demo' : ''}`, href: to.href },
+      to.live ? 'Demo' : 'How it works',
+      el('span', { class: 'ext', 'aria-hidden': 'true' }, '→'),
+    ),
+  );
+  if (!p.ways) row.append(...formatLinks(p, { format: 'btn btn-quiet', other: 'btn btn-quiet', plain: 'format' }));
+  return row;
 }

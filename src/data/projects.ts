@@ -38,8 +38,12 @@ export interface Beat {
   video?: string;
   /** With show 'clip': the URL of a small playable piece of the product, framed with ?embed=1. */
   clip?: string;
-  /** Which side a beside visual sits on; beats alternate sides when it's unset. */
+  /** Which side a beside visual sits on: the right (text left, visual right) unless set to 'left'. */
   side?: 'left' | 'right';
+  /** Consecutive beats with the same row name share one block like the demo: their lines as a rail, one visual at a time. */
+  row?: string;
+  /** With a visual: several short lines beside it, set like a rail's but all at once (one visual, nothing to choose). */
+  lines?: string[];
 }
 
 export interface ProjectEntry {
@@ -91,8 +95,13 @@ export interface ProjectEntry {
   /** Where the full product lives, best first (max 2): a studio or website,
       then GitHub. Never a file download (see CLAUDE.md). Shown as outlined buttons opening in a new
       tab, beside "Try it". `name` is the spoken name when the label alone is
-      vague ("Open the Starling studio"). Empty: "Full version coming". */
-  get?: { label: string; href: string; name?: string }[];
+      vague ("Open the Starling studio"). Empty: "Full version coming".
+      `as` is the availableAs format the link opens: the welcome page names
+      the link after it. */
+  get?: { label: string; href: string; name?: string; as?: string }[];
+  /** The welcome page's one line on where a tool runs, in place of its
+      formats, when they are one flow rather than separate ways in. */
+  ways?: string;
 }
 
 /** Badges that link somewhere, wherever they appear. */
@@ -140,9 +149,9 @@ export const projects: ProjectEntry[] = [
         text: 'Record a phrase right here, then move the note-split settings while it plays back.',
         show: 'live',
       },
-      { title: 'Slides stay slides', text: 'Your voice slides between notes; the MIDI slides with it.' },
-      { title: 'Any tuning', text: 'Not stuck in standard tuning: the comma tuning of Turkish makam music, or any tuning you bring.' },
-      { title: 'One take, start to finish', text: 'From singing to MIDI in Ableton Live, in one take.', show: 'video' },
+      { title: 'Slides stay slides', text: 'Every slide, vibrato and swell kept, as MPE.', show: 'video', video: 'slides', row: 'clips' },
+      { title: 'Any tuning', text: 'Any tuning: standard, 53-EDO for Turkish makam, or your own Scala file.', show: 'video', video: 'tuning', row: 'clips' },
+      { title: 'Into Ableton Live', text: 'Saves the MIDI with its tuning, ready to play in Ableton Live.', show: 'video', video: 'live', row: 'clips' },
     ],
     worksWith: ['MIDI / MPE', 'Scala tunings', 'Ableton Live'],
     availableAs: ['Browser studio', 'Command line'],
@@ -151,7 +160,7 @@ export const projects: ProjectEntry[] = [
     page: 'tools/starling/',
     live: { url: DEMOS.voxmpe },
     get: [
-      { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio' },
+      { label: 'Open the studio', href: 'https://swwallowws.github.io/starling/', name: 'Open the Starling studio', as: 'Browser studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/starling', name: 'Starling on GitHub' },
     ],
     video: VIDEO_COMING,
@@ -177,9 +186,12 @@ export const projects: ProjectEntry[] = [
         text: 'Solo each part of the demo song and see the MIDI written from it.',
         show: 'live',
       },
-      { title: 'Every part as MIDI', text: 'Every part, written down as MIDI.' },
-      { title: 'On the beat', text: 'Aligned, in-tempo MIDI.' },
-      { title: 'From a recording to MIDI', text: 'From a recording to MIDI.', show: 'video' },
+      {
+        title: 'Every part as MIDI',
+        lines: ['Melody, comping, bass and drums, each its own MIDI track.', 'On the beat: the MIDI follows the song’s tempo.'],
+        show: 'video',
+        video: 'studio-plain',
+      },
     ],
     worksWith: ['MP3 / WAV', 'MIDI'],
     availableAs: ['Browser studio', 'Command line'],
@@ -188,7 +200,7 @@ export const projects: ProjectEntry[] = [
     page: 'tools/coming-undone/',
     live: { url: DEMOS.stemscribe },
     get: [
-      { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio' },
+      { label: 'Open the studio', href: 'https://swwallowws.github.io/coming-undone/', name: 'Open the Coming Undone studio', as: 'Browser studio' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/coming-undone', name: 'Coming Undone on GitHub' },
     ],
     video: VIDEO_COMING,
@@ -214,16 +226,23 @@ export const projects: ProjectEntry[] = [
         text: 'Switch between versions of the same part and listen.',
         show: 'live',
       },
-      { title: 'Arrangement habits', text: 'It extracts a song’s arrangement habits.' },
-      { title: 'Rules you can read', text: 'Every choice traces back to a simple rule.' },
-      { title: 'From two songs to a rearrangement', text: 'From two songs to a rearrangement.', show: 'video' },
+      {
+        title: 'From two songs to a rearrangement',
+        lines: [
+          'Two songs in: one gives the chords, the other its arrangement habits.',
+          'Change each part while it plays: bass, guitar, drums, feel.',
+          'Every choice traces back to a rule you can read.',
+        ],
+        show: 'video',
+        video: 'two-songs-plain',
+      },
     ],
     worksWith: ['MIDI'],
-    availableAs: ['Browser studio', 'Command line'],
-    builtWith: ['Python', 'pretty_midi', 'numpy', 'spessasynth'],
+    availableAs: ['Browser studio'],
+    builtWith: ['Rust', 'WebAssembly', 'spessasynth'],
     page: 'tools/rearranged/',
     live: { url: DEMOS.rearranged },
-    get: [{ label: 'Open the studio', href: 'https://swwallowws.github.io/rearranged-web/', name: 'Open the Rearranged studio' }],
+    get: [{ label: 'Open the studio', href: 'https://swwallowws.github.io/rearranged-web/', name: 'Open the Rearranged studio', as: 'Browser studio' }],
     video: VIDEO_COMING,
     code: { placeholder: 'code: public soon' },
   },
@@ -239,24 +258,30 @@ export const projects: ProjectEntry[] = [
     parts: {
       give: 'a tab or a score.',
       does: 'builds a set that plays straight away, slides and bends kept, in the key you pick.',
-      get: 'an Ableton Live set, or a MIDI file.',
+      get: 'an Ableton Live set or a MIDI file, to jam along, practise at any tempo in your own key, or arrange your way.',
     },
     story: [
       { title: 'Open a file', text: 'Drop in a tab or a score and hear it.', show: 'live' },
-      { title: 'A set that plays straight away', text: 'A set that plays straight away.', show: 'video', video: 'straight-away', side: 'right' },
+      {
+        title: 'In the studio',
+        text: 'In the studio: search a song or drop in your own, and the set opens in Live, playing.',
+        show: 'video',
+        video: 'straight-away-plain',
+        row: 'clips',
+      },
+      {
+        title: 'In Ableton Live',
+        text: 'In Ableton Live: search free, public-domain scores and build the set right there.',
+        show: 'video',
+        video: 'impromptu-plain',
+        row: 'clips',
+      },
       {
         title: 'Keeping the slides and bends',
         text: 'Slides and bends survive.',
         show: 'clip',
         clip: 'https://swwallowws.github.io/ready-set/?clip=example',
-        side: 'right',
-      },
-      {
-        title: 'From a tab to an Ableton Live set',
-        text: 'From a tab or a score to a set you can play along with.',
-        show: 'video',
-        video: 'impromptu',
-        side: 'right',
+        row: 'clips',
       },
     ],
     worksWith: ['Guitar Pro', 'MusicXML', 'Ableton Live 12'],
@@ -269,8 +294,8 @@ export const projects: ProjectEntry[] = [
     video: VIDEO_COMING,
     code: { url: 'https://github.com/swwallowws/ready-set' },
     get: [
-      { label: 'Open the website', href: 'https://swwallowws.github.io/ready-set/', name: 'Open the Ready Set website' },
-      { label: 'GitHub', href: 'https://github.com/swwallowws/ready-set', name: 'Ready Set on GitHub' },
+      { label: 'Open the studio', href: 'https://swwallowws.github.io/ready-set/', name: 'Open the Ready Set studio', as: 'Browser studio' },
+      { label: 'Ableton Live extension', href: 'https://github.com/swwallowws/ready-set/releases/latest', name: 'The Ready Set extension for Ableton Live', as: 'Ableton Live extension' },
     ],
   },
   {
@@ -278,29 +303,30 @@ export const projects: ProjectEntry[] = [
     name: 'YSAD',
     fullName: 'You Suck At Drums',
     line: 'simply groove.',
-    summary: 'A drum pattern generator you play live.',
+    summary: 'A circular drum sequencer you play live.',
     parts: {
-      give: 'a style, and how busy each drum should be.',
-      does: 'plays the beat live, lets you change it hit by hit, and draws it around a circle.',
+      give: 'a style, and seven knobs to shape it.',
+      does: 'plays the beat live and lets you change it hit by hit.',
       get: 'MIDI. The same beat can play a synth, chop up a sample or drive visuals.',
     },
     categories: ['transform'],
     from: 'a style and eight knobs',
     to: 'a beat you play live, as MIDI',
-    lead: 'Drum patterns you can play live, in any time signature, around a circle.',
+    lead: 'Drum patterns you can play live, in 4/4 and odd meters, around a circle.',
     story: [
       { title: 'Play it', text: 'Pull the kicks out and bring them back, then lean on the swing.', show: 'live' },
       // With `parts`, a page shows each beat as its one line; the title is
       // only the section's anchor.
-      { title: 'Live on Ableton Push 3', text: 'Play it like an instrument on Ableton Push 3.', show: 'video' },
-      { title: 'Why a circle', text: 'A circle is the intuitive way to see a groove.' },
-      { title: 'Same settings, same beat', text: 'The same settings always give the same beat.' },
-      { title: 'Odd meters', text: 'Every style has its own time signature, from 4/4 to 5/8, 7/8 and 9/8.' },
+      // Named, so it keeps showing "video: coming" until a `push` recording exists.
+      { title: 'Live on Ableton Push 3', text: 'Play it like an instrument on Ableton Push 3, no computer needed.', show: 'video', video: 'push' },
+      { title: 'Why a circle', text: 'The groove drawn around a circle, one ring per drum.', show: 'video', video: 'why-a-circle', row: 'clips' },
+      { title: 'Odd meters', text: '15 styles, in 4/4, 3/4, 6/8, 12/8, 5/8, 7/8 and 9/8.', show: 'video', video: 'odd-meters', row: 'clips' },
+      { title: 'Same settings, same beat', text: 'The same settings always give the same beat.', show: 'video', video: 'same-settings-same-beat', row: 'clips' },
     ],
     availableAs: ['Max for Live device', 'VST3 plugin', 'CLAP plugin'],
     worksIn: ['Ableton Live', 'Ableton Push 3 standalone', 'most music software as plugin'],
     builtWith: ['Max', 'Rust', 'nih-plug'],
-    credit: 'Kirkwood West, for the VST3 port.',
+    credit: 'Music Hackspace for the Lisbon Hackathon and Kirkwood West for the VST3 port.',
     page: 'tools/ysad/',
     live: { url: DEMOS.ysad },
     // Until the full version's store pages exist, both pages say "Full version
@@ -336,7 +362,7 @@ export const projects: ProjectEntry[] = [
         show: 'video',
         video: 'send-a-verse',
       },
-      { title: 'What the tags do', text: 'Tagging the first line of a verse is enough.', show: 'keys', side: 'right' },
+      { title: 'What the tags do', text: 'Tagging the first line of a verse is enough.', show: 'keys' },
       {
         title: 'Notes that live with the set',
         text: 'Set notes travel with the set; global notes are in every set.',
@@ -357,7 +383,7 @@ export const projects: ProjectEntry[] = [
     page: 'tools/session-notes/',
     live: { url: DEMOS.sessionNotes },
     get: [
-      { label: 'Download', href: 'https://github.com/swwallowws/ableton-session-notes/releases/latest', name: 'Session Notes releases' },
+      { label: 'Download', href: 'https://github.com/swwallowws/ableton-session-notes/releases/latest', name: 'Session Notes releases', as: 'Ableton Live extension' },
       { label: 'GitHub', href: 'https://github.com/swwallowws/ableton-session-notes', name: 'Session Notes on GitHub' },
     ],
     video: VIDEO_COMING,
@@ -383,10 +409,10 @@ export const projects: ProjectEntry[] = [
         text: 'From a link on your phone to your DJ crate, in six steps.',
         show: 'flow',
       },
-      { title: 'What it looks like along the way', text: 'What it looks like along the way.', show: 'shots' },
       { title: 'Tags that travel with the file', text: 'The tags travel inside the file itself.' },
     ],
     availableAs: ['Command line', 'Obsidian views', 'iOS Shortcut'],
+    ways: 'iPhone → Obsidian → DJ software',
     worksIn: ['Obsidian', 'DJ software, like DJUCED', 'iPhone'],
     worksWith: ['Obsidian', 'DJUCED', 'AIFF / MP3 / FLAC', 'iPhone share sheet'],
     builtWith: ['Rust', 'Obsidian Bases', 'iOS Shortcuts', 'ID3 / FLAC'],
@@ -412,7 +438,7 @@ export const projects: ProjectEntry[] = [
     categories: ['perceive'],
     from: 'music',
     to: 'live visuals',
-    lead: 'Stay in awe of music, visually too.',
+    lead: 'Live visuals that react when the music surprises you.',
     coming: true,
   },
 ];

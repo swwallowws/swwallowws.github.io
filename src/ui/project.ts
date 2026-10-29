@@ -11,7 +11,7 @@ import { LAMP_CARDS, LAMP_FLOW_CARDS } from '../lamp/cards/index.js';
 import { mountCard, type CardDef } from '../lamp/engine.js';
 import { Maximize, Minimize, Pause, Play, Volume2, VolumeX, type IconNode } from 'lucide';
 import { VISUALS } from '../data/visuals.generated.js';
-import { actions, FULL_VERSION } from './actions.js';
+import { formatLinks } from './actions.js';
 import { THEME_EVENT } from './chrome.js';
 import { lucideSymbolSvg } from './glyphs.js';
 import { badges, el, eyebrow, href, whereRows } from './shared.js';
@@ -34,56 +34,28 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
 
   // The back link sits above the hero, so the text and the demo share one top line.
   main.append(el('a', { class: 'back', href: href('') }, '← all projects'));
+  const ways = p.parts ? fullVersions(p) : null;
   const text = el(
     'div',
     { class: 'page-head' },
     // Pages with the new head (details in place of the lead) drop the category line.
     ...(p.parts ? [] : [eyebrow(p.categories.map(categoryLabel).join(' · '))]),
     // --chars lets a long name scale down to its column instead of overflowing.
-    // The new head puts the way to the full product at the far right of the
-    // title's row: its first destination (GitHub for now, later a store).
-    p.parts && p.get?.[0]
-      ? el(
-          'div',
-          { class: 'head-top' },
-          titleEl(p),
-          el(
-            'a',
-            {
-              class: 'btn btn-try full-version',
-              href: p.get[0].href,
-              target: '_blank',
-              rel: 'noopener',
-              'aria-label': `The full version of ${p.name}: ${p.get[0].label} (opens in a new tab)`,
-            },
-            FULL_VERSION,
-            el('span', { class: 'ext', 'aria-hidden': 'true' }, '↗'),
-          ),
-        )
-      : p.parts && (p.comingTo || (p.live && 'url' in p.live))
-        ? el('div', { class: 'head-top' }, titleEl(p), el('span', { class: 'full-coming big' }, p.comingTo ? `Coming soon to ${p.comingTo}` : 'Full version coming soon'))
-        : titleEl(p),
-    ...(p.line ? [el('p', { class: 'tool-line big' }, p.line)] : []),
+    // The new head puts the ways to the tool at the far right of the title's
+    // row, said as on the welcome page (actions.ts formatLinks).
+    ways ? el('div', { class: 'head-top' }, titleEl(p), ways) : titleEl(p),
   );
   if (p.parts) {
     // The details: the summary, what you give it, what it does, what you get,
-    // then what it is available as and works in, one labelled block.
-    // Technical terms get their notes after the page is drawn (ui/terms.ts).
+    // and who to thank, one labelled block. (What it ships as is said once,
+    // by the links in the title's row.) Technical terms get their notes after
+    // the page is drawn (ui/terms.ts).
     text.append(el('p', { class: 'lede' }, p.summary ?? p.lead));
-    // The details, then the facts. Available as, Works in and Built with
-    // start folded to their label and open sideways on hover or focus.
     const dl = el('dl', { class: 'labelled big details' });
-    const row = (label: string, content: Node | string | (Node | string)[], fold = false): void => {
-      const dd = el('dd', fold ? { class: 'fold' } : {}, ...[content].flat());
-      const dt = el('dt', fold ? { class: 'fold', tabindex: '0' } : {}, label);
-      dl.append(dt, dd);
-    };
+    const row = (label: string, content: string): void => void dl.append(el('dt', {}, label), el('dd', {}, content));
     row('Give it', p.parts.give);
     row('It', p.parts.does);
     row('Get', p.parts.get);
-    if (p.availableAs?.length) row('Available as', badges(p.availableAs), true);
-    if (p.worksIn?.length) row('Works in', badges(p.worksIn), true);
-    if (p.builtWith?.length) row('Built with', badges(p.builtWith), true);
     if (p.credit) row('Thanks', p.credit);
     text.append(dl);
   } else {
@@ -94,8 +66,10 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
   }
   // "Try it" and the way out to the full product, right under the lead
   // (the new head has none: the demo follows right under it).
-  const row = p.parts ? null : actions(p, null);
-  if (row) text.append(row);
+  if (!p.parts) {
+    const links = formatLinks(p, { format: 'btn btn-try', other: 'btn btn-quiet', plain: 'full-coming' });
+    if (links.length) text.append(el('div', { class: 'actions' }, ...links));
+  }
   // The new head (details in place of the lead) has no list of later sections.
   if (liveBeat && rest.length && !p.parts) {
     text.append(
@@ -127,7 +101,7 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
     const demo = liveDemo(p.live.url, p.name, liveBeat.title);
     const wide = el('section', { class: 'demo-wide' }, demo.node);
     main.append(wide);
-    demo.fit(wide, wide);
+    demo.fit(wide, wide, true);
   } else if (liveBeat && p.live && 'url' in p.live) {
     const demo = liveDemo(p.live.url, p.name, liveBeat.title);
     const hero = el('section', { class: 'project-hero' }, text, demo.node);
@@ -139,7 +113,6 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
     if (lamp) main.append(lamp);
   }
 
-  let side = 0; // alternates beside-visuals left and right
   for (const beat of rest) {
     const visual = beat.show ? visualFor(beat, p) : null;
     // The new layout gives each section one line, set as its heading; the
@@ -152,12 +125,28 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
           el('h2', { class: 'section-title' }, beat.title),
           ...(beat.text ? [el('p', { class: 'prose' }, ...inlineCode(beat.text))] : []),
         );
+    // Several lines for one visual: set like a rail, all at once, the visual beside them.
+    if (beat.lines && visual) {
+      main.append(el('section', { class: 'beat beat-rail beat-lines', id: beatId(beat) },
+        el('ul', { class: 'rail-list' }, ...beat.lines.map((l) => el('li', { class: 'rail-line' }, el('span', { class: 'beat-line' }, ...inlineCode(l))))),
+        el('div', { class: 'rail-stage' }, visual)));
+      continue;
+    }
+    // Beats sharing a row become one block like the demo: their lines as a
+    // rail on the left, one stage on the right showing the chosen beat's visual.
+    if (beat.row) {
+      const last = main.lastElementChild;
+      const block = last?.classList.contains('beat-rail') && last.getAttribute('data-row') === beat.row
+        ? (last as HTMLElement)
+        : (main.appendChild(railBlock(beat.row)) as HTMLElement);
+      addToRail(block, beat, p, visual);
+      continue;
+    }
     let layout = 'beat';
     if (visual && beat.show && WIDE.has(beat.show)) layout += ' wide';
     else if (visual) {
-      const flip = beat.side ? beat.side === 'left' : side % 2 === 1;
-      side++;
-      layout += flip ? ' beside flip' : ' beside';
+      // Text left, visual right on every page, unless a beat asks for the left.
+      layout += beat.side === 'left' ? ' beside flip' : ' beside';
     }
     const attrs: Record<string, string> = { class: layout, id: beatId(beat) };
     if (beat.show) attrs['data-show'] = beat.show;
@@ -175,6 +164,13 @@ export function renderProject(main: HTMLElement, p: ProjectEntry): void {
 /** The page title. A short name with a long one (YSAD) shows the long one in
     its place on hover or keyboard focus, as the welcome page's tag does; the
     heading's accessible name carries both. */
+/** The head's ways to the tool: each format as a link to where it lives, then
+    GitHub, as on the welcome page; formats not out yet as "…, coming soon". */
+function fullVersions(p: ProjectEntry): HTMLElement | null {
+  const links = formatLinks(p, { format: 'btn btn-try full-version', other: 'btn btn-quiet full-version', plain: 'full-coming big' });
+  return links.length ? el('div', { class: 'full-versions' }, ...links) : null;
+}
+
 function titleEl(p: ProjectEntry): HTMLElement {
   if (!p.fullName) return el('h1', { class: 'head', style: `--chars: ${p.name.length}` }, p.name);
   return el(
@@ -183,6 +179,34 @@ function titleEl(p: ProjectEntry): HTMLElement {
     el('span', { class: 'short', 'aria-hidden': 'true' }, p.name),
     el('span', { class: 'long', 'aria-hidden': 'true' }, p.fullName),
   );
+}
+
+/* A rail block (beats sharing a `row`): the beats' lines stacked on the left,
+   in their usual style, one chosen at a time, and the chosen beat's visual on
+   the right, so a product is drawn at the demo's size, not shrunk into
+   columns. Choosing a line swaps the visual and pauses the one it replaces. */
+function railBlock(row: string): HTMLElement {
+  return el('div', { class: 'beat beat-rail', 'data-row': row },
+    el('ol', { class: 'rail-list' }), el('div', { class: 'rail-stage' }));
+}
+
+function addToRail(block: HTMLElement, beat: Beat, p: ProjectEntry, visual: HTMLElement | null): void {
+  const list = block.querySelector('.rail-list')!;
+  const stage = block.querySelector('.rail-stage')!;
+  const n = list.children.length;
+  const pane = el('div', { class: 'rail-pane', id: beatId(beat) }, ...(visual ? [visual] : []));
+  const button = el('button', { class: 'rail-item', type: 'button', 'aria-pressed': n === 0 ? 'true' : 'false' },
+    el('span', { class: 'beat-line' }, ...inlineCode(p.parts ? (beat.text ?? beat.title) : beat.title)));
+  pane.hidden = n !== 0;
+  button.addEventListener('click', () => {
+    for (const b of list.querySelectorAll('.rail-item')) b.setAttribute('aria-pressed', String(b === button));
+    for (const other of stage.querySelectorAll<HTMLElement>('.rail-pane')) {
+      other.hidden = other !== pane;
+      if (other !== pane) other.querySelector('video')?.pause();
+    }
+  });
+  list.append(el('li', {}, button));
+  stage.append(pane);
 }
 
 function visualFor(beat: Beat, p: ProjectEntry): HTMLElement | null {
@@ -242,9 +266,9 @@ const MIN_CAP = 420;
    full product (in a new tab when framed), so welcome page, demo, product is
    the whole path. The demo shell (design system) is transparent in ?embed=1 and posts
    { type: 'demo-height', height } whenever its size changes. The frame takes
-   that height, capped so the demo and the text beside it fit on the first
-   screen; only a demo that truly can't fit scrolls inside. */
-function liveDemo(url: string, name: string, title: string): { node: HTMLElement; fit: (hero: HTMLElement, text: HTMLElement) => void } {
+   that height. Beside the text (older pages) it is capped so both fit on the
+   first screen; full width under the text, it never scrolls inside. */
+function liveDemo(url: string, name: string, title: string): { node: HTMLElement; fit: (hero: HTMLElement, text: HTMLElement, full?: boolean) => void } {
   const frame = el('iframe', {
     src: frameUrl(url),
     title: `${name}, running live: ${title}`,
@@ -271,14 +295,15 @@ function liveDemo(url: string, name: string, title: string): { node: HTMLElement
   });
 
   let wanted = DEFAULT_DEMO_HEIGHT;
-  const fit = (hero: HTMLElement, text: HTMLElement): void => {
+  const fit = (hero: HTMLElement, text: HTMLElement, full = false): void => {
     const apply = (): void => {
       const stacked = getComputedStyle(hero).gridTemplateColumns.split(' ').length < 2;
       let cap: number;
-      if (stacked) {
-        // Phones and narrow windows: the demo follows the text and the page
-        // scrolls anyway, so the frame takes its full height (a scroll area
-        // inside a scrolling page is hard to use on a phone).
+      if (full || stacked) {
+        // Full width under the text (the new layout), or phones and narrow
+        // windows: the demo follows the text and the page scrolls anyway, so
+        // the frame takes its full height (a scroll area inside a scrolling
+        // page is hard to use, and hides part of the demo).
         cap = Infinity;
       } else {
         // Desktop: whatever is left of the first screen under the hero's top
@@ -352,7 +377,7 @@ function player(o: { src: string; poster?: string; title: string; silent: boolea
   const time = el('span', { class: 'player-time' }, '0:00');
   const bar = el('div', { class: 'player-bar' }, toggle, track, time);
   if (o.silent) {
-    bar.append(el('span', { class: 'player-silent', title: 'This video has no sound' }, icon(VolumeX), 'no sound'));
+    bar.append(el('span', { class: 'player-silent', title: 'This video has no sound', role: 'img', 'aria-label': 'No sound' }, icon(VolumeX)));
   } else {
     const mute = el('button', { class: 'player-btn', type: 'button', 'aria-label': 'Mute' }, icon(Volume2));
     mute.addEventListener('click', () => {
@@ -365,6 +390,8 @@ function player(o: { src: string; poster?: string; title: string; silent: boolea
   const full = el('button', { class: 'player-btn', type: 'button', 'aria-label': 'Full screen' }, icon(Maximize));
   bar.append(full);
   const fig = el('figure', { class: 'player' }, frame, bar);
+  // A portrait recording (a plugin window on its own) is sized down beside its text.
+  video.addEventListener('loadedmetadata', () => fig.classList.toggle('portrait', video.videoHeight > video.videoWidth));
 
   const sync = () => {
     const playing = !video.paused && !video.ended;

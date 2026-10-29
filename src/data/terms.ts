@@ -27,12 +27,14 @@ export const GLOSSARY: Term[] = [
   { id: 'time-signature', words: ['time signature'], text: 'How a bar is counted: 4/4 is four quarter notes, 7/8 is seven eighth notes, grouped in twos and threes.' },
   { id: 'odd-meters', words: ['Odd meters', 'odd meters'], text: 'Time signatures with an uneven count, like 5/8 or 7/8. They lean and limp in a way 4/4 doesn’t.' },
   { id: 'swing', words: ['swing'], text: 'Every other note played a little late, so a straight beat bounces.' },
-  { id: 'push', words: ['Ableton Push 3'], text: 'Ableton’s instrument with 64 pads. Push 3 can also run on its own, without a computer.' },
+  { id: 'push', words: ['Ableton Push 3'], text: 'Ableton’s instrument with 64 pads. It can also run on its own, without a computer.' },
   { id: 'drum', words: ['drum'], only: ['ysad'], text: 'Drums first, but it sends MIDI, so the same patterns can also play a synth, chop up a sample or drive visuals.' },
   { id: 'arrangement-style', words: ['arrangement'], only: ['rearranged'], text: 'How a song is played: which instruments come in, their rhythms, their registers.' },
   { id: 'arrangement-view', words: ['arrangement'], only: ['session-notes'], text: 'Ableton Live’s timeline view, where a song is laid out from start to end.' },
   { id: 'locators', words: ['locators'], only: ['session-notes'], text: 'Named markers on Ableton Live’s timeline.' },
   { id: 'clips', words: ['clips'], only: ['session-notes'], text: 'Blocks of notes or audio on an Ableton Live track.' },
+  { id: 'max-for-live', words: ['Max for Live'], text: 'A way to build your own instruments and effects inside Ableton Live. A Max for Live device loads like any other.' },
+  { id: 'plugin', words: ['VST3', 'CLAP'], text: 'Plugin formats: an instrument or effect most music software can load. VST3 is the common one, CLAP the newer open one.' },
   { id: 'crate', words: ['crate'], only: ['intentional'], text: 'A DJ’s collection of tracks to play from, named after record crates.' },
 ];
 

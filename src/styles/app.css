@@ -7,7 +7,7 @@ body {
   margin: 0;
   background: var(--ground);
   color: var(--ink);
-  font: 16px/1.55 var(--font-sans);
+  font: 15px/1.55 var(--font-sans);
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
@@ -19,13 +19,13 @@ a { color: var(--ink); text-underline-offset: 3px; }
 a:hover { text-decoration-color: var(--acc); }
 :focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .mut { color: var(--ink-mut); }
-.small { font-size: 13px; }
+.small { font-size: 14px; }
 code { font: 0.9em var(--font-mono); }
 
 .eyebrow {
   margin: 0 0 calc(var(--space) * 2);
-  font: 500 11px/1 var(--font-mono);
-  letter-spacing: .12em;
+  font: 500 14px/1 var(--font-mono);
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--ink-mut);
 }
@@ -55,22 +55,17 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 
 /* ---------------------------------------------------------------- bar */
 
-.bar { border-bottom: var(--hairline); background: var(--ground-2); }
+.bar { background: var(--ground); }
 .bar-inner { max-width: var(--page); margin: 0 auto; padding: calc(var(--space) * 2) 16px; display: flex; align-items: center; gap: var(--space); }
 .wordmark { font: 700 21px/1 var(--font-mono); text-decoration: none; margin-right: auto; display: inline-flex; align-items: center; gap: 10px; }
 .wordmark-mark { display: block; width: 24px; height: 24px; color: var(--ink); }
 /* The switch at the icon buttons' standard size, to match the larger bar. */
-.bar .themeswitch .iconbutton { --iconbutton-size: calc(var(--space) * 4); --iconbutton-glyph: 16px; }
 .wordmark-mark svg { display: block; width: 100%; height: 100%; }
 
-.foot { border-top: var(--hairline); }
-.foot-inner {
-  max-width: var(--page); margin: 0 auto; padding: calc(var(--space) * 3) 16px;
-  display: flex; gap: calc(var(--space) * 2); font: 12px/1.4 var(--font-mono); color: var(--ink-mut);
-}
-.foot-inner span { margin-right: auto; }
-.foot-inner a { color: var(--ink-mut); }
-
+/* GitHub, at the bar's far end, in the list's link voice */
+.bar-link { font: 500 14px/1.2 var(--font-mono); text-transform: lowercase; letter-spacing: .02em; color: var(--ink-mut); text-decoration: none; }
+.bar-link:hover { color: var(--ink); }
+.bar-link .ext { margin-left: .3ch; color: var(--acc); }
 /* ---------------------------------------------------------------- hero */
 
 .hero { position: relative; margin-top: calc(var(--space) * 8); }
@@ -79,105 +74,73 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 /* as written (lowercase, with a capital I): the welcome speaks in a voice; capitals stay for labels and buttons */
 .hero h1 { font-size: clamp(2rem, 6vw, 3.6rem); max-width: 18ch; text-transform: none; }
 
-/* One item per tool, in two columns: the want, name and summary on the left
-   (vertically centred), the visual on the right at about 64% of the row,
-   running the item's full height. Stacks on narrow screens. */
-.wants { list-style: none; margin: calc(var(--space) * 5) 0 0; padding: 0; border-top: var(--hairline); }
-/* Each item sets its own proportions (--cols), text placement (--align) and
-   spacing (--gap-top) from a hand-tuned sequence in home.ts, and every other
-   item flips sides, so the page flows instead of repeating one grid. */
-.wants { border-top: none; --gap-scale: 1.75; }
-.wants > li {
-  display: grid; grid-template-columns: var(--cols, minmax(0, 1fr) minmax(0, 1.8fr));
-  gap: calc(var(--space) * 5); align-items: var(--align, center);
-  /* The sequence scaled as a whole, so the rhythm stays and the tools breathe. */
-  padding: calc(var(--gap-top, 48px) * var(--gap-scale)) 0 0; border-bottom: none;
+/* The list under the stage: one row per tool, all alike, read top to bottom
+   like an index. What it ships as, the want, the tool's name, a line about it and
+   plain links on the left; its hook on the right, unframed. A tool with nothing
+   to show yet runs as one line across both columns. No rules between rows, no
+   boxes round the links: space does the grouping. Stacks on narrow screens. */
+.wants {
+  list-style: none; margin: clamp(96px, 14vh, 160px) 0 0; padding: 0;
+  display: grid; gap: clamp(88px, 13vh, 144px);
 }
-/* The first item keeps its distance from the heading. */
-.wants > li:first-child { padding-top: var(--gap-top, 48px); }
-@media (max-width: 860px) { .wants { --gap-scale: 1.3; } }
-.wants > li.coming { grid-template-columns: minmax(0, 1fr); }
-/* A tool still to come on the right-hand side keeps the rhythm: its text alone in
-   the right column, where a visual's partner text would sit. */
-.wants > li.coming.right { grid-template-columns: var(--cols); }
-.wants > li.coming.right > .item-text { grid-column: 2; }
-.wants > li.flip > .item-text { order: 2; }
-@media (max-width: 860px) {
-  .wants > li, .wants > li.coming.right { grid-template-columns: minmax(0, 1fr); gap: calc(var(--space) * 3); align-items: start; }
-  .wants > li.flip > .item-text { order: 0; }
-  .wants > li.coming.right > .item-text { grid-column: auto; }
+.wants > li {
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 5vw, 88px); align-items: center;
 }
 .want {
-  margin: 0 0 calc(var(--space) * 2.5);
-  font-size: clamp(1.2rem, 2.4vw, 1.5rem); font-weight: var(--head-weight); font-stretch: var(--head-stretch);
+  margin: 0 0 calc(var(--space) * 1.5);
+  font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: var(--head-weight); font-stretch: var(--head-stretch);
   /* lowercase on purpose: one shout per page (the headline); the wants answer in a voice */
-  letter-spacing: var(--head-tracking); text-transform: none; line-height: 1.1; text-wrap: balance;
+  letter-spacing: var(--head-tracking); text-transform: none; line-height: 1; text-wrap: balance;
 }
-/* The still stream winding between the items, in the map's style. */
-.wants { position: relative; }
-.stream { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
-.stream path { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-linecap: round; }
-/* Mist (home.ts sets --fog, 0 clear to 1 misty): items away from the middle
-   of the window fade and soften a little; hover or focus clears them. The
-   stream stays crisp so the path through the page stays legible. */
-.wants > li > .item-text, .wants > li > .thumb-col, .wants > li > .thumb {
-  opacity: calc(1 - var(--fog, 0) * .45);
-  filter: blur(calc(var(--fog, 0) * 1.2px));
-  transition: opacity .6s ease-out, filter .6s ease-out;
-}
-.wants > li:hover > *, .wants > li:focus-within > * { opacity: 1; filter: none; }
-@media (prefers-reduced-motion: reduce) {
-  .wants > li > .item-text, .wants > li > .thumb-col, .wants > li > .thumb { opacity: 1; filter: none; transition: none; }
-}
-
-/* Arriving from the map (home.ts glides there): the want takes the tool's colour. */
-.wants > li .want { transition: color .6s; }
-.wants > li.arrived .want { color: var(--acc); }
-.wants > li { position: relative; z-index: 1; }
-/* A wider gutter between text and visual on desktop: the stream runs in it. */
-@media (min-width: 861px) {
-  .wants > li:not(.coming), .wants > li.coming.right { column-gap: calc(var(--space) * 9); }
-  /* The text leans toward the stream: right-aligned when it is on the left,
-     left-aligned (the default) when it is on the right. */
-  .wants > li:not(.right) > .item-text { text-align: right; }
-  .wants > li:not(.right) > .item-text .summary { margin-left: auto; }
-  .wants > li:not(.right) > .item-text .actions { justify-content: flex-end; }
-}
-.item-text h2 { margin: 0 0 calc(var(--space) * 1.25); font: 700 16px/1.3 var(--font-mono); color: var(--acc); }
-.item-text h2 a { color: var(--acc); text-decoration: none; }
+.item-text h2 { margin: 0 0 calc(var(--space) * 2); font: 600 15px/1.3 var(--font-mono); color: var(--acc); }
+.item-text h2 a { color: inherit; text-decoration: none; }
 .item-text h2 a:hover { color: var(--ink); }
 /* A tool's short line ("simply sing.") beside its name: quiet, in the name's own font. */
 .tool-line { font-weight: 400; color: var(--ink-mut); }
+.item-text h2 .tool-line { margin-left: .6ch; }
+.item-text .summary { margin: 0; max-width: 42ch; font-size: 17px; line-height: 1.6; color: var(--ink-mut); }
+.item-text .pending {
+  margin: calc(var(--space) * 2.5) 0 0; font: 500 14px/1.2 var(--font-mono); color: var(--ink-mut); letter-spacing: .02em;
+}
+/* a tool's one-line flow (Tagline) in the hook's place, quiet, in the links' voice */
+.item-ways { margin: 0; font: 500 15px/1.4 var(--font-mono); letter-spacing: .02em; color: var(--ink-mut); }
+/* Arriving from the stage or a link (home.ts glides there): the want takes the tool's colour. */
+.wants > li .want { transition: color .6s; }
+.wants > li.arrived .want { color: var(--acc); }
+@media (max-width: 860px) {
+  .wants > li { grid-template-columns: minmax(0, 1fr); gap: calc(var(--space) * 3); }
+}
 .sr-only {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-/* The name on the picture's top-left corner, like a tab: a solid chip in the
-   tool's colour, as the Try button is, so it reads at a glance and stays put
-   when the picture softens on hover. */
-.thumb-col .name-tag {
-  position: absolute; top: 0; left: 0; z-index: 1;
-  display: flex; align-items: baseline; gap: .8ch;
-  padding: calc(var(--space) * .75) calc(var(--space) * 1.5);
-  background: var(--acc);
-  font: 700 14px/1.2 var(--font-mono); color: var(--ground); white-space: nowrap;
-  pointer-events: none;
+/* The links under a tool's line (actions.ts): words with an arrow, no boxes.
+   The way in leads, in the tool's colour; the ways out to the full product
+   follow in ink. A line grows under a link on hover. */
+.wants .actions { gap: calc(var(--space) * 1) calc(var(--space) * 3); margin-top: calc(var(--space) * 2.5); }
+.wants .btn {
+  min-height: 32px; padding: 0; border: 0; border-radius: 0; background: none;
+  font: 600 14px/1.2 var(--font-mono); text-transform: lowercase; letter-spacing: .02em;
+  background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat;
+  background-size: 0 1px; background-position: 0 calc(100% - 4px);
+  transition: background-size .25s ease, color .2s;
 }
-.thumb-col .name-tag .tool-line { font-size: 13px; color: var(--ground); opacity: .85; }
-/* A short name's long one takes its place while the picture is hovered. */
-.thumb-col .name-tag .name.full { display: none; }
-@media (hover: hover) {
-  .thumb-col:hover .name-tag .name:has(+ .name.full) { display: none; }
-  .thumb-col:hover .name-tag .name.full { display: inline; }
+.wants .btn:hover { background-size: 100% 1px; }
+.wants .btn-try { color: var(--acc); }
+.wants .btn-try:hover { background-color: transparent; color: var(--acc); }
+.wants .btn-quiet { color: var(--ink); font-weight: 500; }
+.wants .btn .ext { color: var(--acc); margin-left: .3ch; }
+.wants .full-coming { text-transform: lowercase; letter-spacing: .02em; font-size: 14px; }
+/* The demo leads: the one filled thing in the row, a chip in the tool's colour. */
+.wants .btn.btn-demo {
+  padding: 0 14px; border-radius: var(--radius); background: var(--acc); color: var(--ground);
+  background-image: none; transition: filter .2s;
 }
-@media (max-width: 720px) {
-  .thumb-col .name-tag { padding: calc(var(--space) * .4) calc(var(--space) * .9); font-size: 12px; }
-  .thumb-col .name-tag .tool-line { font-size: 11px; }
-}
-.item-text h2 .tool-line { margin-left: .6ch; }
-.item-text .summary { margin: 0; max-width: 46ch; font-size: 18px; line-height: 1.7; color: var(--ink-mut); }
-.item-text .pending { margin-top: calc(var(--space) * 2.5); }
-
+.wants .btn.btn-demo .ext { color: inherit; }
+.wants .btn.btn-demo:hover { background-color: var(--acc); color: var(--ground); filter: brightness(1.12); }
+/* A format with nowhere to go yet, or a tool's one-line flow: in the links' voice, quiet. */
+.wants .format { font: 500 14px/1.2 var(--font-mono); text-transform: lowercase; letter-spacing: .02em; color: var(--ink-mut); }
 /* "Two hops at most" (actions.ts): one accent-filled "Try it", then up to two
    hairline buttons out to the full product with an external arrow, or a quiet
    "Full version coming" note in the same slot. Wraps on narrow screens. */
@@ -186,7 +149,7 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   display: inline-flex; align-items: center; gap: .5ch; min-height: 40px;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
   border: 1px solid var(--acc); border-radius: var(--radius);
-  font: 600 13px/1.2 var(--font-mono); text-decoration: none; white-space: nowrap;
+  font: 600 14px/1.2 var(--font-mono); text-decoration: none; white-space: nowrap;
   text-transform: var(--button-case); letter-spacing: var(--button-tracking);
   transition: background-color .2s, color .2s, border-color .2s;
 }
@@ -198,13 +161,13 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .btn .ext { color: var(--acc); }
 .btn:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
 /* in the buttons' row, so in their voice: the same mono capitals, quieter */
-.full-coming { font: 500 12px/1.2 var(--font-mono); color: var(--ink-mut); text-transform: var(--button-case); letter-spacing: var(--button-tracking); }
+.full-coming { font: 500 14px/1.2 var(--font-mono); color: var(--ink-mut); text-transform: var(--button-case); letter-spacing: var(--button-tracking); }
 /* In a page head, where the Full version button would sit: an outlined label, not a link. */
 .full-coming.big {
   display: inline-flex; align-items: center; min-height: 40px;
   padding: calc(var(--space) * .75) calc(var(--space) * 1.75);
   border: 1px dashed var(--acc); border-radius: var(--radius);
-  font-size: 13px; font-weight: 600; color: var(--ink);
+  font-size: 14px; font-weight: 600; color: var(--ink);
   text-transform: var(--button-case); letter-spacing: var(--button-tracking);
 }
 @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
@@ -212,13 +175,131 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
    would point at something already in view: it only shows when stacked. */
 @media (min-width: 1240px) { .project-hero:not(.single) .btn.in-page { display: none; } }
 
-/* The visual beside each summary: the lamp card (src/lamp/). A click plays it;
-   the way in is the first button beside the summary (actions.ts). */
-.thumb-col { position: relative; display: flex; flex-direction: column; height: 100%; }
-.thumb-col > .lamp-thumb { position: relative; flex: 1; min-height: 300px; }
-.thumb-col .name-tag { pointer-events: none; }
-.lamp-thumb canvas:focus-visible { outline: 2px solid var(--acc); outline-offset: -2px; }
-@media (max-width: 720px) { .thumb-col > .lamp-thumb { min-height: 260px; } }
+/* The visual beside each summary: the tool's hook (home.ts videoSide), always
+   there. It shows its first frame until the item comes to the middle of the
+   window (wireFocus), then plays, muted, with a button for the sound; a click
+   opens the demo, like the way-in link beside the summary. Unframed: the
+   hook's own dark ground is its edge. The lamp cards live in the stage. */
+.thumb.video-thumb { position: relative; aspect-ratio: 1.08; border: 0; background: #110d15; }
+.video-thumb a { position: absolute; inset: 0; display: block; }
+/* "open the demo →", top right, only while the pointer or focus is on the hook */
+.thumb-cue {
+  position: absolute; top: 12px; right: 12px; padding: 4px 10px; border-radius: var(--radius);
+  font: 500 13px/1.3 var(--font-mono); letter-spacing: .02em; color: var(--ink-mut);
+  background: color-mix(in srgb, var(--ground) 75%, transparent);
+  opacity: 0;
+}
+.video-thumb:is(:hover, :focus-within) .thumb-cue { opacity: 1; }
+.video-thumb video { display: block; width: 100%; height: 100%; object-fit: contain; }
+/* centred over the picture in the tool's colour, so it reads on a dark hook;
+   a touch see-through until hovered */
+.focus-sound {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  display: grid; place-items: center; width: 56px; height: 56px; padding: 0; border-radius: 50%;
+  color: var(--acc); cursor: pointer;
+  background: color-mix(in srgb, var(--ground) 80%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--acc) 70%, transparent);
+  opacity: .85; transition: opacity .2s, background-color .2s;
+}
+.focus-sound:hover, .focus-sound:focus-visible { opacity: 1; background: var(--ground); }
+/* A hook with sound (home.ts scrubBar): a thin line along its bottom in the
+   tool's colour, thicker under the pointer; the strip above it is the handle. */
+.scrub { position: absolute; left: 0; right: 0; bottom: 0; height: 18px; cursor: pointer; touch-action: none; }
+.scrub::before, .scrub-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; transition: height .15s; }
+.scrub::before { content: ""; background: color-mix(in srgb, var(--ink) 16%, transparent); }
+.scrub-fill { display: block; background: var(--acc); transform-origin: left; transform: scaleX(0); }
+.scrub:is(:hover, .dragging)::before, .scrub:is(:hover, .dragging) .scrub-fill { height: 5px; }
+@media (prefers-reduced-motion: reduce) { .scrub::before, .scrub-fill { transition: none; } }
+.focus-icon { display: inline-grid; }
+.focus-icon svg { width: 24px; height: 24px; }
+/* The stage under the headline (home.ts stage): a row of bands, one per tool,
+   each showing its product. A band out of focus is a dimmed slice of it (the
+   hook's poster frame or the lamp still) with its want line; the band in focus
+   is the loop itself, as wide as its media, with the want and the tool's name
+   on its corner. No fills of its own: the products are the surface.
+   --stage-inset: one inset for everything inside the stage (home.ts reads it too).
+   --stage-media: the ground the hooks share (each is recorded in the products'
+   Night theme, about #110d15): behind every band and in the seams between them.
+   --stage-ink: the tool's colour lifted so it reads on the dark stage in either
+   page theme. */
+.stage {
+  position: relative; display: flex; gap: 2px; margin: calc(var(--space) * 4) 0 0;
+  height: clamp(300px, 46vh, 520px); overflow: hidden; background: var(--stage-media);
+  --stage-inset: 16px; --stage-media: #110d15;
+}
+@media (max-width: 860px) { .stage { height: 260px; } }
+.band {
+  position: relative; flex: 1 1 0; min-width: 6px; overflow: hidden; display: block;
+  color: inherit; text-decoration: none; background: var(--stage-media);
+  --stage-ink: color-mix(in srgb, var(--acc) 72%, #fff);
+  container-type: inline-size;
+}
+/* the lamp stills share their own ground, so a still carries on to its band's edges */
+.band.has-still.open { background: #1c1822; }
+/* a tool with nothing to show yet keeps a quiet tone of its colour */
+.band.no-poster { background: color-mix(in srgb, var(--acc) 14%, #2a2531); }
+/* out of focus: the slice dimmed, plainly */
+.band-poster {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(.42) saturate(.7);
+}
+.band.open .band-poster { opacity: 0; }
+/* a lamp card (home.ts, src/lamp/): drawn at the open band's size and centred, so
+   it never squeezes */
+.band-lamp { left: 50%; width: var(--open-w, 100%); transform: translateX(-50%); }
+/* Odoroki's live shader (illude-band.ts): drawn at the open band's size and
+   centred, so it never stretches; dimmed like the others until it opens */
+.band-live { left: 50%; width: var(--open-w, 100%); transform: translateX(-50%); }
+.band.open .band-live { opacity: 1; filter: none; }
+/* the fade keeps a closed band's want readable */
+.band::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, color-mix(in srgb, var(--stage-media) 70%, transparent), transparent 55%);
+}
+.band.open::after { opacity: 0; }
+/* a closed band reads its want line upwards from the bottom */
+.band-want {
+  position: absolute; left: 50%; bottom: var(--stage-inset); z-index: 1;
+  transform: translateX(-50%) rotate(180deg); writing-mode: vertical-rl;
+  font: 12px var(--font-mono); color: var(--stage-ink); white-space: nowrap;
+}
+.band.open .band-want { opacity: 0; }
+/* a sliver too thin for its want (a narrow window) keeps only its picture */
+@container (max-width: 20px) { .band-want { display: none; } }
+/* The open band, laid out at the width it rests at (--open-w, home.ts size)
+   and clipped while it glides: the words on their own row, the media in the
+   rest, never scaled while it glides. */
+.band-open {
+  position: absolute; top: 0; bottom: 0; left: 0; width: var(--open-w, 100%); opacity: 0;
+  display: flex; flex-direction: column;
+}
+.band.open .band-open { opacity: 1; }
+/* the media as large as the frame lets it be, in its own shape (--media-ratio,
+   home.ts), less the edge a hook's name is cut from (--crop-top, --crop-left) */
+.band-frame { flex: 1; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.band-crop {
+  position: relative; overflow: hidden; aspect-ratio: var(--media-ratio, 1.08);
+  width: min(100cqw, 100cqh * var(--media-ratio, 1.08));
+}
+.band-media {
+  position: absolute; right: 0; bottom: 0; display: block; object-fit: contain;
+  width: calc(100% / (1 - var(--crop-left, 0))); height: calc(100% / (1 - var(--crop-top, 0)));
+}
+/* the words: the want as a tag in the tool's colour, the name beside it as a
+   dark tag, one piece above the media with clear space around it. One type
+   size for every want (home.ts), so the tag never resizes */
+.band-text { flex: none; align-self: flex-start; margin: var(--stage-inset); display: flex; }
+.band-tag {
+  margin: 0; font-size: var(--tag-size, 40px); font-weight: var(--head-weight); white-space: nowrap;
+  font-stretch: var(--head-stretch); letter-spacing: var(--head-tracking); line-height: 1;
+  color: var(--ground); background: var(--acc);
+  display: flex; align-items: center; box-sizing: border-box; height: 1.28em; padding: 0 16px .07em;
+}
+.band-title {
+  margin: 0; display: flex; align-items: center; padding: 0 12px; white-space: nowrap;
+  font: 600 calc(var(--tag-size, 40px) * .36) var(--font-mono);
+  background: var(--stage-media); color: var(--stage-ink);
+}
 
 .thumb { border: var(--hairline); background: var(--ground-2); overflow: hidden; }
 
@@ -242,17 +323,18 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .labelled.big { margin-top: calc(var(--space) * 2.5); }
 /* A row's label is an interface label, in the labels' capitals; except the
    details' "Give it" / "It" / "Get", which begin the sentence beside them. */
-.labelled > dt { text-transform: var(--button-case); letter-spacing: .04em; }
+.labelled > dt { font-size: 14px; text-transform: var(--button-case); letter-spacing: .04em; }
 .labelled.details > dt:not(.fold) { text-transform: none; letter-spacing: normal; }
 /* The details on a project page's head sit under the summary, quieter than it. */
-.labelled.details > dd { font-size: 0.95rem; line-height: 1.45; color: var(--ink-mut); }
+.labelled.details > dd { font-size: 15px; line-height: 1.45; color: var(--ink-mut); }
 /* The title's row: the name, and the way to the full product at the far right. */
 .head-top { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--space) * 2); flex-wrap: wrap; }
+.full-versions { display: flex; flex-wrap: wrap; gap: var(--space); }
 .btn-try .ext { color: inherit; }
 /* A term that explains itself (ui/terms.ts): dotted underline, the note above
    on hover or focus (and on tap, which focuses it). The note stays open while
-   the pointer is on it, so its "Got it" can be pressed; a transparent strip
-   bridges the gap between the word and the note. */
+   the pointer is on it; a transparent strip bridges the gap between the word
+   and the note. */
 .term { position: relative; text-decoration: underline dotted var(--acc); text-underline-offset: 4px; cursor: help; }
 .term:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
 .term-note {
@@ -269,28 +351,7 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 .term-note img { width: 100%; max-width: 32ch; border-radius: var(--radius); }
 .term:is(:hover, :focus-within) .term-note { display: flex; animation: term-in .2s ease-in-out; }
 @keyframes term-in { from { opacity: 0; } }
-.term-got {
-  align-self: flex-end; border: none; background: transparent; padding: 0; cursor: pointer;
-  font: 600 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); color: var(--acc);
-}
-.term-got:hover { text-decoration: underline; }
-.term-got:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-/* Retired with "Got it", or all notes off with the switch: plain text again. */
-.term.seen, :root[data-terms="off"] .term { text-decoration: none; cursor: inherit; }
-.term.seen .term-note, :root[data-terms="off"] .term-note { display: none; }
 @media (prefers-reduced-motion: reduce) { .term:is(:hover, :focus-within) .term-note { animation: none; } }
-/* The top bar's "Explain terms" switch, beside the colour modes. */
-.bar-end { display: flex; align-items: center; gap: calc(var(--space) * 1.5); }
-.terms-switch {
-  border: var(--hairline); border-radius: var(--radius); background: transparent; padding: 4px 8px; cursor: pointer;
-  font: 600 11px/1.3 var(--font-mono); letter-spacing: .06em; text-transform: var(--button-case); color: var(--ink-mut);
-}
-.terms-switch[aria-pressed="true"] { color: var(--ink); border-color: var(--ink-mut); }
-.terms-switch[aria-pressed="true"]::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: var(--acc); vertical-align: 1px; }
-.terms-switch:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
-.terms-switch { white-space: nowrap; }
-/* narrow phones: "Terms", so the bar keeps one line */
-@media (max-width: 420px) { .terms-switch .long { display: none; } }
 /* A short title (YSAD) swaps to its long name on hover or focus. */
 .head.has-full { cursor: default; }
 .head.has-full .long { display: none; }
@@ -372,7 +433,7 @@ main > .back { margin-top: calc(var(--space) * 4); }
 .highlights a:hover { text-decoration: underline; text-decoration-color: var(--acc); }
 
 /* Story beats: heading + a sentence or two, with the visual that shows it.
-   Wide visuals sit under the text; the rest sit beside it, alternating sides. */
+   Wide visuals sit under the text; the rest sit beside it, on the right. */
 .beat { margin-top: calc(var(--space) * 8); }
 .beat-text .prose { margin: 0; max-width: 52ch; }
 .beat.wide .beat-text { margin-bottom: calc(var(--space) * 2.5); }
@@ -385,6 +446,39 @@ main > .back { margin-top: calc(var(--space) * 4); }
 @media (max-width: 720px) {
   .beat.beside, .beat.beside.flip { grid-template-columns: 1fr; gap: calc(var(--space) * 2); }
   .beat.beside.flip > .beat-text { order: 0; }
+}
+/* A rail block (beats sharing a `row` in the data): the beats' lines stacked
+   on the left in their usual style, the chosen one in full ink with an accent
+   bar, the rest muted; the chosen visual on the right, like a beside beat. A
+   plugin recording shows at the demo's size, capped by the screen height so
+   the whole window and its play bar stay in view. */
+.beat-rail {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: calc(var(--space) * 4); align-items: center;
+}
+.rail-list { list-style: none; margin: 0; padding: 0; display: grid; gap: calc(var(--space) * 3); }
+.rail-item {
+  display: block; width: 100%; padding: 0 0 0 calc(var(--space) * 2);
+  border: 0; border-left: 2px solid transparent; background: none;
+  text-align: left; font: inherit; color: var(--ink-mut); cursor: pointer;
+}
+.rail-item .beat-line { display: block; }
+.rail-item:hover { color: var(--ink); background: none; }
+.rail-item[aria-pressed="true"] { color: var(--ink); border-left-color: var(--acc); background: none; }
+.rail-item:focus-visible { outline: 2px solid var(--acc); outline-offset: 4px; }
+/* several lines for one visual (a beat's `lines`): plain beat lines in full ink,
+   with no rail bar, since there is nothing to switch */
+.rail-line { color: var(--ink); }
+.rail-line .beat-line { display: block; }
+.rail-stage { display: grid; justify-items: center; }
+.rail-pane[hidden] { display: none; }
+/* a framed clip has no width of its own: it takes the stage's */
+.rail-pane:has(> .clip) { width: 100%; }
+.rail-stage .player.portrait { width: auto; }
+.rail-stage .player.portrait video { width: auto; max-width: 100%; max-height: min(78vh, 1040px); }
+@media (max-width: 720px) {
+  .beat-rail { grid-template-columns: 1fr; gap: calc(var(--space) * 2.5); }
+  .rail-list { gap: calc(var(--space) * 1.5); }
 }
 
 .keys {
@@ -407,7 +501,7 @@ main > .back { margin-top: calc(var(--space) * 4); }
   text-wrap: balance;
 }
 .beat.wide .beat-text:has(.beat-line) { margin-bottom: calc(var(--space) * 2.5); }
-.back { display: inline-block; margin-bottom: calc(var(--space) * 4); font: 12px var(--font-mono); color: var(--ink-mut); }
+.back { display: inline-block; margin-bottom: calc(var(--space) * 4); font: 14px var(--font-mono); color: var(--ink-mut); }
 .page-head h1 { font-size: clamp(2.4rem, 8vw, 4.4rem); }
 .fromto.big { margin-top: calc(var(--space) * 2); font-size: 1.2rem; color: var(--ink); }
 .tool-line.big { margin: calc(var(--space) * 1.5) 0 0; font: 400 1.05rem var(--font-mono); }
@@ -420,13 +514,13 @@ main > .back { margin-top: calc(var(--space) * 4); }
   font-weight: 600; text-decoration: none;
 }
 a.site-link:hover { background: var(--acc); color: var(--ground); }
-.site-link.pending { background: none; color: var(--ink-mut); border: 1px dashed var(--ink-mut); font: 12px var(--font-mono); }
+.site-link.pending { background: none; color: var(--ink-mut); border: 1px dashed var(--ink-mut); font: 14px var(--font-mono); }
 
 .slot {
   display: grid; place-items: center;
   min-height: 120px; padding: calc(var(--space) * 2);
   border: 1px dashed var(--ink-mut);
-  font: 12px var(--font-mono); color: var(--ink-mut); text-align: center;
+  font: 14px var(--font-mono); color: var(--ink-mut); text-align: center;
 }
 .slot.tall { aspect-ratio: 16 / 9; min-height: 0; }
 .slot.slim { min-height: 0; padding: calc(var(--space) * 1.25); max-width: 420px; }
@@ -445,6 +539,8 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
 /* The site's video player (project.ts player()): the picture, then one slim
    bar in the interface's mono capitals. Square, hairlined, on the page's ground. */
 .player { margin: 0; }
+/* A portrait recording (a plugin window alone) would tower over its text at full width. */
+.player.portrait { width: min(100%, 300px); justify-self: center; }
 .player-frame { position: relative; border: var(--hairline); border-bottom: 0; background: var(--ground-2); }
 .player-frame video { display: block; width: 100%; height: auto; cursor: pointer; }
 .player-big {
@@ -484,7 +580,7 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
 .shots { display: grid; gap: calc(var(--space) * 2); grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .shots figure { margin: 0; }
 .shots img { display: block; width: 100%; border: var(--hairline); }
-.shots figcaption { margin-top: var(--space); font-size: 13px; color: var(--ink-mut); }
+.shots figcaption { margin-top: var(--space); font-size: 14px; color: var(--ink-mut); }
 
 /* Show the screenshot that matches the mode: the system scheme by default,
    the toggle's choice when one is set. */
@@ -534,7 +630,7 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
 @media (prefers-reduced-motion: reduce) { .flow-lamp .flow li { transition: none; } }
 
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space) calc(var(--space) * 3); margin: 0; }
-.facts dt { font: 500 11px/1.9 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mut); }
+.facts dt { font: 500 14px/1.6 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-mut); }
 .facts dd { margin: 0; }
 
 
