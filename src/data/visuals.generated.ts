@@ -130,6 +130,7 @@ export const VISUALS: Record<string, ProjectVisuals> = {
     "videos": [
       "hook",
       "odd-meters",
+      "push",
       "same-settings-same-beat",
       "trailer",
       "why-a-circle"

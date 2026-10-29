@@ -161,7 +161,8 @@ function encodeRecordings() {
         execFileSync("ffmpeg", ["-v", "error", "-y", "-i", src, "-t", String(manifest.maxVideoSeconds ?? 90),
           "-vf", "scale='min(1600,iw)':-2", "-c:v", "libx264", "-crf", "23", "-preset", "slow", "-pix_fmt", "yuv420p",
           "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", mp4]);
-        execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", "1", "-i", mp4, "-frames:v", "1", "-q:v", "3", poster]);
+        const at = manifest.posters?.[`${project}/${name}`] ?? 1;
+        execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", String(at), "-i", mp4, "-frames:v", "1", "-q:v", "3", poster]);
         log(`video  ${project}/${name}.mp4 (+ poster)`);
       } catch (e) {
         problems.push(`${project}/${f}: ffmpeg failed: ${e.message.split("\n")[0]}`);

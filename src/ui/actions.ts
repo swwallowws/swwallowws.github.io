@@ -14,7 +14,7 @@
 import type { ProjectEntry } from '../data/projects.js';
 import { el } from './shared.js';
 
-const MAX_GET = 2;
+const MAX_GET = 4;
 /** Formats left unnamed (see above). */
 const UNNAMED = new Set(['Command line']);
 

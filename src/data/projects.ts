@@ -318,7 +318,7 @@ export const projects: ProjectEntry[] = [
       // With `parts`, a page shows each beat as its one line; the title is
       // only the section's anchor.
       // Named, so it keeps showing "video: coming" until a `push` recording exists.
-      { title: 'Live on Ableton Push 3', text: 'Play it like an instrument on Ableton Push 3, no computer needed.', show: 'video', video: 'push' },
+      { title: 'Live on Ableton Push 3', text: 'The Max for Live device plays on Ableton Push 3 like an instrument, no computer needed.', show: 'video', video: 'push' },
       { title: 'Why a circle', text: 'The groove drawn around a circle, one ring per drum.', show: 'video', video: 'why-a-circle', row: 'clips' },
       { title: 'Odd meters', text: '15 styles, in 4/4, 3/4, 6/8, 12/8, 5/8, 7/8 and 9/8.', show: 'video', video: 'odd-meters', row: 'clips' },
       { title: 'Same settings, same beat', text: 'The same settings always give the same beat.', show: 'video', video: 'same-settings-same-beat', row: 'clips' },
@@ -329,10 +329,13 @@ export const projects: ProjectEntry[] = [
     credit: 'Music Hackspace for the Lisbon Hackathon and Kirkwood West for the VST3 port.',
     page: 'tools/ysad/',
     live: { url: DEMOS.ysad },
-    // Until the full version's store pages exist, both pages say "Full version
-    // coming soon"; then add them here, e.g.
-    // get: [{ label: 'Full version', href: '<store page>', name: 'YSAD, full version' }],
-    // and set the demo's FULL_PRODUCT and FULL_LIVE.
+    // VST3 on MuseHub, VST3 and CLAP on Gumroad, the Max for Live device on Gumroad only.
+    get: [
+      { label: 'VST3 plugin', href: 'https://www.musehub.com/plugin/ysad', name: 'YSAD on MuseHub', as: 'VST3 plugin' },
+      { label: 'CLAP plugin', href: 'https://swwallowws.gumroad.com/l/ysad', name: 'YSAD for VST3 and CLAP on Gumroad', as: 'CLAP plugin' },
+      { label: 'Max for Live device', href: 'https://swwallowws.gumroad.com/l/ysad-m4l', name: 'YSAD for Max for Live on Gumroad', as: 'Max for Live device' },
+      { label: 'Bundle', href: 'https://swwallowws.gumroad.com/l/ysad-bundle', name: 'YSAD bundle on Gumroad: the plugin and the Max for Live device' },
+    ],
     video: VIDEO_COMING,
     code: { placeholder: 'code: coming' },
   },

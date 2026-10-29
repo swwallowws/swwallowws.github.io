@@ -474,8 +474,6 @@ main > .back { margin-top: calc(var(--space) * 4); }
 .rail-pane[hidden] { display: none; }
 /* a framed clip has no width of its own: it takes the stage's */
 .rail-pane:has(> .clip) { width: 100%; }
-.rail-stage .player.portrait { width: auto; }
-.rail-stage .player.portrait video { width: auto; max-width: 100%; max-height: min(78vh, 1040px); }
 @media (max-width: 720px) {
   .beat-rail { grid-template-columns: 1fr; gap: calc(var(--space) * 2.5); }
   .rail-list { gap: calc(var(--space) * 1.5); }
@@ -539,8 +537,10 @@ a.site-link:hover { background: var(--acc); color: var(--ground); }
 /* The site's video player (project.ts player()): the picture, then one slim
    bar in the interface's mono capitals. Square, hairlined, on the page's ground. */
 .player { margin: 0; }
-/* A portrait recording (a plugin window alone) would tower over its text at full width. */
-.player.portrait { width: min(100%, 300px); justify-self: center; }
+/* A portrait recording (a plugin window alone) would tower over its text at full width:
+   it's held to the screen's height, the same size as the portrait clips in a rail. */
+.player.portrait { width: auto; justify-self: center; }
+.player.portrait video { width: auto; max-width: 100%; max-height: min(78vh, 1040px); }
 .player-frame { position: relative; border: var(--hairline); border-bottom: 0; background: var(--ground-2); }
 .player-frame video { display: block; width: 100%; height: auto; cursor: pointer; }
 .player-big {
