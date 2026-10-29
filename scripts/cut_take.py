@@ -33,7 +33,20 @@ showing what the cursor does next, and without a still frame. A segment's `repla
 at its top-left corner and sets the text there in the caption font, so a
 file name on screen can read as the song's name. The audio is cut and
 crossfaded to match (tempo-changed with `speed`), or left out entirely with
-"audio": false (a silent video with no audio track).
+"audio": false (a silent video with no audio track). A segment with "mute":
+true is silent, so the sound before it fades out over the join. `gain` (dB,
+on the cut list or one segment) raises a quiet take. A segment's `sound`
+({"source": ..., "in": seconds}) plays that moment's sound under its
+picture instead of its own, so an action can be shown while the music
+carries on from where it will continue. `sharpen` ({"radius", "percent",
+"threshold"}, on the cut list) runs an unsharp mask over every framed frame.
+`shade` ([{"rect", "dim", "feather"}], on the cut list) darkens parts of the
+source, softly. In `caption`, "tracking" (em) spaces the letters and
+"shadow": false drops the shadow of bare text; a segment's `captionInk`
+([r, g, b]) colours its caption, which fades where its text, place or ink
+changes. A segment's `labels` ([{"text", "at", "size", "weight", "font",
+"ink", "tracking"}], `font` a design font path) are set like the caption and
+come and go with it.
 
     {
       "sources": { "a": "/path/take-a.mp4", "b": "/path/take-b.mp4" },
@@ -73,6 +86,8 @@ FRAMINGS = cut["framings"]
 MASKS = cut.get("masks", {})
 SEGS = cut["segments"]
 FIRST = next(iter(SOURCES))
+# "sharpen": {"radius", "percent", "threshold"} (Pillow's unsharp mask), applied after framing
+SHARPEN = ImageFilter.UnsharpMask(**cut["sharpen"]) if cut.get("sharpen") else None
 
 
 def src(seg):
@@ -102,9 +117,10 @@ INK, GROUND, LINE = (236, 230, 238), (21, 18, 26), (47, 41, 54)  # design Night 
 
 
 @functools.lru_cache(maxsize=None)
-def caption_font(weight=None, size=None):
-    """Pillow can't read woff2: make a static TTF of the design font once (per weight)."""
-    woff2 = os.path.join(ROOT, (CAP or {}).get("font", "vendor/design/fonts/InterTight.woff2"))
+def caption_font(weight=None, size=None, file=None):
+    """Pillow can't read woff2: make a static TTF of the design font once (per weight).
+    `file` picks another design font (e.g. vendor/design/fonts/GeistMono.woff2)."""
+    woff2 = os.path.join(ROOT, file or (CAP or {}).get("font", "vendor/design/fonts/InterTight.woff2"))
     weight = weight or CAP.get("weight", 600)
     ttf = os.path.join(ROOT, "visuals/raw/_fonts", f"{os.path.splitext(os.path.basename(woff2))[0]}-{weight}.ttf")
     if not os.path.exists(ttf):
@@ -143,34 +159,75 @@ FONT = caption_font() if CAP else None
 _cap_cache = {}
 
 
-def caption_tile(text):
-    """The caption as an RGBA tile: ground with a hairline, ink text. With
-    "box": false, bare ink text over a soft ground shadow. "\\n" breaks lines."""
-    if text not in _cap_cache:
-        boxed = CAP.get("box", True)
-        spacing = round(FONT.size * 0.2)
-        probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
-        l, t, r, b = (round(v) for v in probe.multiline_textbbox((0, 0), text, font=FONT, spacing=spacing, align="center"))
-        px, py = (16, 10) if boxed else (FONT.size, FONT.size)
-        w, h = r - l + 2 * px, b - t + 2 * py
-        pos = (px - l, py - t)
-        if boxed:
-            tile = Image.new("RGBA", (w, h), GROUND + (230,))
-            ImageDraw.Draw(tile).rectangle([0, 0, w - 1, h - 1], outline=LINE + (255,), width=1)
+@functools.lru_cache(maxsize=None)
+def text_tile(text, font, ink=INK, tracking=0.0, boxed=False, shadow=True):
+    """Text as an RGBA tile: on ground with a hairline (boxed), or bare over a soft ground
+    shadow, or bare. "\\n" breaks lines; a one-line text can take letter spacing (em)."""
+    spacing = round(font.size * 0.2)
+    track = tracking * font.size
+    probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
+    if track and "\n" not in text:
+        l, t, _, b = font.getbbox(text)
+        r = l + sum(font.getlength(c) for c in text) + track * (len(text) - 1)
+    else:
+        l, t, r, b = probe.multiline_textbbox((0, 0), text, font=font, spacing=spacing, align="center")
+    l, t, r, b = (round(v) for v in (l, t, r, b))
+    px, py = (16, 10) if boxed else (font.size, font.size)
+    w, h = r - l + 2 * px, b - t + 2 * py
+    pos = (px - l, py - t)
+
+    def write(draw, fill):
+        if track and "\n" not in text:
+            x = pos[0]
+            for c in text:  # letter by letter, for the spacing
+                draw.text((x, pos[1]), c, font=font, fill=fill)
+                x += font.getlength(c) + track
         else:
-            shadow = Image.new("RGBA", (w, h), GROUND + (0,))
-            ImageDraw.Draw(shadow).multiline_text(pos, text, font=FONT, fill=GROUND + (255,), spacing=spacing, align="center")
-            tile = shadow.filter(ImageFilter.GaussianBlur(FONT.size * 0.35))
-        ImageDraw.Draw(tile).multiline_text(pos, text, font=FONT, fill=INK + (255,), spacing=spacing, align="center")
-        _cap_cache[text] = tile
-    return _cap_cache[text]
+            draw.multiline_text(pos, text, font=font, fill=fill, spacing=spacing, align="center")
+
+    if boxed:
+        tile = Image.new("RGBA", (w, h), GROUND + (230,))
+        ImageDraw.Draw(tile).rectangle([0, 0, w - 1, h - 1], outline=LINE + (255,), width=1)
+    elif shadow:
+        tile = Image.new("RGBA", (w, h), GROUND + (0,))
+        write(ImageDraw.Draw(tile), GROUND + (255,))
+        tile = tile.filter(ImageFilter.GaussianBlur(font.size * 0.35))
+    else:
+        tile = Image.new("RGBA", (w, h), ink + (0,))
+    write(ImageDraw.Draw(tile), tuple(ink) + (255,))
+    return tile
 
 
-def draw_caption(img, text, alpha, at=None):
+def caption_tile(text, ink=INK):
+    """The caption as an RGBA tile, styled by the cut list's "caption": boxed (default), or
+    with "box": false bare text over a soft ground shadow ("shadow": false drops it);
+    "tracking" (em) spaces the letters."""
+    return text_tile(text, FONT, tuple(ink), CAP.get("tracking", 0.0), CAP.get("box", True), CAP.get("shadow", True))
+
+
+def label_tile(lab):
+    """A segment label ({"text", "at", "size", "weight", "font", "ink", "tracking"}), bare text."""
+    font = caption_font(lab.get("weight", 500), lab.get("size", 30), lab.get("font"))
+    return text_tile(lab["text"], font, tuple(lab.get("ink", INK)), lab.get("tracking", 0.0), False, False)
+
+
+def draw_tile(img, tile, alpha, at):
+    """Composites a tile centred on `at` at an opacity."""
+    if alpha <= 0:
+        return img
+    if alpha < 1:
+        tile = tile.copy()
+        tile.putalpha(tile.getchannel("A").point(lambda v: int(v * alpha)))
+    img = img.convert("RGBA")
+    img.alpha_composite(tile, (round(at[0] - tile.width / 2), round(at[1] - tile.height / 2)))
+    return img.convert("RGB")
+
+
+def draw_caption(img, text, alpha, at=None, ink=INK):
     """At the bottom centre, or centred on `at` ([x, y] output pixels)."""
     if not text or alpha <= 0:
         return img
-    tile = caption_tile(text)
+    tile = caption_tile(text, ink)
     if alpha < 1:
         tile = tile.copy()
         tile.putalpha(tile.getchannel("A").point(lambda v: int(v * alpha)))
@@ -235,6 +292,29 @@ def duration(seg):
     return seg["hold"] if "freeze" in seg else (seg["out"] - seg["in"]) / seg.get("speed", 1)
 
 
+def cap_key(seg):
+    """What makes a caption the same one: its text, place and ink."""
+    if not seg.get("caption"):
+        return None
+    return seg["caption"], tuple(seg.get("captionAt") or ()), tuple(seg.get("captionInk") or INK)
+
+
+def shade_factor():
+    """"shade" on the cut list ([{"rect": [x0, y0, x1, y1], "dim": 0.45, "feather": 36}], source
+    pixels) darkens those parts of every source frame, with soft edges: a per-pixel factor."""
+    if not cut.get("shade"):
+        return None
+    m = Image.new("L", (SW, SH), 0)
+    d = ImageDraw.Draw(m)
+    for s in cut["shade"]:
+        d.rectangle(s["rect"], fill=round(255 * (1 - s.get("dim", 0.45))))
+    m = m.filter(ImageFilter.GaussianBlur(max(s.get("feather", 36) for s in cut["shade"])))
+    return (1 - np.asarray(m, dtype=np.float32) / 255)[:, :, None]
+
+
+SHADE = shade_factor()
+
+
 def frames(i, start_box):
     """Yields the output frames (numpy uint8, OHxOWx3) of segment i. A segment
     with "freeze": t and "hold": seconds shows the source frame at t, still."""
@@ -251,14 +331,20 @@ def frames(i, start_box):
     moving_in = begin != target and MASKS.get(seg.get("from") or (SEGS[i - 1]["framing"] if i else "")) != mask
     hl = seg.get("highlight")
     text = seg.get("caption")
-    fade_in = text and (i == 0 or SEGS[i - 1].get("caption") != text)
-    fade_out = text and (i + 1 == len(SEGS) or SEGS[i + 1].get("caption") != text)
+    # a caption stays steady across a cut only where its text, place and ink all stay the same
+    fade_in = text and (i == 0 or cap_key(SEGS[i - 1]) != cap_key(seg))
+    fade_out = text and (i + 1 == len(SEGS) or cap_key(SEGS[i + 1]) != cap_key(seg))
     # one caption replacing another swaps right at the cut, with no pause
     swap_in = fade_in and i > 0 and SEGS[i - 1].get("caption")
     swap_out = fade_out and i + 1 < len(SEGS) and SEGS[i + 1].get("caption")
+    # across a crossfade the swap happens at its midpoint, so the two captions never overlap
+    swap_in_at = seg.get("xfade", XF) / 2 if swap_in else 0
+    swap_out_at = SEGS[i + 1].get("xfade", XF) / 2 if swap_out else 0
     at = seg["freeze"] if "freeze" in seg else seg["in"]
     pic_out = seg.get("pictureOut", seg.get("out"))
-    span = ["-frames:v", "1"] if "freeze" in seg else ["-t", str(pic_out - seg["in"])]
+    # a little past the end: the fps filter can drop a piece's last frame, and the loop below stops
+    # at the exact frame count anyway, so the picture never runs short of the sound
+    span = ["-frames:v", "1"] if "freeze" in seg else ["-t", str(pic_out - seg["in"] + 0.2)]
     # the picture's pace: the speed, or slower when it ends early (pictureOut)
     speed = (pic_out - seg["in"]) / dur if "pictureOut" in seg else seg.get("speed", 1)
     retime = f"setpts=PTS/{speed}," if speed != 1 else ""
@@ -283,25 +369,32 @@ def frames(i, start_box):
         t = n / FPS
         s = ease((t - move_at) / move) if move > 0 else 1.0
         img = Image.frombuffer("RGB", (SW, SH), raw, "raw", "RGB", 0, 1)
+        if SHADE is not None:
+            img = Image.fromarray((np.asarray(img) * SHADE).astype(np.uint8))
         if "replace" in seg:
             img = replace_text(img, seg["replace"])
         cam = camera(begin, target, s, clamp=mask is None)
         out = frame(img, cam)
+        if SHARPEN:
+            out = out.filter(SHARPEN)
         if mask:
             out = apply_mask(out, mask, cam, s if moving_in else 1.0)
         if hl:
             dim = hl.get("dim", 0.6) * ease((t - hl.get("at", 0.4)) / HL_FADE)
             if dim > 0:
                 out = apply_mask(out, hl["rect"], cam, dim)
+        alpha = 1.0
         if text:
-            alpha = 1.0
             if fade_in:
-                alpha = min(alpha, ease((t - (0 if swap_in else 0.15)) / CAP_FADE))
+                alpha = min(alpha, ease((t - (swap_in_at if swap_in else 0.15)) / CAP_FADE))
             if fade_out:
-                alpha = min(alpha, ease((dur - t - (0 if swap_out else 0.1)) / CAP_FADE))
-            out = draw_caption(out, text, alpha, seg.get("captionAt"))
+                alpha = min(alpha, ease((dur - t - (swap_out_at if swap_out else 0.1)) / CAP_FADE))
+            out = draw_caption(out, text, alpha, seg.get("captionAt"), tuple(seg.get("captionInk", INK)))
+        for lab in seg.get("labels", []):  # labels come and go with the caption
+            out = draw_tile(out, label_tile(lab), alpha, lab["at"])
         yield np.asarray(out)
         n += 1
+    proc.kill()  # it decodes a little past the end; stop it there rather than let it hit a closed pipe
     proc.stdout.close()
     proc.wait()
 
@@ -325,8 +418,14 @@ def audio(path):
     names = list(SOURCES)
     parts, chain = [], ""
     for i, seg in enumerate(SEGS):
-        if "freeze" in seg:  # a held frame is silent
-            parts.append(f"aevalsrc=0|0:c=stereo:s=48000:d={seg['hold']}[a{i}]")
+        if "freeze" in seg or seg.get("mute"):  # a held frame is silent, as is a muted segment
+            parts.append(f"aevalsrc=0|0:c=stereo:s=48000:d={duration(seg)}[a{i}]")
+        elif "sound" in seg:  # the picture's moment, heard from another: {"source", "in"}, at 1x
+            k = names.index(seg["sound"].get("source", FIRST))
+            at = seg["sound"]["in"]
+            gain = seg.get("gain", cut.get("gain", 0))
+            vol = f",volume={gain}dB" if gain else ""
+            parts.append(f"[{k}:a]atrim={at}:{at + duration(seg)},asetpts=PTS-STARTPTS,aresample=48000{vol}[a{i}]")
         else:
             k = names.index(seg.get("source", FIRST))
             # a pitch shift: resample by r (pitch and pace move together), then the tempo puts the pace back
@@ -335,6 +434,12 @@ def audio(path):
             # "fadeOut": seconds, for a sound the take itself cuts short
             fo = seg.get("fadeOut", 0)
             fade = f",afade=t=out:st={duration(seg) - fo:.3f}:d={fo}" if fo else ""
+            # "fadeIn": seconds, for a sound that starts mid-phrase
+            fi = seg.get("fadeIn", 0)
+            fade += f",afade=t=in:st=0:d={fi}" if fi else ""
+            # "gain": dB, on the cut list or one segment, for a take recorded quietly
+            gain = seg.get("gain", cut.get("gain", 0))
+            fade += f",volume={gain}dB" if gain else ""
             parts.append(f"[{k}:a]atrim={seg['in']}:{seg['out']},asetpts=PTS-STARTPTS,aresample=48000{shift}"
                          f"{atempo(seg.get('speed', 1) / r)}{fade}[a{i}]")
     prev = "a0"
