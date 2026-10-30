@@ -6,6 +6,23 @@ import { defineConfig, type Plugin } from 'vite';
    its og:url. A custom domain later is a change here only. */
 const SITE_URL = 'https://swwallowws.github.io';
 
+/* GoatCounter site code (the "<code>" of <code>.goatcounter.com), or '' for
+   none. No cookies, so no consent banner. Its script skips localhost and
+   framed pages by itself, so previews and the CI check aren't counted. */
+const GOATCOUNTER = 'swwallowws';
+
+function analytics(): Plugin {
+  return {
+    name: 'analytics',
+    apply: 'build',
+    transformIndexHtml(html) {
+      if (!GOATCOUNTER) return html;
+      const tag = `<script data-goatcounter="https://${GOATCOUNTER}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>`;
+      return html.replace('</head>', `  ${tag}\n  </head>`);
+    },
+  };
+}
+
 function linkPreviews(): Plugin {
   return {
     name: 'link-previews',
@@ -26,7 +43,7 @@ function linkPreviews(): Plugin {
 const PAGES = ['starling', 'coming-undone', 'rearranged', 'ready-set', 'ysad', 'session-notes', 'tagline'];
 
 export default defineConfig({
-  plugins: [linkPreviews()],
+  plugins: [linkPreviews(), analytics()],
   build: {
     rollupOptions: {
       input: {

@@ -6,6 +6,7 @@ import '../vendor/design/badges.css';
 import '../vendor/design/iconbutton.css';
 import './styles/app.css';
 import { projects } from './data/projects.js';
+import { countLinksOut } from './ui/analytics.js';
 import { renderBar } from './ui/chrome.js';
 import { renderHome } from './ui/home.js';
 import { renderProject } from './ui/project.js';
@@ -31,3 +32,4 @@ if (pageId === 'home') {
 app.append(bar, main);
 // Technical terms explain themselves at their first use on the page.
 markTerms(main, pageId);
+countLinksOut();
