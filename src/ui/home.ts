@@ -103,7 +103,12 @@ export function renderHome(main: HTMLElement): void {
    narrow. Odoroki, with nothing recorded yet, runs illude's shader live
    (illude-band.ts). With the pointer away (or on touch) the stage steps
    through the tools on its own. A click glides to the tool's item. Under
-   reduced motion it holds still on the first tool. */
+   reduced motion it holds still on the first tool.
+   On a phone the bands are stacked instead (.stacked): every closed one a
+   plain strip of the same height with its want and name, and the open one as
+   tall as its words and the tallest media at the stage's width. The page's
+   scroll decides which is open: the one at the middle of the window, the
+   way the items below light up as they pass it. */
 // how the bands share the width: a gaussian around the tool in focus; the open
 // band's height (amp) is solved in size() so it is exactly as wide as its media
 const SIGMA = 0.5, MIN_GROW = 1, EASE = 0.09;
@@ -116,9 +121,13 @@ const HOOK_CROP: Record<string, { top?: number; left?: number }> = {
 };
 // how long the stage rests on each tool when nothing points at it
 const STEP_MS = 4500;
+// stacked (a phone): the width it starts at, and a closed strip's height,
+// which is also how far the page scrolls to hand the open band on
+const STACKED = '(max-width: 600px)', STRIP = 48, HANDOVER = 0.4;
 function stage(): HTMLElement {
   const box = el('div', { class: 'stage', role: 'group', 'aria-label': 'The tools' });
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const stacked = matchMedia(STACKED);
   const bands = WANTS.map((w) => {
     const p = projects.find((x) => x.id === w.project);
     const vis = VISUALS[w.project];
@@ -140,13 +149,20 @@ function stage(): HTMLElement {
     const crop = HOOK_CROP[w.project];
     if (media && crop && v) { media.style.setProperty('--crop-top', String(crop.top ?? 0)); media.style.setProperty('--crop-left', String(crop.left ?? 0)); }
     const frame = media ? el('div', { class: 'band-frame' }, el('div', { class: 'band-crop' }, media)) : null;
-    // the frame keeps the media's own shape, less what is cut
-    const shape = (w0: number, h0: number) => frame?.style.setProperty('--media-ratio', String((w0 * (1 - (crop?.left ?? 0))) / (h0 * (1 - (crop?.top ?? 0)))));
+    // the frame keeps the media's own shape, less what is cut (and, stacked,
+    // the open band is as tall as that shape needs)
+    let ratio = MEDIA_ASPECT;
+    const shape = (w0: number, h0: number) => {
+      ratio = (w0 * (1 - (crop?.left ?? 0))) / (h0 * (1 - (crop?.top ?? 0)));
+      frame?.style.setProperty('--media-ratio', String(ratio));
+      if (stacked.matches) size();
+    };
     if (v) v.addEventListener('loadedmetadata', () => shape(v.videoWidth, v.videoHeight));
     else if (still) still.addEventListener('load', () => shape((still as HTMLImageElement).naturalWidth, (still as HTMLImageElement).naturalHeight));
     const band = el('a', { class: `band${still ? ' has-still' : ''}${lamp || poster ? '' : ' no-poster'}`, href: `#${w.project}`, 'data-category': p?.categories[0] ?? '', 'aria-label': `${w.want} ${w.name}` },
       ...(lamp ? [lamp] : poster ? [el('img', { class: 'band-poster', src: poster, alt: '', 'aria-hidden': 'true' })] : []),
       el('span', { class: 'band-want', 'aria-hidden': 'true' }, w.want),
+      el('span', { class: 'band-name', 'aria-hidden': 'true' }, w.name),
       el('div', { class: `band-open${media ? '' : ' bare'}`, 'aria-hidden': 'true' },
         el('div', { class: 'band-text' },
           el('p', { class: 'band-tag' }, w.want),
@@ -159,7 +175,7 @@ function stage(): HTMLElement {
     // the card plays once when it comes into view and keeps its lamp wandering;
     // a click goes through to the band (wired below), so the card itself does nothing more
     if (lamp && def) mountCard(lamp, def, { label: `${w.name}: ${w.want} Opens it here.`, silent: true, playOnView: true, onPress: () => {} });
-    return { band, v, live, grow: 1 };
+    return { band, v, live, grow: 1, ratio: () => ratio, openH: STRIP };
   });
   const n = bands.length;
   let amp = 10;
@@ -185,6 +201,7 @@ function stage(): HTMLElement {
   // size follows the band's width
   const size = () => { fit(); fit(); };
   const fit = () => {
+    box.classList.toggle('stacked', stacked.matches);
     const gap = parseFloat(getComputedStyle(box).columnGap) || 0;
     const width = box.clientWidth - (n - 1) * gap;
     const textRow = text.offsetHeight + INSET * 2;
@@ -201,17 +218,35 @@ function stage(): HTMLElement {
     const widest = widestAt(MAX_PX);
     tag.textContent = keep[0];
     title.textContent = keep[1];
-    // the open band is as wide as its media under the words' row, up to half
-    // the stage, and never narrower than the words at their smallest (a phone)
-    const mediaW = Math.floor((box.clientHeight - textRow) * MEDIA_ASPECT);
-    const wordsW = smallest + INSET * 2 + ROOM;
-    const want = Math.min(0.8, Math.max(Math.min(0.5, mediaW / width), wordsW / width));
-    let lo = 0, hi = 400;
-    for (let k = 0; k < 40; k++) { amp = (lo + hi) / 2; if (restShare() < want) lo = amp; else hi = amp; }
-    amp = hi;
-    const openW = Math.floor(width * restShare());
+    const solve = (want: number) => {
+      let lo = 0, hi = 400;
+      for (let k = 0; k < 40; k++) { amp = (lo + hi) / 2; if (restShare() < want) lo = amp; else hi = amp; }
+      amp = hi;
+    };
+    let openW: number;
+    if (stacked.matches) {
+      // stacked: the open band is the stage's width and as tall as the words
+      // and the tallest media, so the stage never changes height (what is
+      // under it never moves); tick() sets the heights
+      openW = box.clientWidth;
+      // (and never taller than the window leaves room for, less a strip each side)
+      const openH = Math.min(textRow + Math.max(...bands.map((b) => Math.floor(openW / b.ratio()))), innerHeight - 2 * STRIP);
+      for (const b of bands) {
+        b.openH = openH;
+        b.live?.size(openW, openH);
+      }
+      box.style.setProperty('--open-h', `${openH}px`);
+    } else {
+      // the open band is as wide as its media under the words' row, up to half
+      // the stage, and never narrower than the words at their smallest (a phone)
+      const mediaW = Math.floor((box.clientHeight - textRow) * MEDIA_ASPECT);
+      const wordsW = smallest + INSET * 2 + ROOM;
+      solve(Math.min(0.8, Math.max(Math.min(0.5, mediaW / width), wordsW / width)));
+      openW = Math.floor(width * restShare());
+      for (const b of bands) { b.band.style.height = ''; b.live?.size(openW, box.clientHeight); }
+      box.style.removeProperty('--open-h');
+    }
     box.style.setProperty('--open-w', `${openW}px`);
-    for (const b of bands) b.live?.size(openW, box.clientHeight);
     // the words' width is the type's, which scales, plus the tags' padding, which doesn't
     const perPx = (widest - smallest) / (MAX_PX - MIN_PX);
     const px = Math.max(MIN_PX, Math.min(MAX_PX, MIN_PX + (openW - INSET * 2 - ROOM - smallest) / perPx));
@@ -219,7 +254,15 @@ function stage(): HTMLElement {
     // a still stage draws only on demand
     if (reduce) requestAnimationFrame(tick);
   };
-  new ResizeObserver(size).observe(box);
+  // stacked, the stage's height is its own doing, so only a new width refits it
+  let fitW = -1, fitH = -1;
+  new ResizeObserver(() => {
+    if (box.clientWidth === fitW && (stacked.matches || box.clientHeight === fitH)) return;
+    fitW = box.clientWidth; fitH = box.clientHeight;
+    size();
+  }).observe(box);
+  // the window's height caps the open band
+  addEventListener('resize', () => { if (stacked.matches) size(); });
   void document.fonts.ready.then(size);
   let target = 0; // the tool the stage rests on (0 .. n-1); starts on the first
   let centre = 0;
@@ -230,28 +273,49 @@ function stage(): HTMLElement {
   // bands shifting under a still pointer never hand the stage on by themselves.
   // A tap opens a band too (touch has no hover); a click on the open band goes to its item.
   box.addEventListener('pointermove', (e) => {
-    if (e.pointerType !== 'mouse') return;
+    if (e.pointerType !== 'mouse' || stacked.matches) return;
     const i = bands.findIndex((x) => x.band === (e.target as Element).closest('.band'));
     if (i >= 0) pointer = i;
   });
   bands.forEach((b, i) => b.band.addEventListener('click', (e) => {
     if (i === shown) return;
     e.preventDefault();
-    pointer = i;
+    // stacked, the page scrolls that tool to the middle, where it opens
+    if (stacked.matches) scrollBy({ top: (i - centre) * STRIP, behavior: reduce ? 'auto' : 'smooth' });
+    else { pointer = i; if (reduce) requestAnimationFrame(tick); }
   }));
   box.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pointer = null; });
+  // a still stage draws only on demand, and stacked it follows the scroll
+  addEventListener('scroll', () => { if (reduce && stacked.matches) requestAnimationFrame(tick); }, { passive: true });
   const tick = (t: number) => {
-    // away from the pointer the stage steps from the first tool to the last and back
-    const k = Math.floor((t - t0) / STEP_MS) % (2 * (n - 1));
-    target = pointer ?? (k < n ? k : 2 * (n - 1) - k);
-    centre += (target - centre) * EASE;
-    if (Math.abs(target - centre) < 0.001) centre = target;
     let best = 0;
-    bands.forEach((b, i) => {
-      b.grow = growAt(i, centre);
-      b.band.style.flexGrow = b.grow.toFixed(3);
-      if (b.grow > bands[best]!.grow) best = i;
-    });
+    if (stacked.matches) {
+      // stacked: the scroll decides. The open band is the one at the middle
+      // of the window; a strip's height of scroll hands it to the next, so it
+      // stays at the middle while the strips pass through it
+      const openH = bands[0]!.openH;
+      centre = Math.max(0, Math.min(n - 1, (innerHeight / 2 - box.getBoundingClientRect().top - openH / 2) / STRIP));
+      // A band stays open for most of its strip of scroll and hands over in
+      // the middle HANDOVER of it, the two sharing the height (the stage never
+      // changes), both showing their words and media clipped
+      bands.forEach((b, i) => {
+        b.grow = Math.max(0, Math.min(1, 0.5 + (0.5 - Math.abs(i - centre)) / HANDOVER));
+        b.band.style.height = `${(STRIP + b.grow * (openH - STRIP)).toFixed(1)}px`;
+        b.band.classList.toggle('part', b.grow > 0.02);
+        if (b.grow > bands[best]!.grow) best = i;
+      });
+    } else {
+      // away from the pointer the stage steps from the first tool to the last and back
+      const k = Math.floor((t - t0) / STEP_MS) % (2 * (n - 1));
+      target = pointer ?? (k < n ? k : 2 * (n - 1) - k);
+      centre = reduce ? target : centre + (target - centre) * EASE;
+      if (Math.abs(target - centre) < 0.001) centre = target;
+      bands.forEach((b, i) => {
+        b.grow = growAt(i, centre);
+        b.band.style.flexGrow = b.grow.toFixed(3);
+        if (b.grow > bands[best]!.grow) best = i;
+      });
+    }
     shown = best;
     // the hand-over is instant: the words, the dimming and the media all
     // change on the same frame, so nothing of one tool lingers on the next

@@ -301,6 +301,42 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
   background: var(--stage-media); color: var(--stage-ink);
 }
 
+/* Stacked, on a phone (home.ts STACKED): the bands run down the page. A closed
+   band is a plain strip, a bar of its tool's colour, its want, its name at the
+   far end; the open band, the one at the middle of the window, is as tall as
+   its words and the tallest media (--open-h, home.ts size). home.ts sets
+   every band's height. */
+.band-name { display: none; }
+.stage.stacked { flex-direction: column; gap: 0; height: auto; }
+.stage.stacked .band {
+  flex: none; min-width: 0; background: #17131c;
+  border-top: 1px solid color-mix(in srgb, #fff 9%, transparent);
+  box-shadow: inset 3px 0 var(--acc);
+}
+.stage.stacked .band:first-child { border-top: 0; }
+.stage.stacked .band.open { background: var(--stage-media); box-shadow: none; }
+.stage.stacked .band:not(.open) .band-poster, .stage.stacked .band::after { opacity: 0; }
+.stage.stacked :is(.band-lamp, .band-live) { left: 0; width: 100%; height: var(--open-h, 100%); transform: none; }
+/* the want and the name sit across the strip's middle (a strip is 48px, home.ts STRIP) */
+.stage.stacked :is(.band-want, .band-name) {
+  position: absolute; z-index: 1; top: 24px; bottom: auto; transform: translateY(-50%);
+  writing-mode: horizontal-tb; white-space: nowrap;
+}
+.stage.stacked .band-want { left: calc(var(--stage-inset) + 3px); font-size: 13px; }
+.stage.stacked .band-name {
+  display: block; right: var(--stage-inset);
+  font: 11px var(--font-mono); color: color-mix(in srgb, var(--stage-ink) 60%, transparent);
+}
+.stage.stacked .band.open .band-name { opacity: 0; }
+/* while two bands hand over, both show their words and media, clipped */
+.stage.stacked .band.part { background: var(--stage-media); box-shadow: none; }
+.stage.stacked .band.part .band-open { opacity: 1; }
+.stage.stacked .band.part :is(.band-want, .band-name) { opacity: 0; }
+.stage.stacked .band-open { right: 0; bottom: auto; width: auto; height: var(--open-h, 100%); }
+/* every open band is as tall as the tallest media, so a shorter one sits in the middle */
+.stage.stacked .band-frame { align-items: center; }
+.stage.stacked .band-title::after { content: "→"; margin-left: .5em; }
+
 .thumb { border: var(--hairline); background: var(--ground-2); overflow: hidden; }
 
 /* ---------------------------------------------------------------- map */
