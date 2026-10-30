@@ -303,11 +303,13 @@ button[aria-pressed="true"]:hover { background: var(--ground-2); }
 
 /* Stacked, on a phone (home.ts STACKED): the bands run down the page. A closed
    band is a plain strip, a bar of its tool's colour, its want, its name at the
-   far end; the open band, the one at the middle of the window, is as tall as
-   its words and the tallest media (--open-h, home.ts size). home.ts sets
-   every band's height. */
+   far end; the open band is as tall as its words and the tallest media
+   (--open-h, home.ts size). The stage pins (sticky) inside its track while
+   the scroll runs through the tools; home.ts sets the pin, the track's
+   height, and every band's height. */
 .band-name { display: none; }
-.stage.stacked { flex-direction: column; gap: 0; height: auto; }
+.stage.stacked { position: sticky; flex-direction: column; gap: 0; height: auto; }
+.stage.stacked .band.gone { border-top: 0; }
 .stage.stacked .band {
   flex: none; min-width: 0; background: #17131c;
   border-top: 1px solid color-mix(in srgb, #fff 9%, transparent);

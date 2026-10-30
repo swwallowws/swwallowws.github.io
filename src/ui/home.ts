@@ -106,9 +106,11 @@ export function renderHome(main: HTMLElement): void {
    reduced motion it holds still on the first tool.
    On a phone the bands are stacked instead (.stacked): every closed one a
    plain strip of the same height with its want and name, and the open one as
-   tall as its words and the tallest media at the stage's width. The page's
-   scroll decides which is open: the one at the middle of the window, the
-   way the items below light up as they pass it. */
+   tall as its words and the tallest media at the stage's width. The stage
+   pins with its open band at the middle of the window while the scroll runs
+   through half a window's height per tool: each tool holds open for most of
+   its share and hands over to the next near its end, and a tool passed folds
+   away. Then the stage lets go and the page carries on. */
 // how the bands share the width: a gaussian around the tool in focus; the open
 // band's height (amp) is solved in size() so it is exactly as wide as its media
 const SIGMA = 0.5, MIN_GROW = 1, EASE = 0.09;
@@ -121,11 +123,14 @@ const HOOK_CROP: Record<string, { top?: number; left?: number }> = {
 };
 // how long the stage rests on each tool when nothing points at it
 const STEP_MS = 4500;
-// stacked (a phone): the width it starts at, and a closed strip's height,
-// which is also how far the page scrolls to hand the open band on
-const STACKED = '(max-width: 600px)', STRIP = 48, HANDOVER = 0.4;
+// stacked (a phone): the width it starts at; a closed strip's height; each
+// tool's share of the scroll, as a share of the window's height; and where in
+// its share the open band hands over to the next (from .. to)
+const STACKED = '(max-width: 600px)', STRIP = 48, PER_TOOL = 0.5, HAND_FROM = 0.6, HAND_TO = 0.9;
 function stage(): HTMLElement {
   const box = el('div', { class: 'stage', role: 'group', 'aria-label': 'The tools' });
+  // stacked, the stage pins inside this track while the scroll runs through it
+  const track = el('div', { class: 'stage-track' }, box);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const stacked = matchMedia(STACKED);
   const bands = WANTS.map((w) => {
@@ -226,16 +231,22 @@ function stage(): HTMLElement {
     let openW: number;
     if (stacked.matches) {
       // stacked: the open band is the stage's width and as tall as the words
-      // and the tallest media, so the stage never changes height (what is
-      // under it never moves); tick() sets the heights
+      // and the tallest media, never taller than the window leaves room for;
+      // tick() sets the heights
       openW = box.clientWidth;
-      // (and never taller than the window leaves room for, less a strip each side)
       const openH = Math.min(textRow + Math.max(...bands.map((b) => Math.floor(openW / b.ratio()))), innerHeight - 2 * STRIP);
       for (const b of bands) {
         b.openH = openH;
         b.live?.size(openW, openH);
       }
       box.style.setProperty('--open-h', `${openH}px`);
+      // the stage pins with its open band in the middle of the window, for a
+      // share of scroll per tool (and half a share more on the last), so the
+      // track is that much taller than the open band; nothing under it moves
+      per = Math.round(innerHeight * PER_TOOL);
+      pinTop = Math.round((innerHeight - openH) / 2);
+      box.style.top = `${pinTop}px`;
+      track.style.height = `${(n - 0.5) * per + openH}px`;
     } else {
       // the open band is as wide as its media under the words' row, up to half
       // the stage, and never narrower than the words at their smallest (a phone)
@@ -245,6 +256,8 @@ function stage(): HTMLElement {
       openW = Math.floor(width * restShare());
       for (const b of bands) { b.band.style.height = ''; b.live?.size(openW, box.clientHeight); }
       box.style.removeProperty('--open-h');
+      box.style.top = '';
+      track.style.height = '';
     }
     box.style.setProperty('--open-w', `${openW}px`);
     // the words' width is the type's, which scales, plus the tags' padding, which doesn't
@@ -266,6 +279,9 @@ function stage(): HTMLElement {
   void document.fonts.ready.then(size);
   let target = 0; // the tool the stage rests on (0 .. n-1); starts on the first
   let centre = 0;
+  let per = 1; // stacked: each tool's share of the scroll (px)
+  let pinTop = 0; // stacked: where the stage pins, from the window's top (px)
+  let along = 0; // stacked: how far the scroll is through the tools (0 .. n-1)
   const t0 = performance.now();
   let pointer: number | null = null;
   let shown = 0;
@@ -280,8 +296,8 @@ function stage(): HTMLElement {
   bands.forEach((b, i) => b.band.addEventListener('click', (e) => {
     if (i === shown) return;
     e.preventDefault();
-    // stacked, the page scrolls that tool to the middle, where it opens
-    if (stacked.matches) scrollBy({ top: (i - centre) * STRIP, behavior: reduce ? 'auto' : 'smooth' });
+    // stacked, the page scrolls to the start of that tool's share
+    if (stacked.matches) scrollBy({ top: (i - along) * per, behavior: reduce ? 'auto' : 'smooth' });
     else { pointer = i; if (reduce) requestAnimationFrame(tick); }
   }));
   box.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pointer = null; });
@@ -290,18 +306,22 @@ function stage(): HTMLElement {
   const tick = (t: number) => {
     let best = 0;
     if (stacked.matches) {
-      // stacked: the scroll decides. The open band is the one at the middle
-      // of the window; a strip's height of scroll hands it to the next, so it
-      // stays at the middle while the strips pass through it
+      // stacked: the scroll through the track decides. A tool stays open for
+      // the first HAND_FROM of its share, then hands over (eased) by HAND_TO.
+      // A tool passed folds away, the open one sits on top, the ones to come
+      // wait under it as strips; during a hand-over both show, clipped
       const openH = bands[0]!.openH;
-      centre = Math.max(0, Math.min(n - 1, (innerHeight / 2 - box.getBoundingClientRect().top - openH / 2) / STRIP));
-      // A band stays open for most of its strip of scroll and hands over in
-      // the middle HANDOVER of it, the two sharing the height (the stage never
-      // changes), both showing their words and media clipped
+      along = Math.max(0, Math.min(n - 1, (pinTop - track.getBoundingClientRect().top) / per));
+      const k = Math.min(n - 2, Math.floor(along));
+      const x = Math.max(0, Math.min(1, (along - k - HAND_FROM) / (HAND_TO - HAND_FROM)));
+      const g = x * x * (3 - 2 * x);
+      centre = k + g;
       bands.forEach((b, i) => {
-        b.grow = Math.max(0, Math.min(1, 0.5 + (0.5 - Math.abs(i - centre)) / HANDOVER));
-        b.band.style.height = `${(STRIP + b.grow * (openH - STRIP)).toFixed(1)}px`;
-        b.band.classList.toggle('part', b.grow > 0.02);
+        const h = i < k ? 0 : i === k ? (1 - g) * openH : i === k + 1 ? STRIP + g * (openH - STRIP) : STRIP;
+        b.grow = i === k ? 1 - g : i === k + 1 ? g : 0;
+        b.band.style.height = `${h.toFixed(1)}px`;
+        b.band.classList.toggle('gone', h < 0.5);
+        b.band.classList.toggle('part', g > 0 && g < 1 && (i === k || i === k + 1));
         if (b.grow > bands[best]!.grow) best = i;
       });
     } else {
@@ -328,7 +348,7 @@ function stage(): HTMLElement {
     if (!reduce) requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
-  return box;
+  return track;
 }
 
 /* Focus (an item's hook playing) goes to the item whose centre is nearest the
