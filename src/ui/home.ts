@@ -107,8 +107,9 @@ export function renderHome(main: HTMLElement): void {
    On a phone the bands are stacked instead (.stacked): every closed one a
    plain strip of the same height with its want and name, and the open one as
    tall as its words and the tallest media at the stage's width. The stage
-   pins with its open band at the middle of the window while the scroll runs
-   through half a window's height per tool: each tool holds open for most of
+   pins while the scroll runs through half a window's height per tool,
+   drifting slowly up as it goes (its open band from the window's foot to its
+   head), so the page never quite stops: each tool holds open for most of
    its share and hands over to the next near its end, and a tool passed folds
    away. Then the stage lets go and the page carries on. */
 // how the bands share the width: a gaussian around the tool in focus; the open
@@ -127,6 +128,8 @@ const STEP_MS = 4500;
 // tool's share of the scroll, as a share of the window's height; and where in
 // its share the open band hands over to the next (from .. to)
 const STACKED = '(max-width: 600px)', STRIP = 48, PER_TOOL = 0.5, HAND_FROM = 0.6, HAND_TO = 0.9;
+// stacked: how close the open band comes to the window's foot and head as the pinned stage drifts
+const EDGE = 16;
 function stage(): HTMLElement {
   const box = el('div', { class: 'stage', role: 'group', 'aria-label': 'The tools' });
   // stacked, the stage pins inside this track while the scroll runs through it
@@ -240,13 +243,17 @@ function stage(): HTMLElement {
         b.live?.size(openW, openH);
       }
       box.style.setProperty('--open-h', `${openH}px`);
-      // the stage pins with its open band in the middle of the window, for a
-      // share of scroll per tool (and half a share more on the last), so the
-      // track is that much taller than the open band; nothing under it moves
+      // the stage pins for a share of scroll per tool (and half a share more
+      // on the last), so the track is that much taller than the open band;
+      // nothing under it moves. Pinned, it still drifts up (tick()), from its
+      // open band at the foot of the window to the head: it pins that much
+      // lower, and the track gives the drift back under it
       per = Math.round(innerHeight * PER_TOOL);
-      pinTop = Math.round((innerHeight - openH) / 2);
+      drift = Math.max(0, innerHeight - openH - 2 * EDGE);
+      pinTop = Math.round((innerHeight - openH) / 2 + drift / 2);
       box.style.top = `${pinTop}px`;
       track.style.height = `${(n - 0.5) * per + openH}px`;
+      track.style.marginBottom = `${-drift}px`;
     } else {
       // the open band is as wide as its media under the words' row, up to half
       // the stage, and never narrower than the words at their smallest (a phone)
@@ -257,7 +264,9 @@ function stage(): HTMLElement {
       for (const b of bands) { b.band.style.height = ''; b.live?.size(openW, box.clientHeight); }
       box.style.removeProperty('--open-h');
       box.style.top = '';
+      box.style.transform = '';
       track.style.height = '';
+      track.style.marginBottom = '';
     }
     box.style.setProperty('--open-w', `${openW}px`);
     // the words' width is the type's, which scales, plus the tags' padding, which doesn't
@@ -281,6 +290,7 @@ function stage(): HTMLElement {
   let centre = 0;
   let per = 1; // stacked: each tool's share of the scroll (px)
   let pinTop = 0; // stacked: where the stage pins, from the window's top (px)
+  let drift = 0; // stacked: how far it rises while pinned (px)
   let along = 0; // stacked: how far the scroll is through the tools (0 .. n-1)
   const t0 = performance.now();
   let pointer: number | null = null;
@@ -311,7 +321,9 @@ function stage(): HTMLElement {
       // A tool passed folds away, the open one sits on top, the ones to come
       // wait under it as strips; during a hand-over both show, clipped
       const openH = bands[0]!.openH;
-      along = Math.max(0, Math.min(n - 1, (pinTop - track.getBoundingClientRect().top) / per));
+      const pinned = pinTop - track.getBoundingClientRect().top;
+      along = Math.max(0, Math.min(n - 1, pinned / per));
+      box.style.transform = `translateY(${(-drift * Math.max(0, Math.min(1, pinned / ((n - 0.5) * per)))).toFixed(1)}px)`;
       const k = Math.min(n - 2, Math.floor(along));
       const x = Math.max(0, Math.min(1, (along - k - HAND_FROM) / (HAND_TO - HAND_FROM)));
       const g = x * x * (3 - 2 * x);
