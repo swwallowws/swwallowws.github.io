@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { plan, MEDIA } from "../scripts/refresh-visuals.mjs";
+import { plan, run, MEDIA } from "../scripts/refresh-visuals.mjs";
 
 const live = (site: string) => ({ "https://a/": { content: "new", commit: "c2" }, "https://b/": { content: "same", commit: "c1" } })[site];
 const loop = (project: string, site: string, extra = {}) => ({ project, site, url: site, show: [], ...extra });
@@ -28,6 +28,12 @@ test("a recipe CI can't record (a local server, or a file outside the repo) is l
   assert.deepEqual(p.manual.map((m) => m.project), ["coming-undone", "ready-set"]);
   assert.match(p.manual[0].why, /local server/);
   assert.match(p.manual[1].why, /outside the showcase/);
+});
+
+test("a command whose output goes straight to the log (stdio inherit) runs without a crash", () => {
+  // execFileSync returns null when nothing is piped; the re-record steps run this way.
+  assert.equal(run(process.execPath, ["--version"], { stdio: "inherit" }), "");
+  assert.match(run(process.execPath, ["--version"]), /^v\d+/);
 });
 
 test("every loop project has a repo and a still name for its media/", () => {

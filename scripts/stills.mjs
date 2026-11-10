@@ -38,7 +38,7 @@ const STILLS = [
   {
     project: "ready-set", name: "site", url: "https://swwallowws.github.io/ready-set/",
     go: async (p) => {
-      await p.setInputFiles("#file", join(root, "../tabridge/spike/gp_serenade/serenade.gp"));
+      await p.setInputFiles("#file", join(root, "../ready-set-public/spike/gp_serenade/serenade.gp"));
       await p.waitForSelector("#preview:not([disabled])", { timeout: 30000 });
       await p.click("#preview");
       await p.waitForSelector("#player-host:not([hidden])", { timeout: 30000 });
