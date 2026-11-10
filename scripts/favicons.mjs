@@ -20,7 +20,7 @@
 // tool's own static folder (COPY below); those repos link them from their
 // pages and commit the copies, so rerun --copy after a symbol change.
 
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright-core";
@@ -35,11 +35,21 @@ const { faviconSymbol } = await import(pathToFileURL(join(root, "src/ui/glyphs.t
 const COPY = {
   ysad: "../yousuckatdrums/demo/favicons",
   starling: "../voxmpe/studio-ui/favicons",
-  "ready-set": "../tabridge/web/favicons",
+  "ready-set": "../ready-set-public/web/favicons",
   "session-notes": "../ableton-session-notes/demo/favicons",
   "coming-undone": "../stemscribe/src/stemscribe/web/static/favicons",
   rearranged: "../rearranged/src/rearranged/web/favicons",
 };
+
+// A repo that moved leaves a stale path here; refuse before writing anything, so --copy
+// doesn't create a stray folder where the repo used to be.
+if (args.includes("--copy")) {
+  const missing = Object.entries(COPY).filter(([, rel]) => !existsSync(join(root, rel)));
+  if (missing.length) {
+    console.error(`--copy: no such folder, fix COPY in scripts/favicons.mjs:\n${missing.map(([id, rel]) => `  ${id}: ${rel}`).join("\n")}`);
+    process.exit(1);
+  }
+}
 
 // ---- colours from the tokens ------------------------------------------------
 const tokens = readFileSync(join(root, "vendor/design/tokens.css"), "utf8");
@@ -99,7 +109,6 @@ try {
   if (args.includes("--copy")) {
     for (const [id, rel] of Object.entries(COPY)) {
       const dir = join(root, rel);
-      mkdirSync(dir, { recursive: true });
       copyFileSync(join(outDir, `${id}.svg`), join(dir, "favicon.svg"));
       copyFileSync(join(outDir, `${id}-32.png`), join(dir, "favicon-32.png"));
       copyFileSync(join(outDir, `${id}-180.png`), join(dir, "apple-touch-icon.png"));
