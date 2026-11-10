@@ -56,8 +56,10 @@ export function plan(loops, sources, liveOf) {
   return { redo, manual };
 }
 
-function run(cmd, args, opts = {}) {
-  return execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts }).trim();
+/** Runs a command and gives its trimmed output, or "" when it went straight to the log (stdio: "inherit"). */
+export function run(cmd, args, opts = {}) {
+  const out = execFileSync(cmd, args, { stdio: ["ignore", "pipe", "inherit"], encoding: "utf8", ...opts });
+  return (out ?? "").trim();
 }
 
 /** Commits `files` ([from, to-in-repo]) to a new branch of `repo` and opens a pull request. */
