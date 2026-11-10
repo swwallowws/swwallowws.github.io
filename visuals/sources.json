@@ -1,26 +1,26 @@
 {
   "coming-undone/loop": {
     "site": "https://swwallowws.github.io/coming-undone/",
-    "content": "1db2da26751c03bf",
-    "commit": "46d9aacc81371a0dd098f5dfb3435379c4de9158",
-    "recorded": "2026-10-29"
+    "content": "527076036844af08",
+    "commit": "d80aac567f9a705cb94bf6ab643b85abc778c534",
+    "recorded": "2026-11-10"
   },
   "ready-set/loop": {
     "site": "https://swwallowws.github.io/ready-set/",
-    "content": "187722d63b0f1116",
-    "commit": "63eab605f4a40f8c6c02e12221d04dd5b7edcce0",
+    "content": "1d9e9629498a5904",
+    "commit": "e165f54eb7d117c1c13b4e79a44cfe16a49e3134",
     "recorded": "2026-11-10"
   },
   "rearranged/loop": {
     "site": "https://swwallowws.github.io/rearranged-web/",
-    "content": "743159e9e1f4a1a3",
-    "commit": "e8a5179f143834ba6d15e07142829adbd9f0cd2d",
-    "recorded": "2026-10-29"
+    "content": "12d092d1af6ec127",
+    "commit": "0bff58027853a394e3670c5009c6b88d140f409b",
+    "recorded": "2026-11-10"
   },
   "starling/loop": {
     "site": "https://swwallowws.github.io/starling/",
-    "content": "e46212ab9f6cc3a1",
-    "commit": "09b0cdfe902239244fe35b3e65897c5a8e9b5438",
+    "content": "0df4c222fb9c8aee",
+    "commit": "1daf370ed0f9f4b8f664d521eb8835d33b79bce3",
     "recorded": "2026-11-10"
   }
 }
