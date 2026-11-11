@@ -7,6 +7,12 @@ name: Refresh pictures
 # showcase's copy of YSAD's demo current (job ysad-demo). Needs the VISUALS_PR_TOKEN
 # secret (Contents and Pull requests write on the product repos and this one,
 # Contents read on you-suck-at-drums).
+#
+# The token never shares a job with an npm package: record installs and runs them with
+# no token, then hands its pictures to propose, which installs nothing and checks the
+# hand-off before it pushes anything (scripts/refresh-visuals.mjs, readHandoff). A
+# leaked token could push to the product repos, and a pushed branch runs their CI.
+# Actions are pinned to commits for the same reason.
 on:
   schedule:
     - cron: "41 */6 * * *"
@@ -19,21 +25,43 @@ concurrency:
   group: refresh-visuals
 
 jobs:
-  refresh:
+  record:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - name: ffmpeg, for encoding the loops
         run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
-      - name: Re-record what changed and propose it
+      - name: Re-record what changed
+        run: node scripts/refresh-visuals.mjs --record "$RUNNER_TEMP/handoff"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: handoff
+          path: ${{ runner.temp }}/handoff
+          retention-days: 1
+
+  propose:
+    needs: record
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: handoff
+          path: ${{ runner.temp }}/handoff
+      # No npm ci here: the script loads only Node's own modules (a test holds that).
+      - name: Propose what was re-recorded
         env:
           VISUALS_PR_TOKEN: ${{ secrets.VISUALS_PR_TOKEN }}
-        run: node scripts/refresh-visuals.mjs
+        run: node scripts/refresh-visuals.mjs --propose "$RUNNER_TEMP/handoff"
 
   # YSAD's repo is private, so the showcase carries a copy of its demo
   # (public/demos/ysad, scripts/ysad-demo.sh). When the demo changed, propose the
@@ -41,7 +69,7 @@ jobs:
   ysad-demo:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
       - name: Fetch YSAD's demo

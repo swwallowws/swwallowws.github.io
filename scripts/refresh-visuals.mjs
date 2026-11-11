@@ -12,12 +12,19 @@
 // Recipes CI can't record (a local server, or a file outside this repo) are listed
 // for a person instead: `node scripts/loops.mjs <project>` by hand, as before.
 //
-// Runs in .github/workflows/refresh-visuals.yml every few hours. Needs
-// VISUALS_PR_TOKEN: a fine-grained token with Contents and Pull requests write on
-// the product repos and this one.
+// Runs in .github/workflows/refresh-visuals.yml every few hours, in two jobs, so the token
+// never meets the npm packages recording needs (any one of them could read it):
+//   node scripts/refresh-visuals.mjs --record DIR    re-records, writes a hand-off in DIR. No token.
+//   node scripts/refresh-visuals.mjs --propose DIR   proposes from the hand-off. Needs
+//     VISUALS_PR_TOKEN (Contents and Pull requests write on the product repos and this one)
+//     and loads nothing outside Node itself.
+// The hand-off comes from a job that ran npm packages, so --propose trusts only a known project
+// and two hashes from it, and builds every repo, branch, file name, title, body and sources
+// entry itself (readHandoff, mediaFiles, sourcesWith).
+// With neither flag it does both in one go, for a run by hand:
 //   node scripts/refresh-visuals.mjs [--dry-run]
 import { execFileSync } from "node:child_process";
-import { copyFileSync, existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -32,6 +39,12 @@ export const MEDIA = {
   "coming-undone": { repo: "swwallowws/coming-undone", still: "full" },
 };
 const SHOWCASE = "swwallowws/swwallowws.github.io";
+
+/** The files a project's media/ gets, by the names its README uses. */
+export const pictureNames = (still) => [
+  "loop-paper.mp4", "loop-night.mp4", "loop-paper.gif", "loop-night.gif", "loop-paper.png", "loop-night.png",
+  `${still}-paper.png`, `${still}-night.png`,
+];
 
 /** Why CI can't record this recipe itself, or null when it can. */
 function blocker(loop) {
@@ -128,6 +141,47 @@ export function withoutFailed(now, before, failed) {
   return Object.fromEntries(Object.keys(out).sort().map((k) => [k, out[k]]));
 }
 
+/**
+ * The hand-off from --record, read for --propose. Throws unless it's {done, failed} with each
+ * done project one of MEDIA's, once, and its content and commit hashes. Failed entries are only
+ * logged, so they're cut to short strings.
+ */
+export function readHandoff(text) {
+  const h = JSON.parse(text);
+  if (!h || typeof h !== "object" || !Array.isArray(h.done) || !Array.isArray(h.failed)) {
+    throw new Error("the hand-off isn't {done, failed}");
+  }
+  const done = h.done.map((d) => {
+    if (!d || typeof d !== "object" || !Object.hasOwn(MEDIA, d.project)) {
+      throw new Error(`the hand-off names an unknown project: ${JSON.stringify(d?.project ?? d).slice(0, 80)}`);
+    }
+    if (typeof d.content !== "string" || !/^[0-9a-f]{8,64}$/.test(d.content)) throw new Error(`the hand-off's ${d.project} content isn't a hash`);
+    if (typeof d.commit !== "string" || !/^[0-9a-f]{7,40}$/.test(d.commit)) throw new Error(`the hand-off's ${d.project} commit isn't a hash`);
+    return { project: d.project, content: d.content, commit: d.commit };
+  });
+  if (new Set(done.map((d) => d.project)).size !== done.length) throw new Error("the hand-off names a project twice");
+  const failed = h.failed.map((f) => ({ project: String(f?.project ?? "?").slice(0, 80), error: String(f?.error ?? "").slice(0, 2000) }));
+  return { done, failed };
+}
+
+/** The pictures in the hand-off for `project`: its known names only, regular files only (no links). */
+export function mediaFiles(dir, project) {
+  return pictureNames(MEDIA[project].still)
+    .map((n) => [join(dir, "pictures", project, n), `media/${n}`])
+    .filter(([from]) => existsSync(from) && lstatSync(from).isFile());
+}
+
+/**
+ * sources.json as it is (`before`) with a fresh loop entry for each project proposed, built from
+ * this checkout's site for it and the hand-off's hashes. Keys come out sorted, as recordSource
+ * writes them.
+ */
+export function sourcesWith(before, proposed, siteOf, today) {
+  const out = { ...before };
+  for (const d of proposed) out[`${d.project}/loop`] = { site: siteOf(d.project), content: d.content, commit: d.commit, recorded: today };
+  return Object.fromEntries(Object.keys(out).sort().map((k) => [k, out[k]]));
+}
+
 /** Commits `files` ([from, to-in-repo]) to a new branch of `repo` and opens a pull request. */
 function propose(repo, branch, files, title, body) {
   const token = process.env.VISUALS_PR_TOKEN;
@@ -156,8 +210,11 @@ function propose(repo, branch, files, title, body) {
   openPr();
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const dry = process.argv.includes("--dry-run");
+/**
+ * Re-records what changed and writes the hand-off to `out`: handoff.json ({done: [{project,
+ * content, commit}], failed}) and pictures/<project>/<name>. Returns false on --dry-run.
+ */
+async function record(out, dry) {
   const { readSources, liveVersion, SOURCES } = await import("./sources.mjs");
   const before = readSources();
   const loops = JSON.parse(readFileSync(join(root, "visuals/loops.json"), "utf8")).loops;
@@ -167,30 +224,79 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   }
   const { redo, manual } = plan(loops, before, (s) => versions[s]);
   for (const m of manual) console.log(`manual ${m.project}: ${m.why}`);
-  if (!redo.length) { console.log("every picture CI can record is up to date"); process.exit(0); }
-  console.log(`redo: ${redo.map((r) => r.project).join(", ")}`);
-  if (dry) process.exit(0);
+  if (redo.length) console.log(`redo: ${redo.map((r) => r.project).join(", ")}`);
+  else console.log("every picture CI can record is up to date");
+  if (dry) return false;
 
   const { done, failed } = eachProject(redo, (r) => {
     run("node", [join(root, "scripts/loops.mjs"), r.project], { stdio: "inherit" });
     run("node", [join(root, "scripts/stills.mjs"), r.project], { stdio: "inherit" });
-    const { repo, still } = MEDIA[r.project];
-    const names = ["loop-paper.mp4", "loop-night.mp4", "loop-paper.gif", "loop-night.gif", "loop-paper.png", "loop-night.png", `${still}-paper.png`, `${still}-night.png`];
-    const files = names.map((n) => [join(root, ".local-visuals", r.project, n), `media/${n}`]).filter(([from]) => existsSync(from));
-    propose(repo, `visuals/${r.live.content}`, files, "README media: today's product",
-      `The product changed since its README pictures were recorded (build ${r.live.commit.slice(0, 7)}), so the showcase re-recorded them from ${r.site}.\n\nLook at the loop and stills, then merge. Proposed by the showcase's refresh-visuals workflow.`);
-  }, hideToken);
-
-  if (failed.length) writeFileSync(SOURCES, JSON.stringify(withoutFailed(readSources(), before, failed), null, 2) + "\n");
-  if (done.length) {
-    const key = done.map((r) => r.live.content.slice(0, 8)).join("-");
-    try {
-      propose(SHOWCASE, `visuals/sources-${key}`, [[join(root, "visuals/sources.json"), "visuals/sources.json"]],
-        "Pictures: record which builds they show",
-        `Re-recorded: ${done.map((r) => r.project).join(", ")}. Merge together with the media pull requests on those repos.`);
-    } catch (e) {
-      failed.push({ project: "showcase sources", error: hideToken(e?.message ?? e) });
+    mkdirSync(join(out, "pictures", r.project), { recursive: true });
+    for (const n of pictureNames(MEDIA[r.project].still)) {
+      const from = join(root, ".local-visuals", r.project, n);
+      if (existsSync(from)) copyFileSync(from, join(out, "pictures", r.project, n));
     }
+  });
+  // The hashes recordSource wrote for each recorded loop, which is what the pictures show. A
+  // loop that left none counts as failed, so the hand-off only ever carries real hashes.
+  const recorded = readSources();
+  const handed = [];
+  for (const r of done) {
+    const entry = recorded[`${r.project}/loop`];
+    if (entry?.content && entry?.commit && entry.content !== before[`${r.project}/loop`]?.content) {
+      handed.push({ project: r.project, content: entry.content, commit: entry.commit });
+    } else failed.push({ project: r.project, error: "recording left no new entry in sources.json" });
+  }
+  writeFileSync(SOURCES, JSON.stringify(withoutFailed(recorded, before, failed), null, 2) + "\n");
+  const handoff = { done: handed, failed };
+  mkdirSync(out, { recursive: true });
+  writeFileSync(join(out, "handoff.json"), JSON.stringify(handoff, null, 2) + "\n");
+  return true;
+}
+
+/** Proposes everything in the hand-off at `dir`. Returns the failures, recording's included. */
+function proposeAll(dir) {
+  const { done, failed } = readHandoff(readFileSync(join(dir, "handoff.json"), "utf8"));
+  for (const f of failed) console.error(`FAILED ${f.project}, while recording: ${f.error}`);
+  const loops = JSON.parse(readFileSync(join(root, "visuals/loops.json"), "utf8")).loops;
+  const siteOf = (project) => loops.find((l) => l.project === project)?.site ?? "its live site";
+  const proposed = eachProject(done, (d) => {
+    propose(MEDIA[d.project].repo, `visuals/${d.content}`, mediaFiles(dir, d.project), "README media: today's product",
+      `The product changed since its README pictures were recorded (build ${d.commit.slice(0, 7)}), so the showcase re-recorded them from ${siteOf(d.project)}.\n\nLook at the loop and stills, then merge. Proposed by the showcase's refresh-visuals workflow.`);
+  }, hideToken);
+  const all = [...failed, ...proposed.failed];
+  if (proposed.done.length) {
+    const before = JSON.parse(readFileSync(join(root, "visuals/sources.json"), "utf8"));
+    const sources = join(mkdtempSync(join(tmpdir(), "sources-")), "sources.json");
+    writeFileSync(sources, JSON.stringify(sourcesWith(before, proposed.done, siteOf, new Date().toISOString().slice(0, 10)), null, 2) + "\n");
+    const key = proposed.done.map((d) => d.content.slice(0, 8)).join("-");
+    try {
+      propose(SHOWCASE, `visuals/sources-${key}`, [[sources, "visuals/sources.json"]],
+        "Pictures: record which builds they show",
+        `Re-recorded: ${proposed.done.map((d) => d.project).join(", ")}. Merge together with the media pull requests on those repos.`);
+    } catch (e) {
+      all.push({ project: "showcase sources", error: hideToken(e?.message ?? e) });
+    }
+  }
+  return all;
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const args = process.argv.slice(2);
+  const after = (flag) => (args.includes(flag) ? args[args.indexOf(flag) + 1] : undefined);
+  const recordTo = after("--record");
+  const proposeFrom = after("--propose");
+  if ((args.includes("--record") && !recordTo) || (args.includes("--propose") && !proposeFrom)) {
+    console.error("usage: node scripts/refresh-visuals.mjs [--record DIR | --propose DIR | --dry-run]");
+    process.exit(2);
+  }
+  let failed = [];
+  if (proposeFrom) failed = proposeAll(proposeFrom);
+  else {
+    const dir = recordTo ?? mkdtempSync(join(tmpdir(), "handoff-"));
+    const recorded = await record(dir, args.includes("--dry-run"));
+    // --record stops at the hand-off; its failures travel in it to --propose, which ends red.
+    if (recorded && !recordTo) failed = proposeAll(dir);
   }
   if (failed.length) {
     console.error(`\n${failed.length} project(s) failed, the rest were proposed:`);
